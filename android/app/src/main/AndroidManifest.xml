@@ -1,8 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bigbird.ims_seller">
    <application
-        android:label="ims_seller"
-        android:name="${applicationName}"
+        android:label="IMS SELLER"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
