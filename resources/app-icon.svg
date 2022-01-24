@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <g id="app-icon" transform="translate(2635 -1)">
+    <path id="Path_7" data-name="Path 7" d="M146.286,0H877.714A146.286,146.286,0,0,1,1024,146.286V877.714A146.286,146.286,0,0,1,877.714,1024H146.286A146.286,146.286,0,0,1,0,877.714V146.286A146.286,146.286,0,0,1,146.286,0Z" transform="translate(-2635 1)"/>
+    <g id="Group_81" data-name="Group 81" transform="translate(-2526.031 -34.223)">
+      <g id="Group_39" data-name="Group 39" transform="translate(67.814 665.014)">
+        <path id="Path_25" data-name="Path 25" d="M0,0H617.967l53.1,53.058v94.374H0Z" fill="#0071e3"/>
+        <text id="Seller" transform="translate(335.218 112.209)" fill="#fff" font-size="111" font-family="Helvetica"><tspan x="-212.867" y="0">SELLER</tspan></text>
+      </g>
+      <text id="IMS" transform="translate(403.031 630.223)" fill="#fff" font-size="464" font-family="MyriadPro-Regular, Myriad Pro"><tspan x="-356.352" y="0">IMS</tspan></text>
+    </g>
+  </g>
+</svg>
