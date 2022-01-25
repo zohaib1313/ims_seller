@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/routes.dart';
+import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
+import 'package:ims_seller/screens/invoice_new_screen.dart';
+import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/styles.dart';
 
 class MainScreen extends StatelessWidget {
@@ -17,14 +20,22 @@ class MainScreen extends StatelessWidget {
           backgroundColor: AppColor.whiteColor,
           drawer: Drawer(
             child: ListView(
-              children: const <Widget>[
+              children: <Widget>[
                 ListTile(
-                  title: Text("Ttem 1"),
-                  trailing: Icon(Icons.arrow_forward),
+                  title: const Text("Search Customer"),
+                  trailing: const Icon(Icons.arrow_forward),
+                  onTap: () {
+                    Navigator.of(myContext!).pop();
+                    Navigator.of(myContext!).pushNamed(SearchCustomerScreen.id);
+                  },
                 ),
                 ListTile(
-                  title: Text("Item 2"),
-                  trailing: Icon(Icons.arrow_forward),
+                  title: const Text("Add New Customer"),
+                  trailing: const Icon(Icons.arrow_forward),
+                  onTap: () {
+                    Navigator.of(myContext!).pop();
+                    Navigator.of(myContext!).pushNamed(AddNewCustomer.id);
+                  },
                 ),
               ],
             ),
@@ -69,6 +80,10 @@ class MainScreen extends StatelessWidget {
                             child: Column(
                               children: [
                                 Button(
+                                  onTap: () {
+                                    Navigator.of(myContext!)
+                                        .pushNamed(InvoiceNewScreen.id);
+                                  },
                                   textColor: AppColor.whiteColor,
                                   buttonText: 'New Invoice',
                                   color: AppColor.blueColor,

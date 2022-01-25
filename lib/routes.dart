@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
+import 'package:ims_seller/screens/invoice_new_screen.dart';
 import 'package:ims_seller/screens/main_screen.dart';
+import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/screens/splash_screen.dart';
 import 'package:ims_seller/screens/target_details_screen.dart';
 import 'package:ims_seller/view_models/dashboard_view_model.dart';
+import 'package:ims_seller/view_models/invoice_new_view_model.dart';
 import 'package:ims_seller/view_models/main_screen_view_model.dart';
 import 'package:ims_seller/view_models/sigin_screen_view_model.dart';
 import 'package:ims_seller/view_models/splash_screen_view_model.dart';
@@ -20,7 +24,10 @@ class RoutesAndNavigation {
     SignInScreen.id: (context) => const SignInScreen(),
     DashBoardScreen.id: (context) => const DashBoardScreen(),
     MainScreen.id: (context) => const MainScreen(),
-    TargetDetailsScreen.id: (context) => const TargetDetailsScreen()
+    TargetDetailsScreen.id: (context) => const TargetDetailsScreen(),
+    InvoiceNewScreen.id: (context) => const InvoiceNewScreen(),
+    SearchCustomerScreen.id: (context) => const SearchCustomerScreen(),
+    AddNewCustomer.id: (context) => const AddNewCustomer(),
   };
 
   final List<ChangeNotifierProvider<dynamic>> multiProviders = [
@@ -33,5 +40,7 @@ class RoutesAndNavigation {
         create: (_) => MainScreenViewModel()),
     ChangeNotifierProvider<TargetDetailsViewModel>(
         create: (_) => TargetDetailsViewModel()),
+    ChangeNotifierProvider<InvoiceNewViewModel>(
+        create: (_) => InvoiceNewViewModel()),
   ];
 }

@@ -25,40 +25,7 @@ class DashBoardScreen extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.all(100.r),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(myContext!).pop();
-                                          },
-                                          child: const Icon(
-                                            Icons.arrow_back_ios,
-                                            size: 25,
-                                            color: AppColor.whiteColor,
-                                          ),
-                                        ),
-                                        const Text("Back",
-                                            style: AppTextStyles.mediumBold)
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 20.h, bottom: 20.h),
-                                      child: const Text(
-                                        'Hi, Hanna Broun',
-                                        style: AppTextStyles.largeBold,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+                            Spacer(),
                             Expanded(
                               flex: 3,
                               child: Container(
@@ -73,12 +40,32 @@ class DashBoardScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: 30.h, left: 100.w, right: 100.w),
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(myContext!).pop();
+                                    },
+                                    child: const Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 25,
+                                      color: AppColor.whiteColor,
+                                    ),
+                                  ),
+                                  const Text("Back",
+                                      style: AppTextStyles.mediumBold)
+                                ],
+                              ),
+                            ),
                             Center(
                               child: SingleChildScrollView(
                                 physics: BouncingScrollPhysics(),
                                 child: Container(
                                   margin: EdgeInsets.only(
-                                      top: 150.h, left: 100.w, right: 100.w),
+                                      top: 50.h, left: 100.w, right: 100.w),
                                   decoration: BoxDecoration(
                                       color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(50)),
@@ -325,7 +312,7 @@ class DashBoardScreen extends StatelessWidget {
                               ),
                             )
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ))),
