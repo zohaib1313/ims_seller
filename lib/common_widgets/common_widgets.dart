@@ -188,6 +188,7 @@ class Button extends StatelessWidget {
   final Color? borderColor;
   final double? width;
   final double? height;
+  final TextStyle? textStyle;
   final double? leftPadding;
   final double? rightPading;
 
@@ -199,6 +200,7 @@ class Button extends StatelessWidget {
       this.color,
       this.textColor,
       this.borderColor,
+      this.textStyle,
       this.width,
       this.height,
       this.leftPadding,
@@ -229,8 +231,10 @@ class Button extends StatelessWidget {
           child: Center(
               child: Text(
             buttonText,
-            style: AppTextStyles.mediumBold
-                .copyWith(color: textColor ?? AppColor.blackColor),
+            textAlign: TextAlign.center,
+            style: textStyle ??
+                AppTextStyles.mediumBold
+                    .copyWith(color: textColor ?? AppColor.blackColor),
           )),
         ),
       ),

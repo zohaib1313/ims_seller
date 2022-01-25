@@ -6,6 +6,7 @@ class AppColor {
   static const redColor = Colors.red;
   static const blueColor = Color(0xff0071E3);
   static const greenColor = Color(0xff42B14A);
+  static const greyColor = Colors.grey;
 }
 
 class AppAssets {
@@ -20,4 +21,6 @@ class AppTextStyles {
       color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 22);
   static const TextStyle mediumBold = TextStyle(
       color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 18);
+  static const TextStyle smallBold = TextStyle(
+      color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 16);
 }

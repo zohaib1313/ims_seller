@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/routes.dart';
+import 'package:ims_seller/screens/dashboard_screen.dart';
 import 'package:ims_seller/styles.dart';
 
 class MainScreen extends StatelessWidget {
@@ -34,7 +36,7 @@ class MainScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(100.r),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -78,6 +80,10 @@ class MainScreen extends StatelessWidget {
                                   textColor: AppColor.whiteColor,
                                   buttonText: 'Dashboard',
                                   color: AppColor.greenColor,
+                                  onTap: () {
+                                    Navigator.of(myContext!)
+                                        .pushNamed(DashBoardScreen.id);
+                                  },
                                 ),
                               ],
                             ),

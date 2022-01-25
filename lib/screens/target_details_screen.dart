@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/routes.dart';
-import 'package:ims_seller/screens/target_details_screen.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../routes.dart';
 import '../styles.dart';
 
-class DashBoardScreen extends StatelessWidget {
-  static const id = "Dashboard";
+class TargetDetailsScreen extends StatefulWidget {
+  const TargetDetailsScreen({Key? key}) : super(key: key);
+  static const id = "Target_Details";
 
-  const DashBoardScreen({Key? key}) : super(key: key);
+  @override
+  _TargetDetailsScreenState createState() => _TargetDetailsScreenState();
+}
 
+class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -25,40 +28,7 @@ class DashBoardScreen extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.all(100.r),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(myContext!).pop();
-                                          },
-                                          child: const Icon(
-                                            Icons.arrow_back_ios,
-                                            size: 25,
-                                            color: AppColor.whiteColor,
-                                          ),
-                                        ),
-                                        const Text("Back",
-                                            style: AppTextStyles.mediumBold)
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 20.h, bottom: 20.h),
-                                      child: const Text(
-                                        'Hi, Hanna Broun',
-                                        style: AppTextStyles.largeBold,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+                            const Spacer(),
                             Expanded(
                               flex: 3,
                               child: Container(
@@ -73,12 +43,32 @@ class DashBoardScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: 30.h, left: 100.w, right: 100.w),
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(myContext!).pop();
+                                    },
+                                    child: const Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 25,
+                                      color: AppColor.whiteColor,
+                                    ),
+                                  ),
+                                  const Text("Back",
+                                      style: AppTextStyles.mediumBold)
+                                ],
+                              ),
+                            ),
                             Center(
                               child: SingleChildScrollView(
                                 physics: BouncingScrollPhysics(),
                                 child: Container(
                                   margin: EdgeInsets.only(
-                                      top: 150.h, left: 100.w, right: 100.w),
+                                      top: 50.h, left: 100.w, right: 100.w),
                                   decoration: BoxDecoration(
                                       color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(50)),
@@ -250,74 +240,9 @@ class DashBoardScreen extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 20.h),
-                            MyTextField(
-                              enable: false,
-                              focusBorderColor: AppColor.greyColor,
-                              hintText: 'Total Sales',
-                              sufixLabel: '14',
-                              prefixIcon: 'assets/icons/icon-invoice.svg',
-                            ),
-                            SizedBox(height: 20.h),
-                            MyTextField(
-                              enable: false,
-                              focusBorderColor: AppColor.greyColor,
-                              hintText: 'Total Discounts',
-                              sufixLabel: '34000',
-                              prefixIcon: 'assets/icons/icon-offer.svg',
-                            ),
-                            SizedBox(height: 20.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Button(
-                                    onTap: () {
-                                      Navigator.of(myContext!)
-                                          .pushNamed(TargetDetailsScreen.id);
-                                    },
-                                    textColor: AppColor.whiteColor,
-                                    buttonText: 'Stock Checking',
-                                    color: AppColor.blueColor,
-                                    textStyle: AppTextStyles.smallBold
-                                        .copyWith(fontSize: 14),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Button(
-                                    buttonText: 'Search Customer',
-                                    color: AppColor.greenColor,
-                                    textStyle: AppTextStyles.smallBold
-                                        .copyWith(fontSize: 14),
-                                    onTap: () {
-                                      Navigator.of(myContext!)
-                                          .pushNamed(DashBoardScreen.id);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 20.h),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 100.w),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Recent Sale Invoices",
-                                    style: AppTextStyles.mediumBold
-                                        .copyWith(color: AppColor.blackColor),
-                                  ),
-                                  Text(
-                                    "View all",
-                                    style: AppTextStyles.mediumBold
-                                        .copyWith(color: AppColor.blueColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
                             Expanded(
                               child: ListView.builder(
+                                physics: BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: 10,
                                 itemBuilder: (context, index) =>
@@ -340,33 +265,72 @@ class DashBoardScreen extends StatelessWidget {
           border: Border.all(color: AppColor.greyColor)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "1293993",
-                    style: AppTextStyles.smallBold.copyWith(
-                        color: AppColor.blackColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal),
-                  ),
-                  Text(
-                    "1293993",
-                    style: AppTextStyles.mediumBold
-                        .copyWith(color: AppColor.blackColor, fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
             Text(
-              "1293993",
-              style: AppTextStyles.mediumBold
-                  .copyWith(color: AppColor.blackColor, fontSize: 16),
-            )
+              "IPAD",
+              style: AppTextStyles.mediumBold.copyWith(
+                  color: AppColor.blackColor, fontWeight: FontWeight.bold),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Target",
+                        style: AppTextStyles.smallBold.copyWith(
+                            color: AppColor.blackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        "40",
+                        style: AppTextStyles.smallBold.copyWith(
+                            color: AppColor.blackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Achieved",
+                        style: AppTextStyles.smallBold.copyWith(
+                            color: AppColor.blackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        "40",
+                        style: AppTextStyles.mediumBold
+                            .copyWith(color: AppColor.blackColor, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: CircularPercentIndicator(
+                    radius: 150.r,
+                    lineWidth: 5.0,
+                    percent: 0.2,
+                    center: Text("100% \n Percentage",
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.smallBold
+                            .copyWith(color: AppColor.blackColor, fontSize: 8)),
+                    progressColor: AppColor.blueColor,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
