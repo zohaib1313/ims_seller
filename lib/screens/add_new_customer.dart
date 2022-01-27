@@ -54,7 +54,7 @@ class AddNewCustomer extends StatelessWidget {
                           Row(
                             children: [
                               Container(
-                                padding: EdgeInsets.all(30.h),
+                                padding: EdgeInsets.all(25.h),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border:

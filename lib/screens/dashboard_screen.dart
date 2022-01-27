@@ -219,7 +219,7 @@ class DashBoardScreen extends StatelessWidget {
                                         ),
                                         Expanded(
                                             child: CircularPercentIndicator(
-                                          radius: 300.r,
+                                          radius: 280.r,
                                           lineWidth: 10.0,
                                           percent: 0.6,
                                           center: Text("100% \n Percentage",
@@ -257,10 +257,7 @@ class DashBoardScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Button(
-                                    onTap: () {
-                                      Navigator.of(myContext!)
-                                          .pushNamed(TargetDetailsScreen.id);
-                                    },
+                                    onTap: () {},
                                     textColor: AppColor.whiteColor,
                                     buttonText: 'Stock Checking',
                                     color: AppColor.blueColor,
@@ -294,10 +291,16 @@ class DashBoardScreen extends StatelessWidget {
                                     style: AppTextStyles.mediumBold
                                         .copyWith(color: AppColor.blackColor),
                                   ),
-                                  Text(
-                                    "View all",
-                                    style: AppTextStyles.mediumBold
-                                        .copyWith(color: AppColor.blueColor),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(myContext!)
+                                          .pushNamed(TargetDetailsScreen.id);
+                                    },
+                                    child: Text(
+                                      "View all",
+                                      style: AppTextStyles.mediumBold
+                                          .copyWith(color: AppColor.blueColor),
+                                    ),
                                   ),
                                 ],
                               ),

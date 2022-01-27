@@ -40,6 +40,8 @@ dependencies:
   google_fonts: ^2.1.0
   flutter_svg: ^0.22.0
   percent_indicator:
+#barcode scanner
+  flutter_barcode_scanner: ^2.0.0
 
 
 dev_dependencies:

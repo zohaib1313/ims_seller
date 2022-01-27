@@ -222,7 +222,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                         ),
                                         Expanded(
                                             child: CircularPercentIndicator(
-                                          radius: 300.r,
+                                          radius: 280.r,
                                           lineWidth: 10.0,
                                           percent: 0.6,
                                           center: Text("100% \n Percentage",

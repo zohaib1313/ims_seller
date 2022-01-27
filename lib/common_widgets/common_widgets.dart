@@ -27,10 +27,14 @@ class SvgViewer extends StatelessWidget {
     } else if (width != null) {
       return SvgPicture.asset(
         svgPath,
+        color: color,
         width: width,
       );
     } else {
-      return SvgPicture.asset(svgPath);
+      return SvgPicture.asset(
+        svgPath,
+        color: color,
+      );
     }
   }
 }
@@ -122,7 +126,7 @@ class MyTextField extends StatelessWidget {
         onChanged: onChanged,
         autofocus: false,
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(contentPadding ?? 30.h),
+          contentPadding: EdgeInsets.all(contentPadding ?? 25.h),
           fillColor: fillColor,
           labelText: labelText,
           hintText: hintText,
@@ -154,22 +158,26 @@ class MyTextField extends StatelessWidget {
                       ? suffixIconWidet
                       : null,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
+            borderRadius: BorderRadius.circular(50.r),
             borderSide:
                 BorderSide(color: focusBorderColor ?? AppColor.blackColor),
           ),
           disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.r),
             borderSide:
                 BorderSide(color: focusBorderColor ?? AppColor.blackColor),
           ),
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.r),
             borderSide:
                 BorderSide(color: unfocusBorderColor ?? AppColor.blackColor),
           ),
-          errorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: AppColor.redColor),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.r),
+            borderSide: const BorderSide(color: AppColor.redColor),
           ),
           focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50.r),
             borderSide:
                 BorderSide(color: focusBorderColor ?? AppColor.blueColor),
           ),
@@ -187,6 +195,8 @@ class Button extends StatelessWidget {
   final Color? textColor;
   final Color? borderColor;
   final double? width;
+  final Widget? prefixIcon;
+  final Widget? postFixIcon;
   final double? height;
   final TextStyle? textStyle;
   final double? leftPadding;
@@ -196,6 +206,8 @@ class Button extends StatelessWidget {
       {Key? key,
       required this.buttonText,
       this.onTap,
+      this.prefixIcon,
+      this.postFixIcon,
       this.padding,
       this.color,
       this.textColor,
@@ -229,14 +241,148 @@ class Button extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(50.r)),
               color: color ?? AppColor.blackColor),
           child: Center(
-              child: Text(
-            buttonText,
-            textAlign: TextAlign.center,
-            style: textStyle ??
-                AppTextStyles.mediumBold
-                    .copyWith(color: textColor ?? AppColor.blackColor),
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              prefixIcon ?? const IgnorePointer(),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Text(
+                    buttonText,
+                    textAlign: TextAlign.center,
+                    style: textStyle ??
+                        AppTextStyles.mediumBold
+                            .copyWith(color: textColor ?? AppColor.blackColor),
+                  ),
+                ),
+              ),
+              postFixIcon ?? const IgnorePointer(),
+            ],
           )),
         ),
+      ),
+    );
+  }
+}
+
+class MyDropDown extends StatefulWidget {
+  Color? fillColor;
+  Function(dynamic? value)? onChange;
+  dynamic? value;
+  Color? borderColor;
+  final Color? labelColor;
+  final Color? textColor;
+  final String? prefixIcon;
+  final String? suffixIcon;
+  List<dynamic>? items = [];
+  final String? labelText;
+  final String? hintText;
+  final Color? hintColor;
+  final double? leftPadding;
+  final double? rightPadding;
+  final FormFieldValidator<dynamic>? validator;
+  final List<DropdownMenuItem<Object>>? itemFuntion;
+  bool isDense;
+
+  MyDropDown(
+      {this.fillColor,
+      required this.onChange,
+      this.textColor,
+      this.value,
+      this.items,
+      this.borderColor,
+      this.labelColor,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.labelText,
+      this.hintText,
+      this.hintColor,
+      this.leftPadding,
+      this.rightPadding,
+      this.validator,
+      this.itemFuntion,
+      this.isDense = true});
+
+  @override
+  State<MyDropDown> createState() => _MyDropDownState();
+}
+
+class _MyDropDownState extends State<MyDropDown> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: widget.leftPadding ?? 100.w,
+        right: widget.rightPadding ?? 100.w,
+      ),
+      child: DropdownButtonFormField(
+        icon: SvgViewer(
+            svgPath: widget.suffixIcon ?? 'assets/icons/ic_arrow_down.svg'),
+        isExpanded: true,
+        validator: widget.validator,
+        onTap: () {
+          print("on tap");
+          FocusScope.of(context).unfocus();
+        },
+        decoration: InputDecoration(
+            labelText: widget.labelText,
+            hintText: widget.hintText,
+            prefixIcon: (widget.prefixIcon != null)
+                ? Padding(
+                    padding: EdgeInsets.all(100.w),
+                    child: SvgViewer(svgPath: widget.prefixIcon!),
+                  )
+                : null,
+            contentPadding: EdgeInsets.all(20.h),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50.r),
+              borderSide: BorderSide(
+                width: 0,
+                style: BorderStyle.none,
+              ),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50.r),
+              borderSide:
+                  BorderSide(color: widget.borderColor ?? AppColor.greenColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50.r),
+              borderSide:
+                  BorderSide(color: widget.borderColor ?? AppColor.greenColor),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50.r),
+              borderSide: const BorderSide(color: AppColor.redColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50.r),
+              borderSide:
+                  BorderSide(color: widget.borderColor ?? AppColor.greenColor),
+            ),
+            filled: true,
+            fillColor: widget.fillColor ?? Colors.transparent),
+        onChanged: widget.onChange,
+        value: widget.value,
+        isDense: widget.isDense,
+        hint: Text(
+          widget.hintText ?? "",
+          style: AppTextStyles.medium.copyWith(color: widget.hintColor),
+        ),
+        items: widget.items != null
+            ? widget.items?.map((dynamic value) {
+                return DropdownMenuItem<dynamic>(
+                    value: value,
+                    child: Text(
+                      value.toString(),
+                      style: TextStyle(
+                        color: widget.textColor,
+                      ),
+                    ));
+              }).toList()
+            : widget.itemFuntion,
       ),
     );
   }

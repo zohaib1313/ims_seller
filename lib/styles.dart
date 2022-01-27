@@ -7,6 +7,7 @@ class AppColor {
   static const blueColor = Color(0xff0071E3);
   static const greenColor = Color(0xff42B14A);
   static const greyColor = Colors.grey;
+  static const alphaGrey = Color(0xffF0F0F0);
 }
 
 class AppAssets {
