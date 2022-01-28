@@ -24,52 +24,63 @@ class AddNewProductScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               getHeader(),
-              SizedBox(height: 30.h),
-              Container(
-                padding: EdgeInsets.all(20.h),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: AppColor.blueColor),
-                child: Row(
-                  children: [
-                    Flexible(
-                      flex: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Customer Name:",
-                            style: AppTextStyles.smallBold
-                                .copyWith(color: AppColor.whiteColor),
-                          ),
-                          Text(
-                            "HLA San Ei",
-                            style: AppTextStyles.largeBold
-                                .copyWith(color: AppColor.whiteColor),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Spacer(flex: 2),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const SvgViewer(svgPath: 'assets/icons/edit_icon.svg'),
-                        const SizedBox(height: 3),
-                        Text(
-                          "+92123456789",
-                          style: AppTextStyles.smallBold
-                              .copyWith(color: AppColor.whiteColor),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 30.h),
+                      Container(
+                        padding: EdgeInsets.all(20.h),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: AppColor.blueColor),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              flex: 4,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Customer Name:",
+                                    style: AppTextStyles.smallBold
+                                        .copyWith(color: AppColor.whiteColor),
+                                  ),
+                                  Text(
+                                    "HLA San Ei",
+                                    style: AppTextStyles.largeBold
+                                        .copyWith(color: AppColor.whiteColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Spacer(flex: 2),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const SvgViewer(
+                                    svgPath: 'assets/icons/edit_icon.svg'),
+                                const SizedBox(height: 3),
+                                Text(
+                                  "+92123456789",
+                                  style: AppTextStyles.smallBold
+                                      .copyWith(color: AppColor.whiteColor),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      SizedBox(height: 30.h),
+                      relevantViewReturner(view),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 30.h),
-              relevantViewReturner(view),
               bottomView(),
             ],
           ),
@@ -104,260 +115,247 @@ class AddNewProductScreen extends StatelessWidget {
   }
 
   scanProductView() {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Scan Product",
-            style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Scan Product",
+          style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
+        ),
+        SizedBox(height: 20.h),
+        Center(
+          child: SvgViewer(
+            svgPath: 'assets/icons/scan_hand_ic.svg',
           ),
-          SizedBox(height: 20.h),
-          const Expanded(
-            child: Center(
-              child: SvgViewer(
-                svgPath: 'assets/icons/scan_hand_ic.svg',
-              ),
-            ),
-          ),
-          SizedBox(height: 20.h),
-        ],
-      ),
+        ),
+        SizedBox(height: 20.h),
+      ],
     );
   }
 
   productListView() {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Product List",
-            style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
-          ),
-          SizedBox(height: 20.h),
-          Expanded(
-            child: Center(
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(20.h),
-                    margin: EdgeInsets.only(bottom: 20.h),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: AppColor.greyColor),
-                        borderRadius: BorderRadius.circular(12),
-                        color: AppColor.whiteColor),
-                    child: Row(
-                      children: [
-                        Flexible(
-                          flex: 4,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "123543388",
-                                style: AppTextStyles.small
-                                    .copyWith(color: AppColor.blackColor),
-                              ),
-                              Text(
-                                "iPhone 13 Pro 256 GB Red",
-                                style: AppTextStyles.small
-                                    .copyWith(color: AppColor.blackColor),
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      "",
-                                      style: AppTextStyles.mediumBold
-                                          .copyWith(color: AppColor.blackColor),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      "MMK: 27,550293",
-                                      style: AppTextStyles.mediumBold
-                                          .copyWith(color: AppColor.blackColor),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Product List",
+          style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
+        ),
+        SizedBox(height: 20.h),
+        Center(
+          child: ListView(
+            shrinkWrap: true,
+            physics: BouncingScrollPhysics(),
+            children: [
+              Container(
+                padding: EdgeInsets.all(20.h),
+                margin: EdgeInsets.only(bottom: 20.h),
+                decoration: BoxDecoration(
+                    border: Border.all(color: AppColor.greyColor),
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColor.whiteColor),
+                child: Row(
+                  children: [
+                    Flexible(
+                      flex: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "123543388",
+                            style: AppTextStyles.small
+                                .copyWith(color: AppColor.blackColor),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(20.h),
-                    margin: EdgeInsets.only(bottom: 20.h),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: AppColor.greyColor),
-                        borderRadius: BorderRadius.circular(12),
-                        color: AppColor.whiteColor),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "123543388",
-                                style: AppTextStyles.small
-                                    .copyWith(color: AppColor.blackColor),
-                              ),
-                              Text(
-                                "iPhone 13 Pro Leather Cover",
-                                style: AppTextStyles.small
-                                    .copyWith(color: AppColor.blackColor),
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      "90,000 * 2",
-                                      style: AppTextStyles.medium
-                                          .copyWith(color: AppColor.blackColor),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "MMK: 27,550293",
-                                        style: AppTextStyles.mediumBold
-                                            .copyWith(
-                                                color: AppColor.blackColor,
-                                                fontSize: 14),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
+                          Text(
+                            "iPhone 13 Pro 256 GB Red",
+                            style: AppTextStyles.small
+                                .copyWith(color: AppColor.blackColor),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Column(
+                          const SizedBox(height: 10),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 3),
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                    color: AppColor.blackColor,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: AppColor.whiteColor,
+                              Flexible(
+                                child: Text(
+                                  "",
+                                  style: AppTextStyles.mediumBold
+                                      .copyWith(color: AppColor.blackColor),
                                 ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 3),
-                                padding: const EdgeInsets.all(8),
-                                decoration: const BoxDecoration(
-                                    color: AppColor.alphaGrey,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(4))),
+                              Flexible(
                                 child: Text(
-                                  '2',
+                                  "MMK: 27,550293",
+                                  style: AppTextStyles.mediumBold
+                                      .copyWith(color: AppColor.blackColor),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(20.h),
+                margin: EdgeInsets.only(bottom: 20.h),
+                decoration: BoxDecoration(
+                    border: Border.all(color: AppColor.greyColor),
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColor.whiteColor),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "123543388",
+                            style: AppTextStyles.small
+                                .copyWith(color: AppColor.blackColor),
+                          ),
+                          Text(
+                            "iPhone 13 Pro Leather Cover",
+                            style: AppTextStyles.small
+                                .copyWith(color: AppColor.blackColor),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  "90,000 * 2",
                                   style: AppTextStyles.medium
                                       .copyWith(color: AppColor.blackColor),
                                 ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 3),
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                    color: AppColor.blackColor,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
-                                child: const Icon(
-                                  Icons.remove,
-                                  color: AppColor.whiteColor,
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "MMK: 27,550293",
+                                    style: AppTextStyles.mediumBold.copyWith(
+                                        color: AppColor.blackColor,
+                                        fontSize: 14),
+                                  ),
                                 ),
                               ),
                             ],
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 3),
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                                color: AppColor.blackColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: const Icon(
+                              Icons.add,
+                              color: AppColor.whiteColor,
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 3),
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                                color: AppColor.alphaGrey,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4))),
+                            child: Text(
+                              '2',
+                              style: AppTextStyles.medium
+                                  .copyWith(color: AppColor.blackColor),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 3),
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                                color: AppColor.blackColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: const Icon(
+                              Icons.remove,
+                              color: AppColor.whiteColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-          SizedBox(height: 20.h),
-        ],
-      ),
+        ),
+        SizedBox(height: 20.h),
+      ],
     );
   }
 
   selectPaymentView() {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Select Payment",
-            style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
-          ),
-          SizedBox(height: 20.h),
-          Expanded(
-            child: Center(
-              child: ListView(
-                physics: BouncingScrollPhysics(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Select Payment",
+          style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
+        ),
+        SizedBox(height: 20.h),
+        Center(
+          child: ListView(
+            shrinkWrap: true,
+            physics: BouncingScrollPhysics(),
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: getPaymentMethodItem(
-                            title: 'Cash',
-                            icon: 'assets/icons/icon-cash.svg',
-                            isSelected: false),
-                      ),
-                      Expanded(
-                        child: getPaymentMethodItem(
-                            title: 'Credit Card',
-                            icon: 'assets/icons/icon-credit-card.svg',
-                            isSelected: false),
-                      ),
-                    ],
+                  Expanded(
+                    child: getPaymentMethodItem(
+                        title: 'Cash',
+                        icon: 'assets/icons/icon-cash.svg',
+                        isSelected: false),
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: getPaymentMethodItem(
-                            title: 'Bank Transfer',
-                            icon: 'assets/icons/icon-bank.svg',
-                            isSelected: true),
-                      ),
-                      const Spacer(),
-                    ],
+                  Expanded(
+                    child: getPaymentMethodItem(
+                        title: 'Credit Card',
+                        icon: 'assets/icons/icon-credit-card.svg',
+                        isSelected: false),
                   ),
                 ],
               ),
-            ),
+              Row(
+                children: [
+                  Expanded(
+                    child: getPaymentMethodItem(
+                        title: 'Bank Transfer',
+                        icon: 'assets/icons/icon-bank.svg',
+                        isSelected: true),
+                  ),
+                  const Spacer(),
+                ],
+              ),
+            ],
           ),
-          SizedBox(height: 20.h),
-        ],
-      ),
+        ),
+        SizedBox(height: 20.h),
+      ],
     );
   }
 
@@ -532,79 +530,76 @@ class AddNewProductScreen extends StatelessWidget {
   }
 
   bankPaymentDetails() {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Bank Transfer",
-            style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
-          ),
-          SizedBox(height: 20.h),
-          Expanded(
-            child: Center(
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                children: [
-                  Text(
-                    'Select Bank *',
-                    style: AppTextStyles.mediumBold
-                        .copyWith(color: AppColor.blackColor),
-                  ),
-                  SizedBox(height: 10.h),
-                  MyDropDown(
-                      rightPadding: 0,
-                      leftPadding: 0,
-                      onChange: (value) {},
-                      borderColor: AppColor.blackColor,
-                      hintColor: AppColor.blackColor,
-                      labelColor: AppColor.blackColor,
-                      hintText: 'Select Bank',
-                      items: ['A', 'B'],
-                      validator: (string) {
-                        if (string == null) {
-                          return "select bank";
-                        }
-                      }),
-                  SizedBox(height: 20.h),
-                  Text(
-                    'Transaction No. *',
-                    style: AppTextStyles.mediumBold
-                        .copyWith(color: AppColor.blackColor),
-                  ),
-                  SizedBox(height: 10.h),
-                  MyTextField(
-                    leftPadding: 0,
-                    rightPadding: 0,
-                    hintText: '123456789',
-                  ),
-                  SizedBox(height: 20.h),
-                  Text(
-                    'Upload Receipt ',
-                    style: AppTextStyles.mediumBold
-                        .copyWith(color: AppColor.blackColor),
-                  ),
-                  SizedBox(height: 20.h),
-                  Button(
-                    onTap: () {},
-                    leftPadding: 0,
-                    rightPading: 0,
-                    padding: 10.h,
-                    color: AppColor.whiteColor,
-                    borderColor: AppColor.blackColor,
-                    buttonText: 'Upload',
-                    textStyle: AppTextStyles.mediumBold
-                        .copyWith(color: AppColor.blackColor),
-                  ),
-                  SizedBox(height: 200.h),
-                ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Bank Transfer",
+          style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
+        ),
+        SizedBox(height: 20.h),
+        Center(
+          child: ListView(
+            shrinkWrap: true,
+            physics: BouncingScrollPhysics(),
+            children: [
+              Text(
+                'Select Bank *',
+                style: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor),
               ),
-            ),
+              SizedBox(height: 10.h),
+              MyDropDown(
+                  rightPadding: 0,
+                  leftPadding: 0,
+                  onChange: (value) {},
+                  borderColor: AppColor.blackColor,
+                  hintColor: AppColor.blackColor,
+                  labelColor: AppColor.blackColor,
+                  hintText: 'Select Bank',
+                  items: ['A', 'B'],
+                  validator: (string) {
+                    if (string == null) {
+                      return "select bank";
+                    }
+                  }),
+              SizedBox(height: 20.h),
+              Text(
+                'Transaction No. *',
+                style: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor),
+              ),
+              SizedBox(height: 10.h),
+              MyTextField(
+                leftPadding: 0,
+                rightPadding: 0,
+                hintText: '123456789',
+              ),
+              SizedBox(height: 20.h),
+              /*   Text(
+                'Upload Receipt ',
+                style: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor),
+              ),
+              SizedBox(height: 20.h),
+              Button(
+                onTap: () {},
+                leftPadding: 0,
+                rightPading: 0,
+                padding: 10.h,
+                color: AppColor.whiteColor,
+                borderColor: AppColor.blackColor,
+                buttonText: 'Upload',
+                textStyle: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor),
+              ),*/
+              SizedBox(height: 200.h),
+            ],
           ),
-          SizedBox(height: 20.h),
-        ],
-      ),
+        ),
+        SizedBox(height: 20.h),
+      ],
     );
   }
 

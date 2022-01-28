@@ -10,93 +10,95 @@ class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.all(150.r),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 10.h),
-                SvgViewer(
-                  svgPath: 'assets/icons/icon-check.svg',
-                  color: AppColor.greenColor,
-                  height: 450.r,
-                  width: 450.r,
-                ),
-                SizedBox(height: 10.h),
-                Text(
-                  "Invoice Generated",
-                  style:
-                      AppTextStyles.large.copyWith(color: AppColor.blackColor),
-                ),
-                SizedBox(height: 10.h),
-                SizedBox(height: 10.h),
-                Text(
-                  "Invoice # S-KBA-9982",
-                  style: AppTextStyles.largeBold
-                      .copyWith(color: AppColor.blackColor),
-                ),
-                SizedBox(height: 30.h),
-                Container(
-                  padding: EdgeInsets.all(20.h),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: AppColor.blueColor),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 4,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+        body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.all(150.r),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 10.h),
+                  SvgViewer(
+                    svgPath: 'assets/icons/icon-check.svg',
+                    color: AppColor.greenColor,
+                    height: 450.r,
+                    width: 450.r,
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    "Invoice Generated",
+                    style: AppTextStyles.large
+                        .copyWith(color: AppColor.blackColor),
+                  ),
+                  SizedBox(height: 10.h),
+                  SizedBox(height: 10.h),
+                  Text(
+                    "Invoice # S-KBA-9982",
+                    style: AppTextStyles.largeBold
+                        .copyWith(color: AppColor.blackColor),
+                  ),
+                  SizedBox(height: 30.h),
+                  Container(
+                    padding: EdgeInsets.all(20.h),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: AppColor.blueColor),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Customer Name:",
+                                style: AppTextStyles.smallBold
+                                    .copyWith(color: AppColor.whiteColor),
+                              ),
+                              Text(
+                                "HLA San Ei",
+                                style: AppTextStyles.largeBold
+                                    .copyWith(color: AppColor.whiteColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Spacer(flex: 2),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              "Customer Name:",
+                              "",
                               style: AppTextStyles.smallBold
                                   .copyWith(color: AppColor.whiteColor),
                             ),
                             Text(
-                              "HLA San Ei",
-                              style: AppTextStyles.largeBold
+                              "+92123456789",
+                              style: AppTextStyles.smallBold
                                   .copyWith(color: AppColor.whiteColor),
                             ),
                           ],
                         ),
-                      ),
-                      const Spacer(flex: 2),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            "",
-                            style: AppTextStyles.smallBold
-                                .copyWith(color: AppColor.whiteColor),
-                          ),
-                          Text(
-                            "+92123456789",
-                            style: AppTextStyles.smallBold
-                                .copyWith(color: AppColor.whiteColor),
-                          ),
-                        ],
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30.h),
+                  Row(
+                    children: [
+                      Text(
+                        "Get Bill By",
+                        style: AppTextStyles.medium
+                            .copyWith(color: AppColor.blackColor),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 30.h),
-                Row(
-                  children: [
-                    Text(
-                      "Get Bill By",
-                      style: AppTextStyles.medium
-                          .copyWith(color: AppColor.blackColor),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 30.h),
-                Expanded(
-                  child: Center(
+                  SizedBox(height: 30.h),
+                  Center(
                     child: ListView(
+                      shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
                       children: [
                         Row(
@@ -129,25 +131,25 @@ class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Button(
-                  onTap: () {},
-                  width: 750.w,
-                  padding: 10.h,
-                  postFixIcon: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: AppColor.whiteColor,
-                    size: 18,
+                  SizedBox(height: 20.h),
+                  Button(
+                    onTap: () {},
+                    width: 750.w,
+                    padding: 10.h,
+                    postFixIcon: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColor.whiteColor,
+                      size: 18,
+                    ),
+                    color: AppColor.greenColor,
+                    borderColor: AppColor.greenColor,
+                    buttonText: 'Send',
+                    textStyle: AppTextStyles.mediumBold
+                        .copyWith(color: AppColor.whiteColor),
                   ),
-                  color: AppColor.greenColor,
-                  borderColor: AppColor.greenColor,
-                  buttonText: 'Send',
-                  textStyle: AppTextStyles.mediumBold
-                      .copyWith(color: AppColor.whiteColor),
-                ),
-                SizedBox(height: 20.h),
-              ],
+                  SizedBox(height: 100.h),
+                ],
+              ),
             ),
           ),
         ),

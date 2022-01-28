@@ -23,72 +23,81 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
         body: Container(
           padding: EdgeInsets.all(120.r),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               getHeader(),
-              SizedBox(height: 150.h),
-              Text(
-                'Search Customer',
-                style: AppTextStyles.largeBold
-                    .copyWith(color: AppColor.blackColor),
-              ),
-              SizedBox(height: 10.h),
-              Text(
-                'Add customer mobile number\nto check the customer registration',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.small
-                    .copyWith(color: AppColor.blackColor, wordSpacing: 1.5),
-              ),
-              SizedBox(height: 50.h),
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(25.h),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppColor.blackColor)),
-                    child: Text(
-                      '+959',
-                      style: AppTextStyles.small
-                          .copyWith(color: AppColor.blackColor),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: MyTextField(
-                      rightPadding: 0,
-                      leftPadding: 0,
-                      hintText: 'Enter Mobile Number',
-                      onChanged: (String text) {
-                        /*   if (text.isNotEmpty) {
-                          setState(() {
-                            isSearching = true;
-                          });
-                        } else {
-                          setState(() {
-                            isSearching = false;
-                          });
-                        }*/
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              isSearching
-                  ? showSearchList()
-                  : Container(
-                      margin: EdgeInsets.only(top: 50.h),
-                      padding: EdgeInsets.all(80.r),
-                      decoration: BoxDecoration(
-                          color: AppColor.blueColor,
-                          borderRadius: BorderRadius.circular(100)),
-                      child: Icon(
-                        Icons.search,
-                        size: 150.r,
-                        color: AppColor.whiteColor,
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 150.h),
+                      Text(
+                        'Search Customer',
+                        style: AppTextStyles.largeBold
+                            .copyWith(color: AppColor.blackColor),
                       ),
-                    )
+                      SizedBox(height: 10.h),
+                      Text(
+                        'Add customer mobile number\nto check the customer registration',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.small.copyWith(
+                            color: AppColor.blackColor, wordSpacing: 1.5),
+                      ),
+                      SizedBox(height: 50.h),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(25.h),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppColor.blackColor)),
+                            child: Text(
+                              '+959',
+                              style: AppTextStyles.small
+                                  .copyWith(color: AppColor.blackColor),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: MyTextField(
+                              rightPadding: 0,
+                              leftPadding: 0,
+                              hintText: 'Enter Mobile Number',
+                              onChanged: (String text) {
+                                /*   if (text.isNotEmpty) {
+                                  setState(() {
+                                    isSearching = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    isSearching = false;
+                                  });
+                                }*/
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      isSearching
+                          ? showSearchList()
+                          : Container(
+                              margin: EdgeInsets.only(top: 50.h),
+                              padding: EdgeInsets.all(80.r),
+                              decoration: BoxDecoration(
+                                  color: AppColor.blueColor,
+                                  borderRadius: BorderRadius.circular(100)),
+                              child: Icon(
+                                Icons.search,
+                                size: 150.r,
+                                color: AppColor.whiteColor,
+                              ),
+                            )
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

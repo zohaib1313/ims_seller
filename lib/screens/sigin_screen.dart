@@ -12,30 +12,30 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.blackColor,
-      body: Column(
-        children: [
-          Flexible(
-            child: Padding(
-              padding: EdgeInsets.all(30.0.r),
-              child: SvgViewer(
-                svgPath: AppAssets.appLogo,
-                height: 350.h,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColor.blackColor,
+        body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10.0.r),
+                child: SvgViewer(
+                  svgPath: AppAssets.appLogo,
+                  height: 350.h,
+                ),
               ),
-            ),
-          ),
-          Flexible(
-              flex: 3,
-              child: Container(
+              Container(
                 margin: EdgeInsets.only(
                     top: 20.h, bottom: 150.h, left: 150.w, right: 150.w),
                 decoration: BoxDecoration(
                     color: AppColor.whiteColor,
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(50.r)),
-                child: ListView(
+                child: Column(
                   children: [
+                    SizedBox(height: 50.h),
                     SvgViewer(
                       svgPath: AppAssets.lockIc,
                       height: 160.h,
@@ -60,11 +60,13 @@ class SignInScreen extends StatelessWidget {
                             .pushReplacementNamed(MainScreen.id);
                       },
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 80.h),
                   ],
                 ),
-              )),
-        ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
