@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/screens/main_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/styles.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
 
 import '../routes.dart';
 
@@ -20,8 +22,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3),
-        () => Navigator.pushReplacementNamed(myContext!, SignInScreen.id));
+    Timer(
+        const Duration(seconds: 3),
+        () => {
+              if (UserDefaults.getUserSession() != null)
+                {Navigator.pushReplacementNamed(myContext!, MainScreen.id)}
+              else
+                {Navigator.pushReplacementNamed(myContext!, SignInScreen.id)}
+            });
   }
 
   @override

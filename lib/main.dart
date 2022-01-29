@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/splash_screen.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await UserDefaults.getPref();
   runApp(const MyApp());
 }
 

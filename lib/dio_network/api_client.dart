@@ -1,17 +1,13 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:ims_seller/utils/utils.dart';
 
+import 'APis.dart';
 import 'api_response.dart';
 import 'api_route.dart';
-import 'cache.dart';
 import 'decodable.dart';
 
 abstract class BaseAPIClient {
@@ -30,22 +26,22 @@ class APIClient implements BaseAPIClient {
 
   init() async {
     // String sha256  = 'KEZJOdneURbhMeANe+HVaw0mcmPp6zKFKr6jHc85o0E=';
-    print("loading certificate");
-    try {
-      ByteData bytes =
-          await rootBundle.load('assets/certification/salammobile-sa.pem');
-      print("certificate bites= ${bytes}");
-      (instance!.httpClientAdapter as DefaultHttpClientAdapter)
-          .onHttpClientCreate = (client) {
-        print("certificate added");
-        SecurityContext sc = SecurityContext();
-        sc.setTrustedCertificatesBytes(bytes.buffer.asUint8List());
-        HttpClient httpClient = HttpClient(context: sc);
-        return httpClient;
-      };
-    } catch (e) {
-      print("Exceptionaa ${e}");
-    }
+    // print("loading certificate");
+    // try {
+    //   ByteData bytes =
+    //       await rootBundle.load('assets/certification/salammobile-sa.pem');
+    //   print("certificate bites= ${bytes}");
+    //   (instance!.httpClientAdapter as DefaultHttpClientAdapter)
+    //       .onHttpClientCreate = (client) {
+    //     print("certificate added");
+    //     SecurityContext sc = SecurityContext();
+    //     sc.setTrustedCertificatesBytes(bytes.buffer.asUint8List());
+    //     HttpClient httpClient = HttpClient(context: sc);
+    //     return httpClient;
+    //   };
+    // } catch (e) {
+    //   print("Exceptionaa ${e}");
+    // }
   }
 
   APIClient(
@@ -60,8 +56,8 @@ class APIClient implements BaseAPIClient {
       if (isCache) {
         List<String> allowedSHa = [];
         //   allowedSHa.add('KEZJOdneURbhMeANe+HVaw0mcmPp6zKFKr6jHc85o0E=');
-        instance!.interceptors.add(DioCacheInterceptor(
-            options: CacheOption(CachePolicy.forceCache).options));
+        // instance!.interceptors.add(DioCacheInterceptor(
+        //     options: CacheOption(CachePolicy.forceCache).options));
         //  instance!.interceptors.add(CertificatePinningInterceptor(allowedSHAFingerprints: allowedSHa));
       } else {
         // instance!.interceptors.add(DioCacheInterceptor(options: CacheOption(CachePolicy.noCache).options));
@@ -71,6 +67,8 @@ class APIClient implements BaseAPIClient {
 
   Map<String, dynamic> headers = {
     'Content-Type': 'application/json',
+    'Authorization': 'Token 	614e83765257d5c98edf7bbb72958a4fd13e4519',
+    'charset': 'utf-8'
   };
 
   @override
@@ -93,17 +91,26 @@ class APIClient implements BaseAPIClient {
 
     final response = await instance!.fetch(config).catchError((error) {
       // AppPopUps().dissmissDialog();
-      // print("error in response ${error.toString()}");
+      print("error in response ${error.toString()}");
+
       if ((error as DioError).type == DioErrorType.connectTimeout) {
-        print('Connection TimeOut ${config.path}');
+        if (kDebugMode) {
+          print('Connection TimeOut ${config.path}');
+        }
 
         throw error;
       }
     });
 
     final responseData = response.data;
-    print('response CODE= ' + response.statusCode.toString());
-    print('response data= ' + response.toString());
+    if (kDebugMode) {
+      print('\n*****response CODE=*******\n' +
+          response.statusCode.toString() +
+          " \n******************\n");
+      printWrapped('\n************response Data=***********\n' +
+          response.data.toString() +
+          " \n**************\n");
+    }
     int statusCode = response.statusCode!;
 
     switch (statusCode) {
@@ -112,9 +119,10 @@ class APIClient implements BaseAPIClient {
         var finalResponse =
             ResponseWrapper.init(create: create, json: responseData);
         if (finalResponse.error != null) {
-          print('this Error');
+          if (kDebugMode) {
+            print('Response Error');
+          }
           final errorResponse = finalResponse.error!;
-
           throw errorResponse;
         } else {
           return ResponseWrapper.init(create: create, json: responseData);

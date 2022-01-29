@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
+import 'package:provider/provider.dart';
 
 import '../routes.dart';
 import '../styles.dart';
 
 class AddNewCustomer extends StatelessWidget {
-  const AddNewCustomer({Key? key}) : super(key: key);
+  AddNewCustomer({Key? key}) : super(key: key);
   static const id = "AddNewCustomer";
+
+  var view = Provider.of<AddNewCustomerViewModel>(myContext!);
 
   @override
   Widget build(BuildContext context) {
@@ -38,64 +42,84 @@ class AddNewCustomer extends StatelessWidget {
                             color: AppColor.blackColor, wordSpacing: 1.5),
                       ),
                       SizedBox(height: 50.h),
-                      Column(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Mobile Number*',
-                                textAlign: TextAlign.center,
-                                style: AppTextStyles.mediumBold.copyWith(
-                                    color: AppColor.blackColor,
-                                    wordSpacing: 1.5),
-                              ),
-                              SizedBox(height: 10.h),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(25.h),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color: AppColor.blackColor)),
-                                    child: Text(
-                                      '+959',
-                                      style: AppTextStyles.small
-                                          .copyWith(color: AppColor.blackColor),
+                      Form(
+                        key: view.formKey,
+                        child: Column(
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Mobile Number*',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.mediumBold.copyWith(
+                                      color: AppColor.blackColor,
+                                      wordSpacing: 1.5),
+                                ),
+                                SizedBox(height: 10.h),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(25.h),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: AppColor.blackColor)),
+                                      child: Text(
+                                        '+959',
+                                        style: AppTextStyles.small.copyWith(
+                                            color: AppColor.blackColor),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: MyTextField(
-                                      rightPadding: 0,
-                                      leftPadding: 0,
-                                      hintText: 'Enter Mobile Number',
-                                      onChanged: (String text) {
-                                        /*   if (text.isNotEmpty) {
-                                    setState(() {
-                                      isSearching = true;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      isSearching = false;
-                                    });
-                                  }*/
-                                      },
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: MyTextField(
+                                        rightPadding: 0,
+                                        controller:
+                                            view.mobileNumberEditingController,
+                                        leftPadding: 0,
+                                        hintText: 'Enter Mobile Number',
+                                        // validator: (string) {
+                                        //   if (string == null ||
+                                        //       string.isEmpty) {
+                                        //     return 'Enter Mobile Number';
+                                        //   }
+                                        //   return null;
+                                        // },
+                                        onChanged: (String text) {
+                                          /*   if (text.isNotEmpty) {
+                                      setState(() {
+                                        isSearching = true;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        isSearching = false;
+                                      });
+                                    }*/
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20.h),
-                          getRow('Full Name*'),
-                          SizedBox(height: 20.h),
-                          getRow('Email Address'),
-                          SizedBox(height: 20.h),
-                          getRow('Membership No*'),
-                        ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.h),
+                            getRow('Full Name*',
+                                view.fullNameEditingTextController),
+                            SizedBox(height: 20.h),
+                            getRow(
+                                'Email Address', view.emailAddressController),
+                            SizedBox(height: 20.h),
+                            getRow('City', view.cityController),
+                            SizedBox(height: 20.h),
+                            getRow('Address', view.addressController),
+                            SizedBox(height: 20.h),
+                            getRow('Membership No*',
+                                view.memberShipNumberEditingController),
+                          ],
+                        ),
                       ),
                       Container(
                         padding: const EdgeInsets.all(8.0),
@@ -106,6 +130,11 @@ class AddNewCustomer extends StatelessWidget {
                             textStyle: AppTextStyles.mediumBold
                                 .copyWith(color: AppColor.whiteColor),
                             buttonText: 'Next',
+                            onTap: () {
+                              if (view.formKey.currentState!.validate()) {
+                                view.addNewUser(completion: () {});
+                              }
+                            },
                           ),
                         ),
                       )
@@ -143,7 +172,7 @@ class AddNewCustomer extends StatelessWidget {
     );
   }
 
-  getRow(String title) {
+  getRow(String title, TextEditingController controller) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,9 +189,16 @@ class AddNewCustomer extends StatelessWidget {
             Expanded(
               child: MyTextField(
                 rightPadding: 0,
+                controller: controller,
                 leftPadding: 0,
-                hintText: 'Hla San Ei',
+                hintText: '',
                 onChanged: (String text) {},
+                validator: (string) {
+                  if (string == null || string.isEmpty) {
+                    return 'Enter $title';
+                  }
+                  return null;
+                },
               ),
             ),
           ],

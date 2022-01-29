@@ -121,6 +121,7 @@ class MyTextField extends StatelessWidget {
             isDigitsOnly ? [FilteringTextInputFormatter.digitsOnly] : [],
         keyboardType: keyboardType ?? TextInputType.text,
         enabled: enable,
+        //onFieldSubmitted: onChanged,
         focusNode: focusNode,
         validator: validator,
         onChanged: onChanged,
@@ -384,6 +385,32 @@ class _MyDropDownState extends State<MyDropDown> {
               }).toList()
             : widget.itemFuntion,
       ),
+    );
+  }
+}
+
+class ExpandableCardContainer extends StatefulWidget {
+  bool isExpanded;
+  Widget collapsedChild;
+  Widget expandedChild;
+
+  ExpandableCardContainer(
+      {required this.isExpanded,
+      required this.collapsedChild,
+      required this.expandedChild});
+
+  @override
+  _ExpandableCardContainerState createState() =>
+      _ExpandableCardContainerState();
+}
+
+class _ExpandableCardContainerState extends State<ExpandableCardContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 4000),
+      curve: Curves.easeInOut,
+      child: widget.isExpanded ? widget.expandedChild : widget.collapsedChild,
     );
   }
 }

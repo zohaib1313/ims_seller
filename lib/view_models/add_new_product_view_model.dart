@@ -10,6 +10,20 @@ class AddNewProductViewModel extends ChangeNotifier {
   Views get currentView => _currentView;
   List<Views> _viewsHistory = [Views.scanProduct];
 
+  bool _isExpanded = false;
+  bool get isExpanded => _isExpanded;
+
+  set isExpanded(bool value) {
+    _isExpanded = value;
+    notifyListeners();
+  }
+
+  List<Views> get viewsHistory => _viewsHistory;
+
+  set viewsHistory(List<Views> value) {
+    _viewsHistory = value;
+  }
+
   void goForwards(Views view) {
     _viewsHistory.add(view);
     currentView = view;

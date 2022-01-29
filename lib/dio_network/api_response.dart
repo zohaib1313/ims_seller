@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import 'decodable.dart';
 
 typedef Create<T> = T Function();
@@ -25,17 +23,14 @@ class ResponseWrapper<T> extends GenericObject<T> {
   factory ResponseWrapper.init(
       {Create<Decodable>? create, Map<String, dynamic>? json}) {
     final wrapper = ResponseWrapper<T>(create: create);
+    print("generic object ${wrapper.response}");
+
     wrapper.response = wrapper.genericObject(json);
+    print("generic object ${wrapper.response}");
 
     if (wrapper.response is APIResponse) {
-      if (kDebugMode) {
-        print(wrapper.response.toString() + "this is response");
-      }
       var finalResponse = wrapper.response as APIResponse;
-      if (finalResponse.responseCode != '00' || finalResponse.status == '404') {
-        if (kDebugMode) {
-          print(wrapper.response.toString() + "this is response");
-        }
+      if (finalResponse.status != true) {
         wrapper.error = ErrorResponse.fromJson(json!);
       }
     }
@@ -45,18 +40,16 @@ class ResponseWrapper<T> extends GenericObject<T> {
 
 class APIResponse<T> extends GenericObject<T>
     implements Decodable<APIResponse<T>> {
-  String? responseCode;
   String? responseMessage;
-  String? status;
+  bool? status;
   T? data;
 
   APIResponse({Create<Decodable>? create}) : super(create: create);
 
   @override
   APIResponse<T> decode(dynamic json) {
-    responseCode = json['responseCode'];
-    responseMessage = json['responseMessage'];
-    status = json['status'] ?? '';
+    responseMessage = json['message'] ?? '';
+    status = json['status'] ?? false;
     data = (json as Map<String, dynamic>).containsKey('data')
         ? genericObject(json['data'])
         : null;
@@ -66,22 +59,23 @@ class APIResponse<T> extends GenericObject<T>
 
 class APIListResponse<T> extends GenericObject<T>
     implements Decodable<APIListResponse<T>> {
-  String? responseCode;
   String? responseMessage;
-  String? status;
+  bool? status;
   List<T>? data;
 
   APIListResponse({Create<Decodable>? create}) : super(create: create);
 
   @override
   APIListResponse<T> decode(dynamic json) {
-    responseCode = json['responseCode'];
-    responseMessage = json['responseMessage'];
-    status = json['status'] ?? '';
+    responseMessage = json['message'] ?? '';
+    status = json['status'] ?? false;
     data = [];
-    json['data'].forEach((item) {
-      data!.add(genericObject(item));
-    });
+
+    if (json['data'] != null) {
+      json['data'].forEach((item) {
+        data!.add(genericObject(item));
+      });
+    }
     return this;
   }
 }
@@ -93,7 +87,7 @@ class ErrorResponse implements Exception {
 
   factory ErrorResponse.fromJson(Map<String, dynamic> json) {
     return ErrorResponse(
-        message: json['responseMessage'] ?? 'Something went wrong');
+        message: json['non_field_errors'][0] ?? 'Something went wrong');
   }
 
   @override

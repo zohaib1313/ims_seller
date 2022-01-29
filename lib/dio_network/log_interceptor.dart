@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../utils.dart';
+import '../utils/utils.dart';
 
 class LogInterceptor extends InterceptorsWrapper {
   @override

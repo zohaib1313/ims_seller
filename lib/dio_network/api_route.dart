@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-enum APIType { NOTIFICATIONLIST }
+import 'APis.dart';
 
 class APIRoute implements APIRouteConfigurable {
   final APIType? type;
@@ -16,27 +16,37 @@ class APIRoute implements APIRouteConfigurable {
     // pass extra value to detect public or auth api
 
     switch (type) {
-      case APIType.NOTIFICATIONLIST:
+      case APIType.login:
         return RequestOptions(
-          path: ApiConstants.assignSimToUser,
+          path: ApiConstants.loginUser,
+          headers: headers,
+          data: body,
+          method: APIMethod.post,
+        );
+
+      case APIType.searchCustomer:
+        return RequestOptions(
+          path: ApiConstants.searchCustomer,
+          headers: headers,
+          queryParameters: body,
+          method: APIMethod.get,
+        );
+      case APIType.addCustomer:
+        return RequestOptions(
+          path: ApiConstants.addCustomer,
           headers: headers,
           data: body,
           method: APIMethod.post,
         );
       default:
         return RequestOptions(
-          path: ApiConstants.assignSimToUser,
+          path: ApiConstants.loginUser,
           headers: headers,
           data: body,
           method: APIMethod.post,
         );
     }
   }
-}
-
-class ApiConstants {
-  static const baseUrl = "";
-  static const assignSimToUser = '';
 }
 
 abstract class APIRouteConfigurable {

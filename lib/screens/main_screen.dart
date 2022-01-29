@@ -7,7 +7,9 @@ import 'package:ims_seller/screens/add_new_product_screen.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
 import 'package:ims_seller/screens/invoice_new_screen.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
+import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/styles.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
 
 class MainScreen extends StatelessWidget {
   static const id = 'Main_Screen';
@@ -44,6 +46,15 @@ class MainScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.of(myContext!).pop();
                     Navigator.of(myContext!).pushNamed(AddNewProductScreen.id);
+                  },
+                ),
+                ListTile(
+                  title: const Text("Logout"),
+                  trailing: const Icon(Icons.logout),
+                  onTap: () {
+                    UserDefaults().clearAll();
+                    Navigator.of(myContext!).pop();
+                    Navigator.of(myContext!).pushNamed(SignInScreen.id);
                   },
                 ),
               ],

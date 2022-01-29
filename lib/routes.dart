@@ -10,10 +10,12 @@ import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/screens/splash_screen.dart';
 import 'package:ims_seller/screens/target_details_screen.dart';
+import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:ims_seller/view_models/dashboard_view_model.dart';
 import 'package:ims_seller/view_models/invoice_new_view_model.dart';
 import 'package:ims_seller/view_models/main_screen_view_model.dart';
+import 'package:ims_seller/view_models/search_customer_view_model.dart';
 import 'package:ims_seller/view_models/sigin_screen_view_model.dart';
 import 'package:ims_seller/view_models/splash_screen_view_model.dart';
 import 'package:ims_seller/view_models/target_details_view_model.dart';
@@ -25,13 +27,13 @@ BuildContext? myContext = navigatorKey.currentState!.context;
 class RoutesAndNavigation {
   final Map<String, Widget Function(BuildContext)> routes = {
     SplashScreen.id: (context) => const SplashScreen(),
-    SignInScreen.id: (context) => const SignInScreen(),
+    SignInScreen.id: (context) => SignInScreen(),
     DashBoardScreen.id: (context) => const DashBoardScreen(),
     MainScreen.id: (context) => const MainScreen(),
     TargetDetailsScreen.id: (context) => const TargetDetailsScreen(),
     InvoiceNewScreen.id: (context) => const InvoiceNewScreen(),
-    SearchCustomerScreen.id: (context) => const SearchCustomerScreen(),
-    AddNewCustomer.id: (context) => const AddNewCustomer(),
+    SearchCustomerScreen.id: (context) => SearchCustomerScreen(),
+    AddNewCustomer.id: (context) => AddNewCustomer(),
     AddNewProductScreen.id: (context) => AddNewProductScreen(),
     InvoiceSummaryScreen.id: (context) => const InvoiceSummaryScreen(),
     SendAlertInvoiceGeneratedScreen.id: (context) =>
@@ -52,5 +54,9 @@ class RoutesAndNavigation {
         create: (_) => InvoiceNewViewModel()),
     ChangeNotifierProvider<AddNewProductViewModel>(
         create: (_) => AddNewProductViewModel()),
+    ChangeNotifierProvider<SearchCustomerViewModel>(
+        create: (_) => SearchCustomerViewModel()),
+    ChangeNotifierProvider<AddNewCustomerViewModel>(
+        create: (_) => AddNewCustomerViewModel()),
   ];
 }

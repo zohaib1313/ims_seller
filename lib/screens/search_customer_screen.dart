@@ -1,33 +1,48 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/search_result_model.dart';
+import 'package:ims_seller/view_models/search_customer_view_model.dart';
+import 'package:provider/provider.dart';
 
 import '../routes.dart';
 import '../styles.dart';
 
 class SearchCustomerScreen extends StatefulWidget {
-  const SearchCustomerScreen({Key? key}) : super(key: key);
+  SearchCustomerScreen({Key? key}) : super(key: key);
   static const id = "SearchCustomerId";
 
   @override
-  State<SearchCustomerScreen> createState() => _SearchCustomerScreenState();
+  _SearchCustomerScreenState createState() => _SearchCustomerScreenState();
 }
 
 class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
-  bool isSearching = true;
+  Stream<List<SearchResultModel>>? streamSearch;
+  var view = Provider.of<SearchCustomerViewModel>(myContext!);
+
+  @override
+  void initState() {
+    streamSearch = view.streamController.stream;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          padding: EdgeInsets.all(120.r),
-          child: Column(
-            children: [
-              getHeader(),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+    return WillPopScope(
+      onWillPop: () {
+        view.resetState();
+        return Future.value(true);
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: Container(
+            padding: EdgeInsets.all(120.r),
+            child: Column(
+              children: [
+                getHeader(),
+                Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,9 +78,17 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
                           Expanded(
                             child: MyTextField(
                               rightPadding: 0,
+                              controller: view.searchTextEditingController,
                               leftPadding: 0,
                               hintText: 'Enter Mobile Number',
                               onChanged: (String text) {
+                                print("text   $text");
+                                if (text.isNotEmpty) {
+                                  streamSearch = view.getSearchResult();
+                                } else {
+                                  view.streamController.sink.add([]);
+                                }
+
                                 /*   if (text.isNotEmpty) {
                                   setState(() {
                                     isSearching = true;
@@ -80,25 +103,12 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
                           ),
                         ],
                       ),
-                      isSearching
-                          ? showSearchList()
-                          : Container(
-                              margin: EdgeInsets.only(top: 50.h),
-                              padding: EdgeInsets.all(80.r),
-                              decoration: BoxDecoration(
-                                  color: AppColor.blueColor,
-                                  borderRadius: BorderRadius.circular(100)),
-                              child: Icon(
-                                Icons.search,
-                                size: 150.r,
-                                color: AppColor.whiteColor,
-                              ),
-                            )
+                      showSearchList()
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -106,45 +116,133 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
   }
 
   showSearchList() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(top: 8),
-            decoration: BoxDecoration(
-                border: Border.all(color: AppColor.blackColor),
-                borderRadius: BorderRadius.circular(12)),
+    return Expanded(
+      child: Row(
+        children: [
+          Expanded(
             child: Container(
-                padding: EdgeInsets.all(10),
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    getSearchItem(true),
-                    getSearchItem(false),
-                    getSearchItem(false),
-                    getSearchItem(false),
-                    getSearchItem(false),
-                  ],
-                )),
+              margin: const EdgeInsets.only(top: 8),
+              decoration: BoxDecoration(
+                  border: Border.all(color: AppColor.blackColor),
+                  borderRadius: BorderRadius.circular(12)),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: StreamBuilder(
+                    stream: streamSearch,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<SearchResultModel>> snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      } else if (!snapshot.hasData && snapshot.error != null) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        var list = snapshot.data!;
+                        return list.isNotEmpty
+                            ? Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                          onTap: () {
+                                            view.resetState();
+                                            view.streamController.sink.add([]);
+                                          },
+                                          child: Icon(Icons.cancel)),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: list.length,
+                                      itemBuilder: (context, index) {
+                                        return getSearchItem(
+                                            list[index].name.toString(),
+                                            list[index].phone.toString());
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : view.searchTextEditingController.text.isNotEmpty
+                                ? Center(
+                                    child: Text('No data found',
+                                        style: AppTextStyles.mediumBold
+                                            .copyWith(
+                                                color: AppColor.blackColor)),
+                                  )
+                                : Center(
+                                    child: Container(
+                                      padding: EdgeInsets.all(80.r),
+                                      decoration: BoxDecoration(
+                                          color: AppColor.blueColor,
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (view.searchTextEditingController
+                                              .text.isNotEmpty) {
+                                            streamSearch =
+                                                view.getSearchResult();
+                                          } else {
+                                            AppPopUps().showSnackBar(
+                                                'Enter number to search');
+                                          }
+                                        },
+                                        child: Icon(
+                                          Icons.search,
+                                          size: 100.r,
+                                          color: AppColor.whiteColor,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                      } else {
+                        return Center(
+                          child: Container(
+                            padding: EdgeInsets.all(80.r),
+                            decoration: BoxDecoration(
+                                color: AppColor.blueColor,
+                                borderRadius: BorderRadius.circular(100)),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (view.searchTextEditingController.text
+                                    .isNotEmpty) {
+                                  streamSearch = view.getSearchResult();
+                                } else {
+                                  AppPopUps()
+                                      .showSnackBar('Enter number to search');
+                                }
+                              },
+                              child: Icon(
+                                Icons.search,
+                                size: 100.r,
+                                color: AppColor.whiteColor,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    }),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  getSearchItem(bool showClearButton) {
+  getSearchItem(String title, String number) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Hisham Ali"),
-            showClearButton ? Icon(Icons.clear) : IgnorePointer()
-          ],
-        ),
-        const Text("+92456789"),
+        Text(title.toString()),
+        Text(number.toString()),
         const Divider(
           color: AppColor.blackColor,
         )
@@ -157,6 +255,7 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
       children: [
         InkWell(
           onTap: () {
+            view.resetState();
             Navigator.of(myContext!).pop();
           },
           child: const SvgViewer(

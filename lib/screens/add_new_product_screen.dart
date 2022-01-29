@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/screens/invoice_summary_screen.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../routes.dart';
 import '../styles.dart';
+import 'invoice_summary_screen.dart';
 
 class AddNewProductScreen extends StatelessWidget {
   static const id = 'AddNewProductScreen';
@@ -388,97 +388,108 @@ class AddNewProductScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: 20.h),
-          Container(
-            padding: EdgeInsets.only(left: 20.h, right: 20, top: 20),
-            decoration: const BoxDecoration(
-              color: AppColor.blackColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+          GestureDetector(
+            onTap: () {
+              view.isExpanded = !view.isExpanded;
+            },
+            child: Container(
+              padding: EdgeInsets.only(left: 20.h, right: 20, top: 20),
+              decoration: const BoxDecoration(
+                color: AppColor.blackColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: const [
-                    Text(
-                      'Total Amount',
-                      style: AppTextStyles.medium,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-                Row(
-                  children: const [
-                    Text(
-                      '27,00.00',
-                      style: AppTextStyles.largeBold,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-                const Divider(color: AppColor.whiteColor),
-                SizedBox(height: 10.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Button(
-                        onTap: () async {
-                          if (await view.goBackwards()) {
-                            Navigator.of(myContext!).pop();
-                          }
-                        },
-                        leftPadding: 0,
-                        rightPading: 0,
-                        padding: 10.h,
-                        color: AppColor.blackColor,
-                        borderColor: AppColor.whiteColor,
-                        prefixIcon: const Icon(
-                          Icons.arrow_back_ios_rounded,
-                          color: AppColor.whiteColor,
-                          size: 18,
-                        ),
-                        buttonText: 'Back',
-                        textStyle: AppTextStyles.mediumBold
-                            .copyWith(color: AppColor.whiteColor),
+              child: Column(
+                children: [
+                  Row(
+                    children: const [
+                      Text(
+                        'Total Amount',
+                        style: AppTextStyles.medium,
                       ),
-                    ),
-                    SizedBox(width: 40.w),
-                    Expanded(
-                      child: Button(
-                        onTap: () {
-                          if (view.currentView == Views.scanProduct) {
-                            view.goForwards(Views.listProducts);
-                          } else if (view.currentView == Views.listProducts) {
-                            view.goForwards(Views.selectPayment);
-                          } else if (view.currentView == Views.selectPayment &&
-                              view.selectedPaymentMethod ==
-                                  PaymentMethod.bank) {
-                            view.goForwards(Views.bankPaymentDetails);
-                          } else {
-                            Navigator.of(myContext!)
-                                .pushNamed(InvoiceSummaryScreen.id);
-                          }
-                        },
-                        leftPadding: 0,
-                        rightPading: 0,
-                        padding: 10.h,
-                        postFixIcon: const Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColor.whiteColor,
-                          size: 18,
-                        ),
-                        color: AppColor.blueColor,
-                        borderColor: AppColor.blueColor,
-                        buttonText: 'Next',
-                        textStyle: AppTextStyles.mediumBold
-                            .copyWith(color: AppColor.whiteColor),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  Row(
+                    children: const [
+                      Text(
+                        '27,00.00',
+                        style: AppTextStyles.largeBold,
                       ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  const Divider(color: AppColor.whiteColor),
+                  SizedBox(height: 10.h),
+                  ExpandableCardContainer(
+                    isExpanded: view.isExpanded,
+                    collapsedChild: IgnorePointer(),
+                    expandedChild: Row(
+                      children: [
+                        Expanded(
+                          child: Button(
+                            onTap: () async {
+                              if (await view.goBackwards()) {
+                                Navigator.of(myContext!).pop();
+                              }
+                            },
+                            leftPadding: 0,
+                            rightPading: 0,
+                            padding: 10.h,
+                            color: AppColor.blackColor,
+                            borderColor: AppColor.whiteColor,
+                            prefixIcon: const Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: AppColor.whiteColor,
+                              size: 18,
+                            ),
+                            buttonText: 'Back',
+                            textStyle: AppTextStyles.mediumBold
+                                .copyWith(color: AppColor.whiteColor),
+                          ),
+                        ),
+                        SizedBox(width: 40.w),
+                        Expanded(
+                          child: Button(
+                            onTap: () {
+                              if (view.currentView == Views.scanProduct) {
+                                view.goForwards(Views.listProducts);
+                              } else if (view.currentView ==
+                                  Views.listProducts) {
+                                view.goForwards(Views.selectPayment);
+                              } else if (view.currentView ==
+                                      Views.selectPayment &&
+                                  view.selectedPaymentMethod ==
+                                      PaymentMethod.bank) {
+                                view.goForwards(Views.bankPaymentDetails);
+                              } else {
+                                Navigator.of(myContext!)
+                                    .pushNamed(InvoiceSummaryScreen.id);
+                              }
+                            },
+                            leftPadding: 0,
+                            rightPading: 0,
+                            padding: 10.h,
+                            postFixIcon: const Icon(
+                              Icons.arrow_forward_ios,
+                              color: AppColor.whiteColor,
+                              size: 18,
+                            ),
+                            color: AppColor.blueColor,
+                            borderColor: AppColor.blueColor,
+                            buttonText: 'Next',
+                            textStyle: AppTextStyles.mediumBold
+                                .copyWith(color: AppColor.whiteColor),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(height: 15.h),
-              ],
+                  ),
+                  SizedBox(height: 15.h),
+                ],
+              ),
             ),
           ),
         ],
