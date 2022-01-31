@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/search_result_model.dart';
+import 'package:ims_seller/screens/add_new_customer.dart';
+import 'package:ims_seller/screens/add_new_product_screen.dart';
 import 'package:ims_seller/view_models/search_customer_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -80,6 +82,7 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
                               rightPadding: 0,
                               controller: view.searchTextEditingController,
                               leftPadding: 0,
+                              keyboardType: TextInputType.number,
                               hintText: 'Enter Mobile Number',
                               onChanged: (String text) {
                                 print("text   $text");
@@ -160,9 +163,7 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
                                       shrinkWrap: true,
                                       itemCount: list.length,
                                       itemBuilder: (context, index) {
-                                        return getSearchItem(
-                                            list[index].name.toString(),
-                                            list[index].phone.toString());
+                                        return getSearchItem(list[index]);
                                       },
                                     ),
                                   ),
@@ -170,10 +171,33 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
                               )
                             : view.searchTextEditingController.text.isNotEmpty
                                 ? Center(
-                                    child: Text('No data found',
-                                        style: AppTextStyles.mediumBold
-                                            .copyWith(
-                                                color: AppColor.blackColor)),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'No data found ',
+                                          style: AppTextStyles.mediumBold
+                                              .copyWith(
+                                                  color: AppColor.blackColor),
+                                        ),
+                                        SizedBox(
+                                          height: 10.h,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(myContext!)
+                                                .pushNamed(AddNewCustomer.id);
+                                          },
+                                          child: Text(
+                                            'Add New Customer?',
+                                            style: AppTextStyles.mediumBold
+                                                .copyWith(
+                                                    color: AppColor.blueColor,
+                                                    decoration: TextDecoration
+                                                        .underline),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   )
                                 : Center(
                                     child: Container(
@@ -236,17 +260,27 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
     );
   }
 
-  getSearchItem(String title, String number) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title.toString()),
-        Text(number.toString()),
-        const Divider(
-          color: AppColor.blackColor,
-        )
-      ],
+  getSearchItem(SearchResultModel user) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  AddNewProductScreen.user(modelUser: user)),
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(user.name.toString()),
+          Text(user.phone.toString()),
+          const Divider(
+            color: AppColor.blackColor,
+          )
+        ],
+      ),
     );
   }
 

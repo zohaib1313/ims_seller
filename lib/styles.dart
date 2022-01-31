@@ -21,11 +21,11 @@ class AppTextStyles {
   static const TextStyle largeBold = TextStyle(
       color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 22);
   static const TextStyle mediumBold = TextStyle(
-      color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 18);
+      color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 16);
   static const TextStyle medium =
       TextStyle(color: AppColor.whiteColor, fontSize: 18);
   static const TextStyle smallBold = TextStyle(
-      color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 16);
+      color: AppColor.whiteColor, fontWeight: FontWeight.bold, fontSize: 14);
   static const TextStyle small =
       TextStyle(color: AppColor.whiteColor, fontSize: 16);
   static const TextStyle large = TextStyle(

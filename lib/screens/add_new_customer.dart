@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/screens/success_screen.dart';
 import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -132,7 +133,18 @@ class AddNewCustomer extends StatelessWidget {
                             buttonText: 'Next',
                             onTap: () {
                               if (view.formKey.currentState!.validate()) {
-                                view.addNewUser(completion: () {});
+                                view.addNewUser(
+                                  completion: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            SuccessScreen(
+                                                'User added successfully'),
+                                      ),
+                                    );
+                                  },
+                                );
                               }
                             },
                           ),

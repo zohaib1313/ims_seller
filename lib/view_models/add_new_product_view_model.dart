@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:ims_seller/common_widgets/app_popups.dart';
+import 'package:ims_seller/dio_network/APis.dart';
+import 'package:ims_seller/dio_network/api_client.dart';
+import 'package:ims_seller/dio_network/api_response.dart';
+import 'package:ims_seller/dio_network/api_route.dart';
+import 'package:ims_seller/models/product_detail_scanned_model.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
+import 'package:ims_seller/utils/utils.dart';
+
+import '../routes.dart';
 
 class AddNewProductViewModel extends ChangeNotifier {
   Views _currentView = Views.scanProduct;
 
   PaymentMethod selectedPaymentMethod = PaymentMethod.bank;
+  ProductDetailScannedModel? productDetailScannedModel;
 
   Views get currentView => _currentView;
   List<Views> _viewsHistory = [Views.scanProduct];
 
   bool _isExpanded = false;
+
   bool get isExpanded => _isExpanded;
 
   set isExpanded(bool value) {
@@ -49,23 +61,26 @@ class AddNewProductViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  scanBarcodeNormal() async {
-    String barcodeScanRes;
+  scanBarcodeNormal({completion}) async {
+    String barcodeScanRes = '';
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      barcodeScanRes = '888462108416';
+
+      ///temporary todo
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
-
+    completion(barcodeScanRes);
     print(barcodeScanRes);
-    notifyListeners();
   }
 
   void resetState() {
     _viewsHistory = [Views.scanProduct];
     currentView = Views.scanProduct;
+    productDetailScannedModel = null;
     notifyListeners();
   }
 
@@ -80,6 +95,43 @@ class AddNewProductViewModel extends ChangeNotifier {
       case Views.bankPaymentDetails:
         return "Bank Transfer";
     }
+  }
+
+  void getProductDetails({required String code, completion}) {
+    AppPopUps().showProgressDialog(context: myContext!);
+
+    Map<String, dynamic> body = {
+      "date_time": DateTime.now().toString(),
+      "imei_number": code,
+      "for_type": "sale",
+      "branch_id": UserDefaults.getUserSession()?.branchDetail?.id ?? ""
+    };
+    var client = APIClient(isCache: false);
+    client
+        .request(
+            route: APIRoute(
+              APIType.getInvoiceDetails,
+              body: body,
+            ),
+            create: () => APIResponse<ProductDetailScannedModel>(
+                create: () => ProductDetailScannedModel()),
+            apiFunction: getProductDetails)
+        .then((response) {
+      AppPopUps().dissmissDialog();
+      if (response.response!.data != null) {
+        productDetailScannedModel = response.response!.data;
+        completion();
+      }
+    }).catchError((error) {
+      printWrapped("error= " + error.toString());
+      AppPopUps().dissmissDialog();
+      AppPopUps().showErrorPopUp(
+          title: "Error",
+          error: error.toString(),
+          onButtonPressed: () {
+            AppPopUps().dissmissDialog();
+          });
+    });
   }
 }
 

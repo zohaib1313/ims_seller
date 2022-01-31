@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/invoice_sale_model.dart';
+import 'package:ims_seller/models/model_invoice_merchat.dart';
 import 'package:ims_seller/routes.dart';
+import 'package:ims_seller/screens/sale_invoice_screen.dart';
+import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/target_details_screen.dart';
+import 'package:ims_seller/view_models/dashboard_view_model.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 import '../styles.dart';
 
-class DashBoardScreen extends StatelessWidget {
+class DashBoardScreen extends StatefulWidget {
   static const id = "Dashboard";
 
-  const DashBoardScreen({Key? key}) : super(key: key);
+  DashBoardScreen({Key? key}) : super(key: key);
+
+  @override
+  State<DashBoardScreen> createState() => _DashBoardScreenState();
+}
+
+class _DashBoardScreenState extends State<DashBoardScreen> {
+  Stream<List<ModelInvoiceMerchant>>? streamMerchantInvoices;
+  var view = Provider.of<DashboardViewModel>(myContext!);
+
+  @override
+  void initState() {
+    super.initState();
+
+    streamMerchantInvoices = view.getMerchantInvoiceList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,177 +83,173 @@ class DashBoardScreen extends StatelessWidget {
                               ),
                             ),
                             Center(
-                              child: SingleChildScrollView(
-                                physics: BouncingScrollPhysics(),
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                      top: 50.h, left: 100.w, right: 100.w),
-                                  decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                      borderRadius: BorderRadius.circular(50)),
-                                  height: 250.h,
-                                  child: Card(
-                                    elevation: 20,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(100.w),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    "Top Sales",
-                                                    style: AppTextStyles
-                                                        .mediumBold
-                                                        .copyWith(
-                                                            color: AppColor
-                                                                .blackColor),
-                                                  ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                    top: 50.h, left: 100.w, right: 100.w),
+                                decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.circular(50)),
+                                height: 250.h,
+                                child: Card(
+                                  elevation: 20,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(100.w),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  "Top Sales",
+                                                  style: AppTextStyles
+                                                      .mediumBold
+                                                      .copyWith(
+                                                          color: AppColor
+                                                              .blackColor),
                                                 ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      const SvgViewer(
-                                                          svgPath:
-                                                              'assets/icons/vertical_bar.svg'),
-                                                      SizedBox(width: 50.w),
-                                                      Expanded(
-                                                          child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "Total Amount",
-                                                            style: AppTextStyles
-                                                                .smallBold
-                                                                .copyWith(
-                                                                    color: AppColor
-                                                                        .blackColor),
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const SvgViewer(
-                                                                  svgPath:
-                                                                      'assets/icons/icon-money.svg'),
-                                                              SizedBox(
-                                                                  width: 50.w),
-                                                              Expanded(
-                                                                  child: Text(
-                                                                "2357,00203",
-                                                                maxLines: 1,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                style: AppTextStyles
-                                                                    .smallBold
-                                                                    .copyWith(
-                                                                        color: AppColor
-                                                                            .blackColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                              ))
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ))
-                                                    ],
-                                                  ),
+                                              ),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SvgViewer(
+                                                        svgPath:
+                                                            'assets/icons/vertical_bar.svg'),
+                                                    SizedBox(width: 50.w),
+                                                    Expanded(
+                                                        child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Total Amount",
+                                                          style: AppTextStyles
+                                                              .smallBold
+                                                              .copyWith(
+                                                                  color: AppColor
+                                                                      .blackColor),
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            const SvgViewer(
+                                                                svgPath:
+                                                                    'assets/icons/icon-money.svg'),
+                                                            SizedBox(
+                                                                width: 50.w),
+                                                            Expanded(
+                                                                child: Text(
+                                                              "2357,00203",
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: AppTextStyles
+                                                                  .smallBold
+                                                                  .copyWith(
+                                                                      color: AppColor
+                                                                          .blackColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                            ))
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ))
+                                                  ],
                                                 ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      const SvgViewer(
-                                                          svgPath:
-                                                              'assets/icons/vertical_bar.svg'),
-                                                      SizedBox(width: 50.w),
-                                                      Expanded(
-                                                          child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "Total Amount",
-                                                            style: AppTextStyles
-                                                                .smallBold
-                                                                .copyWith(
-                                                                    color: AppColor
-                                                                        .blackColor),
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const SvgViewer(
-                                                                  svgPath:
-                                                                      'assets/icons/icon-money.svg'),
-                                                              SizedBox(
-                                                                  width: 50.w),
-                                                              Expanded(
-                                                                  child: Text(
-                                                                "2357,00203",
-                                                                maxLines: 1,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                style: AppTextStyles
-                                                                    .smallBold
-                                                                    .copyWith(
-                                                                        color: AppColor
-                                                                            .blackColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                              ))
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ))
-                                                    ],
-                                                  ),
+                                              ),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SvgViewer(
+                                                        svgPath:
+                                                            'assets/icons/vertical_bar.svg'),
+                                                    SizedBox(width: 50.w),
+                                                    Expanded(
+                                                        child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Total Amount",
+                                                          style: AppTextStyles
+                                                              .smallBold
+                                                              .copyWith(
+                                                                  color: AppColor
+                                                                      .blackColor),
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            const SvgViewer(
+                                                                svgPath:
+                                                                    'assets/icons/icon-money.svg'),
+                                                            SizedBox(
+                                                                width: 50.w),
+                                                            Expanded(
+                                                                child: Text(
+                                                              "2357,00203",
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: AppTextStyles
+                                                                  .smallBold
+                                                                  .copyWith(
+                                                                      color: AppColor
+                                                                          .blackColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                            ))
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ))
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Expanded(
-                                            child: CircularPercentIndicator(
-                                          radius: 280.r,
-                                          lineWidth: 10.0,
-                                          percent: 0.6,
-                                          center: Text("100% \n Percentage",
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.smallBold
-                                                  .copyWith(
-                                                      color:
-                                                          AppColor.blackColor)),
-                                          progressColor: AppColor.blueColor,
-                                        ))
-                                      ],
-                                    ),
+                                      ),
+                                      Expanded(
+                                          child: CircularPercentIndicator(
+                                        radius: 280.r,
+                                        lineWidth: 10.0,
+                                        percent: 0.6,
+                                        center: Text("100% \n Percentage",
+                                            textAlign: TextAlign.center,
+                                            style: AppTextStyles.smallBold
+                                                .copyWith(
+                                                    color:
+                                                        AppColor.blackColor)),
+                                        progressColor: AppColor.blueColor,
+                                      ))
+                                    ],
                                   ),
                                 ),
                               ),
@@ -262,7 +280,7 @@ class DashBoardScreen extends StatelessWidget {
                                     buttonText: 'Stock Checking',
                                     color: AppColor.blueColor,
                                     textStyle: AppTextStyles.smallBold
-                                        .copyWith(fontSize: 14),
+                                        .copyWith(fontSize: 11),
                                   ),
                                 ),
                                 Expanded(
@@ -270,10 +288,10 @@ class DashBoardScreen extends StatelessWidget {
                                     buttonText: 'Search Customer',
                                     color: AppColor.greenColor,
                                     textStyle: AppTextStyles.smallBold
-                                        .copyWith(fontSize: 14),
+                                        .copyWith(fontSize: 11),
                                     onTap: () {
                                       Navigator.of(myContext!)
-                                          .pushNamed(DashBoardScreen.id);
+                                          .pushNamed(SearchCustomerScreen.id);
                                     },
                                   ),
                                 ),
@@ -307,13 +325,33 @@ class DashBoardScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 20.h),
                             Expanded(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: 10,
-                                itemBuilder: (context, index) =>
-                                    getRowSalesInvoice(),
-                              ),
-                            )
+                              child: StreamBuilder(
+                                  stream: streamMerchantInvoices,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<ModelInvoiceMerchant>>
+                                          snapshot) {
+                                    if (snapshot.data != null) {
+                                      var list = snapshot.data!;
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: list.length,
+                                        itemBuilder: (context, index) =>
+                                            getRowSalesInvoice(
+                                                invoiceMerchant: list[index]),
+                                      );
+                                    } else if (snapshot.error != null) {
+                                      return Center(
+                                          child: Text(
+                                        snapshot.error.toString(),
+                                        style: AppTextStyles.medium.copyWith(
+                                            color: AppColor.blackColor),
+                                      ));
+                                    } else {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                  }),
+                            ),
                           ],
                         ),
                       ],
@@ -322,42 +360,60 @@ class DashBoardScreen extends StatelessWidget {
     );
   }
 
-  getRowSalesInvoice() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 100.w, vertical: 10.h),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColor.greyColor)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "1293993",
-                    style: AppTextStyles.smallBold.copyWith(
-                        color: AppColor.blackColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal),
+  getRowSalesInvoice({required ModelInvoiceMerchant invoiceMerchant}) {
+    return GestureDetector(
+      onTap: () {
+        view.getSaleInvoice(
+            invoiceId: invoiceMerchant.invoiceId.toString(),
+            completion: (InvoiceSaleModel? model) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => SaleInvoiceScreen.invoice(
+                    invoiceModel: model,
                   ),
-                  Text(
-                    "1293993",
-                    style: AppTextStyles.mediumBold
-                        .copyWith(color: AppColor.blackColor, fontSize: 16),
-                  ),
-                ],
+                ),
+              );
+            });
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 100.w, vertical: 10.h),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColor.greyColor)),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      DateFormat('dd-MM-yyyy').format(
+                          DateFormat("yyyy-MM-dd'T'HH:mm:sss")
+                              .parse(invoiceMerchant.invoiceDate.toString())),
+                      style: AppTextStyles.smallBold.copyWith(
+                          color: AppColor.blackColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    Text(
+                      invoiceMerchant.invoiceId.toString(),
+                      style: AppTextStyles.mediumBold
+                          .copyWith(color: AppColor.blackColor, fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Text(
-              "1293993",
-              style: AppTextStyles.mediumBold
-                  .copyWith(color: AppColor.blackColor, fontSize: 16),
-            )
-          ],
+              Text(
+                invoiceMerchant.invoiceAmount.toString(),
+                style: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor, fontSize: 16),
+              )
+            ],
+          ),
         ),
       ),
     );

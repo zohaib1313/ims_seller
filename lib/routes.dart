@@ -2,19 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/add_new_product_screen.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
-import 'package:ims_seller/screens/invoice_new_screen.dart';
 import 'package:ims_seller/screens/invoice_summary_screen.dart';
 import 'package:ims_seller/screens/main_screen.dart';
+import 'package:ims_seller/screens/sale_invoice_screen.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/screens/splash_screen.dart';
+import 'package:ims_seller/screens/success_screen.dart';
 import 'package:ims_seller/screens/target_details_screen.dart';
 import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:ims_seller/view_models/dashboard_view_model.dart';
-import 'package:ims_seller/view_models/invoice_new_view_model.dart';
 import 'package:ims_seller/view_models/main_screen_view_model.dart';
+import 'package:ims_seller/view_models/sales_invoice_view_model.dart';
 import 'package:ims_seller/view_models/search_customer_view_model.dart';
 import 'package:ims_seller/view_models/sigin_screen_view_model.dart';
 import 'package:ims_seller/view_models/splash_screen_view_model.dart';
@@ -28,16 +29,17 @@ class RoutesAndNavigation {
   final Map<String, Widget Function(BuildContext)> routes = {
     SplashScreen.id: (context) => const SplashScreen(),
     SignInScreen.id: (context) => SignInScreen(),
-    DashBoardScreen.id: (context) => const DashBoardScreen(),
+    DashBoardScreen.id: (context) => DashBoardScreen(),
     MainScreen.id: (context) => const MainScreen(),
     TargetDetailsScreen.id: (context) => const TargetDetailsScreen(),
-    InvoiceNewScreen.id: (context) => const InvoiceNewScreen(),
+    SaleInvoiceScreen.id: (context) => SaleInvoiceScreen(),
     SearchCustomerScreen.id: (context) => SearchCustomerScreen(),
     AddNewCustomer.id: (context) => AddNewCustomer(),
     AddNewProductScreen.id: (context) => AddNewProductScreen(),
     InvoiceSummaryScreen.id: (context) => const InvoiceSummaryScreen(),
     SendAlertInvoiceGeneratedScreen.id: (context) =>
         const SendAlertInvoiceGeneratedScreen(),
+    SuccessScreen.id: (context) => SuccessScreen(""),
   };
 
   final List<ChangeNotifierProvider<dynamic>> multiProviders = [
@@ -50,8 +52,8 @@ class RoutesAndNavigation {
         create: (_) => MainScreenViewModel()),
     ChangeNotifierProvider<TargetDetailsViewModel>(
         create: (_) => TargetDetailsViewModel()),
-    ChangeNotifierProvider<InvoiceNewViewModel>(
-        create: (_) => InvoiceNewViewModel()),
+    ChangeNotifierProvider<SaleInvoiceViewModel>(
+        create: (_) => SaleInvoiceViewModel()),
     ChangeNotifierProvider<AddNewProductViewModel>(
         create: (_) => AddNewProductViewModel()),
     ChangeNotifierProvider<SearchCustomerViewModel>(

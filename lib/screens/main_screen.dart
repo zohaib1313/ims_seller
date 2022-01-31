@@ -5,7 +5,7 @@ import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/add_new_product_screen.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
-import 'package:ims_seller/screens/invoice_new_screen.dart';
+import 'package:ims_seller/screens/sale_invoice_screen.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/styles.dart';
@@ -102,7 +102,7 @@ class MainScreen extends StatelessWidget {
                                 Button(
                                   onTap: () {
                                     Navigator.of(myContext!)
-                                        .pushNamed(InvoiceNewScreen.id);
+                                        .pushNamed(SaleInvoiceScreen.id);
                                   },
                                   textColor: AppColor.whiteColor,
                                   buttonText: 'New Invoice',

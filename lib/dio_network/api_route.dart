@@ -38,6 +38,27 @@ class APIRoute implements APIRouteConfigurable {
           data: body,
           method: APIMethod.post,
         );
+      case APIType.searchMerchantInvoices:
+        return RequestOptions(
+          path: ApiConstants.searchMerchantInvoices,
+          headers: headers,
+          data: body,
+          method: APIMethod.get,
+        );
+      case APIType.getInvoiceDetails:
+        return RequestOptions(
+          path: ApiConstants.getInvoiceDetails,
+          headers: headers,
+          queryParameters: body,
+          method: APIMethod.get,
+        );
+      case APIType.getProductDetails:
+        return RequestOptions(
+          path: ApiConstants.getProductDetails,
+          headers: headers,
+          queryParameters: body,
+          method: APIMethod.get,
+        );
       default:
         return RequestOptions(
           path: ApiConstants.loginUser,

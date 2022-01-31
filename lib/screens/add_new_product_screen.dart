@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/search_result_model.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -12,77 +13,88 @@ class AddNewProductScreen extends StatelessWidget {
   static const id = 'AddNewProductScreen';
   var view = Provider.of<AddNewProductViewModel>(myContext!, listen: true);
 
+  SearchResultModel? modelUser;
+
+  AddNewProductScreen({Key? key}) : super(key: key);
+
+  AddNewProductScreen.user({this.modelUser});
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          padding: EdgeInsets.only(top: 120.r, left: 120.r, right: 120.r),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getHeader(),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 30.h),
-                      Container(
-                        padding: EdgeInsets.all(20.h),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: AppColor.blueColor),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              flex: 4,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+    return WillPopScope(
+      onWillPop: () {
+        return view.goBackwards();
+      },
+      child: SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Container(
+            padding: EdgeInsets.only(top: 120.r, left: 120.r, right: 120.r),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                getHeader(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 30.h),
+                        Container(
+                          padding: EdgeInsets.all(20.h),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: AppColor.blueColor),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                flex: 4,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Customer Name:",
+                                      style: AppTextStyles.smallBold
+                                          .copyWith(color: AppColor.whiteColor),
+                                    ),
+                                    Text(
+                                      modelUser?.name ?? '',
+                                      style: AppTextStyles.largeBold
+                                          .copyWith(color: AppColor.whiteColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Spacer(flex: 2),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  const SvgViewer(
+                                      svgPath: 'assets/icons/edit_icon.svg'),
+                                  const SizedBox(height: 3),
                                   Text(
-                                    "Customer Name:",
+                                    modelUser?.phone ?? '',
                                     style: AppTextStyles.smallBold
-                                        .copyWith(color: AppColor.whiteColor),
-                                  ),
-                                  Text(
-                                    "HLA San Ei",
-                                    style: AppTextStyles.largeBold
                                         .copyWith(color: AppColor.whiteColor),
                                   ),
                                 ],
                               ),
-                            ),
-                            const Spacer(flex: 2),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const SvgViewer(
-                                    svgPath: 'assets/icons/edit_icon.svg'),
-                                const SizedBox(height: 3),
-                                Text(
-                                  "+92123456789",
-                                  style: AppTextStyles.smallBold
-                                      .copyWith(color: AppColor.whiteColor),
-                                ),
-                              ],
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 30.h),
-                      relevantViewReturner(view),
-                    ],
+                        SizedBox(height: 30.h),
+                        relevantViewReturner(view),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              bottomView(),
-            ],
+                bottomView(),
+              ],
+            ),
           ),
         ),
       ),
@@ -124,7 +136,7 @@ class AddNewProductScreen extends StatelessWidget {
           style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
         ),
         SizedBox(height: 20.h),
-        Center(
+        const Center(
           child: SvgViewer(
             svgPath: 'assets/icons/scan_hand_ic.svg',
           ),
@@ -375,10 +387,13 @@ class AddNewProductScreen extends StatelessWidget {
                   backgroundColor: AppColor.greenColor,
                   onPressed: () {
                     //  view.currentView = (Views.listProducts);
-                    //view.scanBarcodeNormal();
-                    if (view.currentView != Views.listProducts) {
-                      view.goForwards(Views.listProducts);
-                    }
+                    view.scanBarcodeNormal(completion: (id) {
+                      if (view.currentView != Views.listProducts) {
+                        view.getProductDetails(completion: () {
+                          view.goForwards(Views.listProducts);
+                        }, code: id);...
+                      }
+                    });
                   },
                   child: const SvgViewer(
                     svgPath: 'assets/icons/icon-scan-qr.svg',

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/invoice_sale_model.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/styles.dart';
 
-class InvoiceNewScreen extends StatefulWidget {
-  const InvoiceNewScreen({Key? key}) : super(key: key);
+class SaleInvoiceScreen extends StatefulWidget {
   static const id = "newInvoiceScreen";
+  InvoiceSaleModel? invoiceModel;
+
+  SaleInvoiceScreen();
+
+  SaleInvoiceScreen.invoice({Key? key, required this.invoiceModel})
+      : super(key: key);
 
   @override
-  _InvoiceNewScreenState createState() => _InvoiceNewScreenState();
+  _SaleInvoiceScreenState createState() => _SaleInvoiceScreenState();
 }
 
-class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
+class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,7 +32,7 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
               getHeader(),
               SizedBox(height: 30.h),
               Text(
-                "Invoice# S-KBA-02345",
+                "Invoice# ${widget.invoiceModel?.saleInvoice![0].invoiceNumber ?? ""}",
                 style: AppTextStyles.largeBold
                     .copyWith(color: AppColor.blackColor),
               ),
@@ -50,8 +56,10 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
                                 .copyWith(color: AppColor.whiteColor),
                           ),
                           Text(
-                            "HLA San Ei",
-                            style: AppTextStyles.largeBold
+                            widget.invoiceModel?.saleInvoice![0].iClient
+                                    ?.tradingName ??
+                                "",
+                            style: AppTextStyles.smallBold
                                 .copyWith(color: AppColor.whiteColor),
                           ),
                         ],
@@ -68,7 +76,9 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
                               .copyWith(color: AppColor.blackColor),
                         ),
                         Text(
-                          "+92123456789",
+                          widget.invoiceModel?.saleInvoice![0].iClient
+                                  ?.pocPhone ??
+                              "",
                           style: AppTextStyles.smallBold
                               .copyWith(color: AppColor.whiteColor),
                         ),
@@ -89,97 +99,14 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
                   child: Column(
                     children: [
                       SizedBox(height: 30.h),
-                      Container(
-                        padding: EdgeInsets.all(20.h),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColor.greyColor),
-                            color: AppColor.whiteColor),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  '1233444234567',
-                                  style: AppTextStyles.small
-                                      .copyWith(color: AppColor.blackColor),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Iphone 13 pro 256GB RED',
-                                  style: AppTextStyles.small
-                                      .copyWith(color: AppColor.blackColor),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 20.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '',
-                                  style: AppTextStyles.smallBold
-                                      .copyWith(color: AppColor.blackColor),
-                                ),
-                                Text(
-                                  'MMK:25,76890',
-                                  style: AppTextStyles.smallBold
-                                      .copyWith(color: AppColor.blackColor),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30.h),
-                      Container(
-                        padding: EdgeInsets.all(20.h),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColor.greyColor),
-                            color: AppColor.whiteColor),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  '1233444234567',
-                                  style: AppTextStyles.small
-                                      .copyWith(color: AppColor.blackColor),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Iphone 13 pro 256GB RED',
-                                  style: AppTextStyles.small
-                                      .copyWith(color: AppColor.blackColor),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 20.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '900008*2',
-                                  style: AppTextStyles.smallBold
-                                      .copyWith(color: AppColor.blackColor),
-                                ),
-                                Text(
-                                  'MMK:25,76890',
-                                  style: AppTextStyles.smallBold
-                                      .copyWith(color: AppColor.blackColor),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: widget.invoiceModel!.saleInvoice![0]
+                              .saleInvoice!.length,
+                          itemBuilder: (context, index) {
+                            return getSingleProduct(widget.invoiceModel!
+                                .saleInvoice![0].saleInvoice![index]);
+                          }),
                       SizedBox(height: 30.h),
                       const Divider(color: AppColor.blackColor),
                       Row(
@@ -188,32 +115,14 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
                               flex: 3,
                               child: Text(
                                 'Payment Method:',
-                                style: AppTextStyles.mediumBold
+                                style: AppTextStyles.smallBold
                                     .copyWith(color: AppColor.blackColor),
                               )),
                           Spacer(),
                           Expanded(
-                              flex: 3,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const Flexible(
-                                    child: SvgViewer(
-                                      svgPath: 'assets/icons/icon-cash.svg',
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                  ),
-                                  SizedBox(width: 50.w),
-                                  Flexible(
-                                    child: Text(
-                                      'Cash',
-                                      style: AppTextStyles.mediumBold
-                                          .copyWith(color: AppColor.blackColor),
-                                    ),
-                                  )
-                                ],
-                              ))
+                            flex: 3,
+                            child: getPaymentMethodIcName(widget.invoiceModel),
+                          )
                         ],
                       ),
                       SizedBox(height: 20.h),
@@ -235,7 +144,11 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      '2,75,999',
+                                      (double.parse(widget
+                                                  .invoiceModel!.discount!) +
+                                              double.parse(
+                                                  widget.invoiceModel!.amount!))
+                                          .toString(),
                                       style: AppTextStyles.medium
                                           .copyWith(color: AppColor.blackColor),
                                     ),
@@ -263,7 +176,7 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      '50,000',
+                                      widget.invoiceModel!.discount!.toString(),
                                       style: AppTextStyles.medium
                                           .copyWith(color: AppColor.blackColor),
                                     ),
@@ -291,7 +204,7 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      '27,0000',
+                                      widget.invoiceModel!.amount!,
                                       style: AppTextStyles.largeBold
                                           .copyWith(color: AppColor.blackColor),
                                     ),
@@ -348,4 +261,120 @@ class _InvoiceNewScreenState extends State<InvoiceNewScreen> {
       ],
     );
   }
+
+  getPaymentMethodIcName(InvoiceSaleModel? invoiceModel) {
+    switch (invoiceModel!.paymentMethod!) {
+      case 'cs':
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Flexible(
+              child: SvgViewer(
+                svgPath: 'assets/icons/icon-cash.svg',
+                width: 20,
+                height: 20,
+              ),
+            ),
+            SizedBox(width: 50.w),
+            Flexible(
+              child: Text(
+                'Cash',
+                style: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor),
+              ),
+            )
+          ],
+        );
+      case 'cc':
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Flexible(
+              child: SvgViewer(
+                svgPath: 'assets/icons/icon-credit-card.svg',
+                width: 20,
+                height: 20,
+              ),
+            ),
+            SizedBox(width: 50.w),
+            Flexible(
+              child: Text(
+                'Credit Card',
+                style: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor),
+              ),
+            )
+          ],
+        );
+      case 'bt':
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Flexible(
+              child: SvgViewer(
+                svgPath: 'assets/icons/icon-bank.svg',
+                width: 20,
+                height: 20,
+              ),
+            ),
+            SizedBox(width: 50.w),
+            Flexible(
+              child: Text(
+                'Bank Transfer',
+                style: AppTextStyles.mediumBold
+                    .copyWith(color: AppColor.blackColor),
+              ),
+            )
+          ],
+        );
+    }
+  }
+}
+
+getSingleProduct(SubSaleInvoice saleInvoice) {
+  return Container(
+    padding: EdgeInsets.all(20.h),
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColor.greyColor),
+        color: AppColor.whiteColor),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              saleInvoice.iProductItem!.iProduct!.shortCode.toString(),
+              style: AppTextStyles.small.copyWith(color: AppColor.blackColor),
+            )
+          ],
+        ),
+        Row(
+          children: [
+            Text(
+              saleInvoice.iProductItem!.iProduct!.name.toString(),
+              style: AppTextStyles.small.copyWith(color: AppColor.blackColor),
+            )
+          ],
+        ),
+        SizedBox(height: 20.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              saleInvoice.qty! > 1
+                  ? '${saleInvoice.price!} x ${saleInvoice.qty!}'
+                  : "${saleInvoice.price!}",
+              style:
+                  AppTextStyles.smallBold.copyWith(color: AppColor.blackColor),
+            ),
+            Text(
+              'MMK: ${saleInvoice.price!}',
+              style:
+                  AppTextStyles.smallBold.copyWith(color: AppColor.blackColor),
+            )
+          ],
+        ),
+      ],
+    ),
+  );
 }

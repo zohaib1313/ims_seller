@@ -50,7 +50,7 @@ class AddNewCustomerViewModel extends ChangeNotifier {
             apiFunction: addNewUser)
         .then((response) {
       AppPopUps().dissmissDialog();
-
+      resetState();
       completion();
     }).catchError((error) {
       print("error=  ${error.toString()}");
