@@ -59,6 +59,20 @@ class APIRoute implements APIRouteConfigurable {
           queryParameters: body,
           method: APIMethod.get,
         );
+      case APIType.getPaymentMethods:
+        return RequestOptions(
+          path: ApiConstants.getPaymentMethods,
+          headers: headers,
+          data: body,
+          method: APIMethod.get,
+        );
+      case APIType.getNotificationMethods:
+        return RequestOptions(
+          path: ApiConstants.getNotificationMethods,
+          headers: headers,
+          data: body,
+          method: APIMethod.get,
+        );
       default:
         return RequestOptions(
           path: ApiConstants.loginUser,

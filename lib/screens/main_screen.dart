@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
-import 'package:ims_seller/screens/add_new_product_screen.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
 import 'package:ims_seller/screens/sale_invoice_screen.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
@@ -40,14 +39,14 @@ class MainScreen extends StatelessWidget {
                     Navigator.of(myContext!).pushNamed(AddNewCustomer.id);
                   },
                 ),
-                ListTile(
-                  title: const Text("Add Product"),
-                  trailing: const Icon(Icons.arrow_forward),
-                  onTap: () {
-                    Navigator.of(myContext!).pop();
-                    Navigator.of(myContext!).pushNamed(AddNewProductScreen.id);
-                  },
-                ),
+                // ListTile(
+                //   title: const Text("Add Product"),
+                //   trailing: const Icon(Icons.arrow_forward),
+                //   onTap: () {
+                //     Navigator.of(myContext!).pop();
+                //     Navigator.of(myContext!).pushNamed(AddNewProductScreen.id);
+                //   },
+                // ),
                 ListTile(
                   title: const Text("Logout"),
                   trailing: const Icon(Icons.logout),

@@ -3,6 +3,7 @@ import 'package:ims_seller/dio_network/decodable.dart';
 class ProductDetailScannedModel implements Decodable {
   String? imeiNumber;
   String? branchId;
+  int _localQty = 1;
   ProductDetail? productDetail;
 
   ProductDetailScannedModel(
@@ -34,6 +35,12 @@ class ProductDetailScannedModel implements Decodable {
         ? ProductDetail.fromJson(json['product_detail'])
         : null;
     return this;
+  }
+
+  int get localQty => _localQty;
+
+  set localQty(int value) {
+    _localQty = value;
   }
 }
 

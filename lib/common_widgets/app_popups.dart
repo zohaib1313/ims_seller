@@ -259,6 +259,48 @@ class AppPopUps {
       ),
     );
   }
+
+  static Future<void> displayTextInputDialog(
+      {onSubmit,
+      required String title,
+      required String message,
+      required String hint}) {
+    TextEditingController controller = TextEditingController();
+    return showDialog(
+        context: myContext!,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              title,
+              style:
+                  AppTextStyles.smallBold.copyWith(color: AppColor.blackColor),
+            ),
+            content: TextField(
+              controller: controller,
+              decoration: InputDecoration(hintText: hint),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                child: const Text('CANCEL'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: const Text('OK'),
+                onPressed: () {
+                  onSubmit(controller.text);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
 }
 
 enum ErrorType { ERROR, WARNING }

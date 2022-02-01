@@ -16,6 +16,15 @@ class SearchCustomerViewModel extends ChangeNotifier {
   StreamController<List<SearchResultModel>> streamController =
       StreamController.broadcast();
 
+  SearchResultModel? _selectedUser;
+
+  SearchResultModel? get selectedUser => _selectedUser;
+
+  set selectedUser(SearchResultModel? value) {
+    _selectedUser = value;
+    notifyListeners();
+  }
+
   Stream<List<SearchResultModel>> getSearchResult() {
     String phone = '';
 

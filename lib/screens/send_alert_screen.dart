@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/styles.dart';
+import 'package:ims_seller/view_models/add_new_product_view_model.dart';
+import 'package:provider/provider.dart';
+
+import '../routes.dart';
+import 'add_new_products/add_new_product_views.dart';
 
 class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
-  const SendAlertInvoiceGeneratedScreen({Key? key}) : super(key: key);
+  SendAlertInvoiceGeneratedScreen() {
+    view.getNotificationMethods();
+  }
+  var view = Provider.of<AddNewProductViewModel>(myContext!, listen: true);
+
   static const id = "invoiceGeneratedAlert";
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -97,39 +109,45 @@ class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 30.h),
                   Center(
-                    child: ListView(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: getSendAlertMethodItem(
-                                  title: 'SMS',
-                                  icon: 'assets/icons/icon-sms.svg',
-                                  isSelected: true),
-                            ),
-                            Expanded(
-                              child: getSendAlertMethodItem(
-                                  title: 'Email',
-                                  icon: 'assets/icons/icon-mail.svg',
-                                  isSelected: false),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: getSendAlertMethodItem(
-                                  title: 'Print',
-                                  icon: 'assets/icons/icon-printer.svg',
-                                  isSelected: false),
-                            ),
-                            const Spacer(),
-                          ],
-                        ),
-                      ],
-                    ),
+                    child: StreamBuilder(
+                        stream: view.notificationMethodStream.stream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<ModelMethods>> snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(snapshot.error.toString()),
+                            );
+                          } else if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasData &&
+                              snapshot.data != null) {
+                            var list = snapshot.data!;
+                            List<Widget> listOfWidget = [];
+
+                            for (var element in list) {
+                              listOfWidget.add(
+                                getNotificationMethod(
+                                    enabled: element.active ?? true,
+                                    title: element.name ?? "-",
+                                    icon: getIcon(element.id ?? "sms"),
+                                    notificationMethodType:
+                                        getType(element.id ?? "sms")),
+                              );
+                            }
+                            return StaggeredGrid.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 2,
+                              crossAxisSpacing: 2,
+                              children: listOfWidget,
+                            );
+                          } else {
+                            return const Center(
+                              child: Text("No data found"),
+                            );
+                          }
+                        }),
                   ),
                   SizedBox(height: 20.h),
                   Button(
@@ -199,4 +217,151 @@ class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+selectPaymentView() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "Select Payment",
+        style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
+      ),
+      SizedBox(height: 20.h),
+      Center(
+        child: StreamBuilder(
+            stream: view.notificationMethodStream.stream,
+            builder: (BuildContext context,
+                AsyncSnapshot<List<ModelMethods>> snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(snapshot.error.toString()),
+                );
+              } else if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasData && snapshot.data != null) {
+                var list = snapshot.data!;
+                List<Widget> listOfWidget = [];
+
+                for (var element in list) {
+                  listOfWidget.add(
+                    getNotificationMethod(
+                        enabled: element.active ?? true,
+                        title: element.name ?? "-",
+                        icon: getIcon(element.id ?? "sms"),
+                        notificationMethodType: getType(element.id ?? "sms")),
+                  );
+                }
+                return StaggeredGrid.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 2,
+                  crossAxisSpacing: 2,
+                  children: listOfWidget,
+                );
+              } else {
+                return const Center(
+                  child: Text("No data found"),
+                );
+              }
+            }),
+      ),
+      SizedBox(height: 20.h),
+    ],
+  );
+}
+
+getType(String id) {
+  switch (id) {
+    case 'sms':
+      return NotificationMethods.sms;
+    case 'email':
+      return NotificationMethods.email;
+
+    case 'print':
+      return NotificationMethods.print;
+  }
+}
+
+getIcon(String id) {
+  switch (id) {
+    case 'sms':
+      return 'assets/icons/icon-sms.svg';
+    case 'email':
+      return 'assets/icons/icon-mail.svg';
+    case 'print':
+      return 'assets/icons/icon-printer.svg';
+  }
+}
+
+getNotificationMethod(
+    {required String title,
+    required String icon,
+    required NotificationMethods notificationMethodType,
+    required bool enabled}) {
+  return AbsorbPointer(
+    absorbing: !enabled,
+    child: GestureDetector(
+      onTap: () {
+        view.updateNotificationMethodTypes(notificationMethodType);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: enabled ? AppColor.whiteColor : AppColor.alphaGrey,
+            border: Border.all(
+                color: !enabled
+                    ? AppColor.alphaGrey
+                    : (view.selectedNotificationMethods
+                            .contains(notificationMethodType)
+                        ? AppColor.blueColor
+                        : AppColor.greyColor))),
+        padding: EdgeInsets.all(20.r),
+        margin: EdgeInsets.all(50.r),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CircleAvatar(
+                  backgroundColor: !enabled
+                      ? AppColor.alphaGrey
+                      : (view.selectedNotificationMethods
+                              .contains(notificationMethodType)
+                          ? AppColor.blueColor
+                          : AppColor.whiteColor),
+                  child: const Icon(
+                    Icons.check,
+                    size: 14,
+                    color: AppColor.whiteColor,
+                  ),
+                  maxRadius: 10,
+                )
+              ],
+            ),
+            SvgViewer(
+                svgPath: icon,
+                color: view.selectedNotificationMethods
+                        .contains(notificationMethodType)
+                    ? AppColor.blueColor
+                    : AppColor.blackColor),
+            Text(
+              title,
+              style: AppTextStyles.mediumBold.copyWith(
+                  color: view.selectedNotificationMethods
+                          .contains(notificationMethodType)
+                      ? AppColor.blueColor
+                      : AppColor.blackColor),
+            ),
+            SizedBox(height: 20.h)
+          ],
+        ),
+      ),
+    ),
+  );
 }

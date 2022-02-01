@@ -263,12 +263,14 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
   getSearchItem(SearchResultModel user) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  AddNewProductScreen.user(modelUser: user)),
-        );
+        view.selectedUser = user;
+        Navigator.of(myContext!).pushNamed(AddNewProductScreen.id);
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (BuildContext context) =>
+        //           AddNewProductScreen.user(modelUser: user)),
+        // );
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

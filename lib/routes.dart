@@ -36,9 +36,9 @@ class RoutesAndNavigation {
     SearchCustomerScreen.id: (context) => SearchCustomerScreen(),
     AddNewCustomer.id: (context) => AddNewCustomer(),
     AddNewProductScreen.id: (context) => AddNewProductScreen(),
-    InvoiceSummaryScreen.id: (context) => const InvoiceSummaryScreen(),
+    InvoiceSummaryScreen.id: (context) => InvoiceSummaryScreen(),
     SendAlertInvoiceGeneratedScreen.id: (context) =>
-        const SendAlertInvoiceGeneratedScreen(),
+        SendAlertInvoiceGeneratedScreen(),
     SuccessScreen.id: (context) => SuccessScreen(""),
   };
 

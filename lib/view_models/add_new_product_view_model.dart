@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -6,7 +9,10 @@ import 'package:ims_seller/dio_network/APis.dart';
 import 'package:ims_seller/dio_network/api_client.dart';
 import 'package:ims_seller/dio_network/api_response.dart';
 import 'package:ims_seller/dio_network/api_route.dart';
+import 'package:ims_seller/dio_network/error_mapper.dart';
+import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/models/product_detail_scanned_model.dart';
+import 'package:ims_seller/models/search_result_model.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/utils/utils.dart';
 
@@ -14,9 +20,22 @@ import '../routes.dart';
 
 class AddNewProductViewModel extends ChangeNotifier {
   Views _currentView = Views.scanProduct;
+  SearchResultModel? _modelUser;
 
   PaymentMethod selectedPaymentMethod = PaymentMethod.bank;
-  ProductDetailScannedModel? productDetailScannedModel;
+  var selectedNotificationMethods = <NotificationMethods>{
+    NotificationMethods.sms
+  };
+
+  TextEditingController discountedPriceController =
+      TextEditingController(text: '0.0');
+
+  void changePaymentMethod(PaymentMethod selectedPaymentMethod) {
+    this.selectedPaymentMethod = selectedPaymentMethod;
+    notifyListeners();
+  }
+
+  List<ProductDetailScannedModel?> listOfScannedProducts = [];
 
   Views get currentView => _currentView;
   List<Views> _viewsHistory = [Views.scanProduct];
@@ -49,6 +68,10 @@ class AddNewProductViewModel extends ChangeNotifier {
       resetState();
       return Future.value(true);
     } else {
+      if (_currentView == Views.listProducts) {
+        listOfScannedProducts.clear();
+        calculateTotalAmount();
+      }
       _viewsHistory.removeLast();
       _currentView = _viewsHistory.last;
       notifyListeners();
@@ -80,7 +103,12 @@ class AddNewProductViewModel extends ChangeNotifier {
   void resetState() {
     _viewsHistory = [Views.scanProduct];
     currentView = Views.scanProduct;
-    productDetailScannedModel = null;
+    listOfScannedProducts = [];
+    _totalAmount = 0.0;
+    selectedNotificationMethods = <NotificationMethods>{
+      NotificationMethods.sms
+    };
+    discountedPriceController.clear();
     notifyListeners();
   }
 
@@ -110,7 +138,7 @@ class AddNewProductViewModel extends ChangeNotifier {
     client
         .request(
             route: APIRoute(
-              APIType.getInvoiceDetails,
+              APIType.getProductDetails,
               body: body,
             ),
             create: () => APIResponse<ProductDetailScannedModel>(
@@ -119,7 +147,8 @@ class AddNewProductViewModel extends ChangeNotifier {
         .then((response) {
       AppPopUps().dissmissDialog();
       if (response.response!.data != null) {
-        productDetailScannedModel = response.response!.data;
+        listOfScannedProducts.add(response.response!.data);
+        calculateTotalAmount();
         completion();
       }
     }).catchError((error) {
@@ -133,6 +162,110 @@ class AddNewProductViewModel extends ChangeNotifier {
           });
     });
   }
+
+///////////////////total amount calculatin///////////////////
+  double _totalAmount = 0.0;
+
+  double get totalAmount => _totalAmount;
+
+  set totalAmount(double value) {
+    _totalAmount = value;
+    calculateTotalAmount();
+  }
+
+  void calculateTotalAmount() {
+    _totalAmount = 0.0;
+    if (listOfScannedProducts.isNotEmpty) {
+      for (var element in listOfScannedProducts) {
+        int qty = element?.localQty ?? 0;
+        double price = (double.parse(element?.productDetail?.salePrice ?? "0"));
+        double fullPrice = (price * qty);
+        _totalAmount = _totalAmount + fullPrice;
+
+        // double disPrice = 0.0;
+        // if (discountedPriceController.text.isNotEmpty) {
+        //   disPrice = double.parse(discountedPriceController.text);
+        // }
+        //_totalAmount = _totalAmount - disPrice;
+      }
+    }
+    refresh();
+  }
+
+  StreamController<List<ModelMethods>> paymentListStream =
+      StreamController.broadcast();
+  StreamController<List<ModelMethods>> notificationMethodStream =
+      StreamController.broadcast();
+
+  Stream<List<ModelMethods>> getPaymentMethods() {
+    Map<String, dynamic> body = {};
+    var client = APIClient(isCache: false);
+    client
+        .request(
+            route: APIRoute(
+              APIType.getPaymentMethods,
+              body: body,
+            ),
+            create: () =>
+                APIResponse<ModelMethodsList>(create: () => ModelMethodsList()),
+            apiFunction: getPaymentMethods)
+        .then((response) {
+      if (response.response!.data != null) {
+        paymentListStream.sink.add(response.response!.data!.modelMethodList);
+      }
+    }).catchError((error) {
+      printWrapped("error= " + error.toString());
+      paymentListStream.addError(
+          error is DioError ? ErrorMapper.dioError(error) : error.toString());
+    });
+    return paymentListStream.stream;
+  }
+
+  Stream<List<ModelMethods>> getNotificationMethods() {
+    Map<String, dynamic> body = {};
+    var client = APIClient(isCache: false);
+    client
+        .request(
+            route: APIRoute(
+              APIType.getNotificationMethods,
+              body: body,
+            ),
+            create: () =>
+                APIResponse<ModelMethodsList>(create: () => ModelMethodsList()),
+            apiFunction: getPaymentMethods)
+        .then((response) {
+      if (response.response!.data != null) {
+        notificationMethodStream.sink
+            .add(response.response!.data!.modelMethodList);
+      }
+    }).catchError((error) {
+      printWrapped("error= " + error.toString());
+      notificationMethodStream.addError(
+          error is DioError ? ErrorMapper.dioError(error) : error.toString());
+    });
+    return notificationMethodStream.stream;
+  }
+
+  SearchResultModel? get modelUser => _modelUser;
+
+  set modelUser(SearchResultModel? value) {
+    _modelUser = value;
+    notifyListeners();
+  }
+
+  void refresh() {
+    notifyListeners();
+  }
+
+  void updateNotificationMethodTypes(
+      NotificationMethods notificationMethodType) {
+    if (selectedNotificationMethods.contains(notificationMethodType)) {
+      selectedNotificationMethods.remove(notificationMethodType);
+    } else {
+      selectedNotificationMethods.add(notificationMethodType);
+    }
+    notifyListeners();
+  }
 }
 
 enum Views {
@@ -143,3 +276,4 @@ enum Views {
 }
 
 enum PaymentMethod { bank, cash, creditCard }
+enum NotificationMethods { sms, email, print }
