@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,8 +8,17 @@ import 'package:ims_seller/screens/splash_screen.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:provider/provider.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (_, __, ___) => true;
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
   await UserDefaults.getPref();
   runApp(const MyApp());
 }
@@ -38,11 +49,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return ScreenUtilInit(
       designSize: const Size(1920, 1080),
       builder: () => MultiProvider(
-        providers: RoutesAndNavigation().multiProviders,
+        providers: multiProviders,
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           initialRoute: SplashScreen.id,
-          routes: RoutesAndNavigation().routes,
+          routes: routes,
           navigatorKey: navigatorKey,
           theme: ThemeData(textTheme: GoogleFonts.ibmPlexSansTextTheme()),
         ),

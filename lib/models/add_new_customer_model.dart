@@ -1,6 +1,6 @@
 import 'package:ims_seller/dio_network/decodable.dart';
 
-class AddNewCustomerModel implements Decodable {
+class CustomerModel implements Decodable {
   int? id;
   String? name;
   String? phone;
@@ -9,7 +9,7 @@ class AddNewCustomerModel implements Decodable {
   String? city;
   String? address;
 
-  AddNewCustomerModel(
+  CustomerModel(
       {this.id,
       this.name,
       this.phone,
@@ -18,7 +18,7 @@ class AddNewCustomerModel implements Decodable {
       this.city,
       this.address});
 
-  AddNewCustomerModel.fromJson(Map<String, dynamic> json) {
+  CustomerModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     phone = json['phone'];

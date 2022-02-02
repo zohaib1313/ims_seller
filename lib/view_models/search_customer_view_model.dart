@@ -7,25 +7,26 @@ import 'package:ims_seller/dio_network/api_client.dart';
 import 'package:ims_seller/dio_network/api_response.dart';
 import 'package:ims_seller/dio_network/api_route.dart';
 import 'package:ims_seller/dio_network/error_mapper.dart';
+import 'package:ims_seller/models/add_new_customer_model.dart';
 import 'package:ims_seller/models/search_result_model.dart';
 import 'package:ims_seller/utils/utils.dart';
 
 class SearchCustomerViewModel extends ChangeNotifier {
   TextEditingController searchTextEditingController = TextEditingController();
 
-  StreamController<List<SearchResultModel>> streamController =
+  StreamController<List<CustomerModel>> streamController =
       StreamController.broadcast();
 
-  SearchResultModel? _selectedUser;
+  CustomerModel? _selectedUser;
 
-  SearchResultModel? get selectedUser => _selectedUser;
+  CustomerModel? get selectedUser => _selectedUser;
 
-  set selectedUser(SearchResultModel? value) {
+  set selectedUser(CustomerModel? value) {
     _selectedUser = value;
     notifyListeners();
   }
 
-  Stream<List<SearchResultModel>> getSearchResult() {
+  Stream<List<CustomerModel>> getSearchResult() {
     String phone = '';
 
     phone = '959${searchTextEditingController.text.toString()}';

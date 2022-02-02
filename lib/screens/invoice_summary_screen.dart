@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +67,10 @@ class InvoiceSummaryScreen extends StatelessWidget {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    editName();
+                                    view.resetState();
+                                    Navigator.of(myContext!)
+                                        .pushReplacementNamed(
+                                            SearchCustomerScreen.id);
                                   },
                                   child: const SvgViewer(
                                       svgPath: 'assets/icons/edit_icon.svg'),
@@ -129,7 +132,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
             shrinkWrap: true,
             physics: BouncingScrollPhysics(),
             children: [
-              productListView(),
+              productListView(view),
               SizedBox(height: 20.h),
               const Divider(color: AppColor.blackColor),
               Row(
@@ -320,7 +323,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
               child: Button(
                 onTap: () {
                   Navigator.of(myContext!)
-                      .pushNamed(SendAlertInvoiceGeneratedScreen.id);
+                      .pushReplacementNamed(SendAlertInvoiceGeneratedScreen.id);
                 },
                 leftPadding: 0,
                 rightPading: 0,
@@ -370,14 +373,14 @@ class InvoiceSummaryScreen extends StatelessWidget {
 }
 
 void editName() {
-  AppPopUps.displayTextInputDialog(
-      title: 'Change name',
-      message: "Enter new name",
-      hint: "New name",
-      onSubmit: (String text) {
-        if (text.isNotEmpty) {
-          view.modelUser!.name = text;
-          view.refresh();
-        }
-      });
+  // AppPopUps.displayTextInputDialog(
+  //     title: 'Change name',
+  //     message: "Enter new name",
+  //     hint: "New name",
+  //     onSubmit: (String text) {
+  //       if (text.isNotEmpty) {
+  //         view.modelUser!.name = text;
+  //         view.refresh();
+  //       }
+  //     });
 }

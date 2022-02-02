@@ -8,15 +8,25 @@ import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../routes.dart';
-import 'add_new_products/add_new_product_views.dart';
 
-class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
-  SendAlertInvoiceGeneratedScreen() {
-    view.getNotificationMethods();
-  }
+class SendAlertInvoiceGeneratedScreen extends StatefulWidget {
+  SendAlertInvoiceGeneratedScreen() {}
+  static const id = "invoiceGeneratedAlert";
+
+  @override
+  State<SendAlertInvoiceGeneratedScreen> createState() =>
+      _SendAlertInvoiceGeneratedScreenState();
+}
+
+class _SendAlertInvoiceGeneratedScreenState
+    extends State<SendAlertInvoiceGeneratedScreen> {
   var view = Provider.of<AddNewProductViewModel>(myContext!, listen: true);
 
-  static const id = "invoiceGeneratedAlert";
+  @override
+  void initState() {
+    super.initState();
+    view.getNotificationMethods();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +139,7 @@ class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
                             for (var element in list) {
                               listOfWidget.add(
                                 getNotificationMethod(
+                                    view: view,
                                     enabled: element.active ?? true,
                                     title: element.name ?? "-",
                                     icon: getIcon(element.id ?? "sms"),
@@ -151,7 +162,9 @@ class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 20.h),
                   Button(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(myContext!);
+                    },
                     width: 750.w,
                     padding: 10.h,
                     postFixIcon: const Icon(
@@ -219,7 +232,7 @@ class SendAlertInvoiceGeneratedScreen extends StatelessWidget {
   }
 }
 
-selectPaymentView() {
+selectPaymentView(view) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,6 +262,7 @@ selectPaymentView() {
                 for (var element in list) {
                   listOfWidget.add(
                     getNotificationMethod(
+                        view: view,
                         enabled: element.active ?? true,
                         title: element.name ?? "-",
                         icon: getIcon(element.id ?? "sms"),
@@ -298,6 +312,7 @@ getIcon(String id) {
 
 getNotificationMethod(
     {required String title,
+    required AddNewProductViewModel view,
     required String icon,
     required NotificationMethods notificationMethodType,
     required bool enabled}) {

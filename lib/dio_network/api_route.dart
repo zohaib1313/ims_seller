@@ -73,6 +73,13 @@ class APIRoute implements APIRouteConfigurable {
           data: body,
           method: APIMethod.get,
         );
+      case APIType.getSalesTarget:
+        return RequestOptions(
+          path: ApiConstants.getSalesTarget,
+          headers: headers,
+          data: body,
+          method: APIMethod.get,
+        );
       default:
         return RequestOptions(
           path: ApiConstants.loginUser,

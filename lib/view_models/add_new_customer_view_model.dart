@@ -45,13 +45,15 @@ class AddNewCustomerViewModel extends ChangeNotifier {
               APIType.addCustomer,
               body: body,
             ),
-            create: () => APIResponse<AddNewCustomerModel>(
-                create: () => AddNewCustomerModel()),
+            create: () =>
+                APIResponse<CustomerModel>(create: () => CustomerModel()),
             apiFunction: addNewUser)
         .then((response) {
       AppPopUps().dissmissDialog();
-      resetState();
-      completion();
+      if (response.response?.data != null) {
+        resetState();
+        completion(response.response!.data!);
+      }
     }).catchError((error) {
       print("error=  ${error.toString()}");
       AppPopUps().dissmissDialog();

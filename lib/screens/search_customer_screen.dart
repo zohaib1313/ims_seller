@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/models/search_result_model.dart';
+import 'package:ims_seller/models/add_new_customer_model.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
-import 'package:ims_seller/screens/add_new_product_screen.dart';
+import 'package:ims_seller/screens/add_new_products/add_new_product_screen.dart';
 import 'package:ims_seller/view_models/search_customer_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class SearchCustomerScreen extends StatefulWidget {
 }
 
 class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
-  Stream<List<SearchResultModel>>? streamSearch;
+  Stream<List<CustomerModel>>? streamSearch;
   var view = Provider.of<SearchCustomerViewModel>(myContext!);
 
   @override
@@ -133,7 +133,7 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
                 child: StreamBuilder(
                     stream: streamSearch,
                     builder: (BuildContext context,
-                        AsyncSnapshot<List<SearchResultModel>> snapshot) {
+                        AsyncSnapshot<List<CustomerModel>> snapshot) {
                       if (snapshot.hasError) {
                         return Center(
                           child: Text(snapshot.error.toString()),
@@ -260,17 +260,16 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
     );
   }
 
-  getSearchItem(SearchResultModel user) {
+  getSearchItem(CustomerModel user) {
     return GestureDetector(
       onTap: () {
-        view.selectedUser = user;
-        Navigator.of(myContext!).pushNamed(AddNewProductScreen.id);
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (BuildContext context) =>
-        //           AddNewProductScreen.user(modelUser: user)),
-        // );
+        view.resetState();
+        Navigator.push(
+          myContext!,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  AddNewProductScreenNew(customerModel: user)),
+        );
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

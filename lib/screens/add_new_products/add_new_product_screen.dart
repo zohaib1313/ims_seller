@@ -1,33 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/screens/add_new_products/add_new_product_views.dart';
+import 'package:ims_seller/models/add_new_customer_model.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
-import 'package:ims_seller/view_models/search_customer_view_model.dart';
 import 'package:provider/provider.dart';
 
-import '../routes.dart';
-import '../styles.dart';
-import 'invoice_summary_screen.dart';
+import '../../routes.dart';
+import '../../styles.dart';
+import '../invoice_summary_screen.dart';
+import '../search_customer_screen.dart';
+import 'add_new_product_views.dart';
 
-class AddNewProductScreen extends StatelessWidget {
-  static const id = 'AddNewProductScreen';
+class AddNewProductScreenNew extends StatefulWidget {
+  CustomerModel customerModel;
+
+  AddNewProductScreenNew({Key? key, required this.customerModel})
+      : super(key: key);
+
+  @override
+  State<AddNewProductScreenNew> createState() => _AddNewProductScreenNewState();
+}
+
+class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
   var view = Provider.of<AddNewProductViewModel>(myContext!, listen: true);
 
-  AddNewProductScreen() {
-    view.modelUser =
-        Provider.of<SearchCustomerViewModel>(myContext!, listen: true)
-            .selectedUser;
-    view.getPaymentMethods();
-    view.getNotificationMethods();
+  @override
+  void initState() {
+    super.initState();
+    view.modelUser = widget.customerModel;
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        return view.goBackwards();
+        return Provider.of<AddNewProductViewModel>(context, listen: false)
+            .goBackwards();
       },
       child: SafeArea(
         child: Scaffold(
@@ -79,7 +87,10 @@ class AddNewProductScreen extends StatelessWidget {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      editName();
+                                      view.resetState();
+                                      Navigator.of(myContext!)
+                                          .pushReplacementNamed(
+                                              SearchCustomerScreen.id);
                                     },
                                     child: const SvgViewer(
                                         svgPath: 'assets/icons/edit_icon.svg'),
@@ -96,7 +107,7 @@ class AddNewProductScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 30.h),
-                        relevantViewReturner(view),
+                        relevantViewReturner(myContext!),
                       ],
                     ),
                   ),
@@ -156,10 +167,13 @@ class AddNewProductScreen extends StatelessWidget {
 
                       view.getProductDetails(
                           completion: () {
+                            print("got product result");
                             if (view.currentView != Views.listProducts) {
+                              print("forward to list products");
                               view.goForwards(Views.listProducts);
-                            } else if (view.currentView ==
-                                Views.listProducts) {}
+                            } else if (view.currentView == Views.listProducts) {
+                              print("current view not list product");
+                            }
                           },
                           code: id);
                     });
@@ -284,30 +298,59 @@ class AddNewProductScreen extends StatelessWidget {
     );
   }
 
-  relevantViewReturner(AddNewProductViewModel view) {
-    switch (view.currentView) {
-      case Views.scanProduct:
-        return scanProductView();
-      case Views.listProducts:
-        return productListView();
-      case Views.selectPayment:
-        return selectPaymentView();
+  Widget relevantViewReturner(context) {
+    print("returning new sceen ${view.currentView.name}");
 
+    switch (Provider.of<AddNewProductViewModel>(context, listen: true)
+        .currentView) {
+      case Views.scanProduct:
+        return scanProductView(view);
+      case Views.listProducts:
+        return productListView(view);
+      case Views.selectPayment:
+        return selectPaymentView(view);
       case Views.bankPaymentDetails:
-        return bankPaymentDetails();
+        return bankPaymentDetails(view);
     }
   }
 
   void editName() {
-    AppPopUps.displayTextInputDialog(
-        title: 'Change name',
-        message: "Enter new name",
-        hint: "New name",
-        onSubmit: (String text) {
-          if (text.isNotEmpty) {
-            view.modelUser!.name = text;
-            view.refresh();
-          }
-        });
+    // AppPopUps.displayTextInputDialog(
+    //     title: 'Change name',
+    //     message: "Enter new name",
+    //     hint: "New name",
+    //     onSubmit: (String text) {
+    //       if (text.isNotEmpty) {
+    //         view.modelUser!.name = text;
+    //         view.refresh();
+    //       }
+    //     });
   }
 }
+
+/*
+class AddNewProductScreen extends StatefulWidget {
+  static var id = "product";
+  CustomerModel customerModel;
+
+  AddNewProductScreen({Key? key, required this.customerModel})
+      : super(key: key);
+
+  @override
+  State<AddNewProductScreen> createState() => _AddNewProductScreenState();
+}
+
+class _AddNewProductScreenState extends State<AddNewProductScreen> {
+  var view = Provider.of<AddNewProductViewModel>(myContext!, listen: true);
+
+  @override
+  void initState() {
+    super.initState();
+    view.modelUser = widget.customerModel;
+    view.getPaymentMethods();
+    view.getNotificationMethods();
+  }
+
+
+}
+*/

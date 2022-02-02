@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/ModelSalesTarget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../routes.dart';
 import '../styles.dart';
 
 class TargetDetailsScreen extends StatefulWidget {
-  const TargetDetailsScreen({Key? key}) : super(key: key);
+  ModelSalesTarget _modelSalesTarget;
+
+  TargetDetailsScreen(this._modelSalesTarget);
+
   static const id = "Target_Details";
 
   @override
@@ -137,7 +141,10 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                                   width: 50.w),
                                                               Expanded(
                                                                   child: Text(
-                                                                "2357,00203",
+                                                                widget
+                                                                    ._modelSalesTarget
+                                                                    .totalSaleAmount
+                                                                    .toString(),
                                                                 maxLines: 1,
                                                                 overflow:
                                                                     TextOverflow
@@ -180,7 +187,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            "Total Amount",
+                                                            "Total Quantity",
                                                             style: AppTextStyles
                                                                 .smallBold
                                                                 .copyWith(
@@ -196,7 +203,10 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                                   width: 50.w),
                                                               Expanded(
                                                                   child: Text(
-                                                                "2357,00203",
+                                                                widget
+                                                                    ._modelSalesTarget
+                                                                    .totalSaleQty
+                                                                    .toString(),
                                                                 maxLines: 1,
                                                                 overflow:
                                                                     TextOverflow
@@ -224,8 +234,13 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                             child: CircularPercentIndicator(
                                           radius: 280.r,
                                           lineWidth: 10.0,
-                                          percent: 0.6,
-                                          center: Text("100% \n Percentage",
+                                          percent: (widget._modelSalesTarget
+                                                      .totalAchivement
+                                                      ?.toDouble() ??
+                                                  0.0) /
+                                              100,
+                                          center: Text(
+                                              "${widget._modelSalesTarget.totalAchivement.toString()}% \n Target",
                                               textAlign: TextAlign.center,
                                               style: AppTextStyles.smallBold
                                                   .copyWith(
@@ -242,12 +257,22 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                             SizedBox(height: 20.h),
                             Expanded(
                               child: ListView.builder(
-                                physics: BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: 10,
-                                itemBuilder: (context, index) =>
-                                    getRowSalesInvoice(),
-                              ),
+                                  physics: BouncingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: widget
+                                          ._modelSalesTarget.targets?.length ??
+                                      0,
+                                  itemBuilder: (context, index) {
+                                    if (widget._modelSalesTarget.targets !=
+                                            null &&
+                                        widget._modelSalesTarget.targets!
+                                            .isNotEmpty) {
+                                      return getRowSalesInvoice(widget
+                                          ._modelSalesTarget.targets![index]);
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
                             )
                           ],
                         )
@@ -257,7 +282,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
     );
   }
 
-  getRowSalesInvoice() {
+  getRowSalesInvoice(Targets target) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 100.w, vertical: 10.h),
       decoration: BoxDecoration(
@@ -270,7 +295,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "IPAD",
+              target.name.toString(),
               style: AppTextStyles.mediumBold.copyWith(
                   color: AppColor.blackColor, fontWeight: FontWeight.bold),
             ),
@@ -289,7 +314,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                             fontWeight: FontWeight.normal),
                       ),
                       Text(
-                        "40",
+                        target.targetAmount.toString(),
                         style: AppTextStyles.smallBold.copyWith(
                             color: AppColor.blackColor,
                             fontSize: 16,
@@ -310,7 +335,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                             fontWeight: FontWeight.normal),
                       ),
                       Text(
-                        "40",
+                        target.achivedAmount.toString(),
                         style: AppTextStyles.mediumBold
                             .copyWith(color: AppColor.blackColor, fontSize: 16),
                       ),
@@ -321,8 +346,8 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                   child: CircularPercentIndicator(
                     radius: 150.r,
                     lineWidth: 5.0,
-                    percent: 0.2,
-                    center: Text("100% \n Percentage",
+                    percent: (target.percentage?.toDouble() ?? 0.0) / 100,
+                    center: Text("${target.percentage}% \n Percentage",
                         textAlign: TextAlign.center,
                         style: AppTextStyles.smallBold
                             .copyWith(color: AppColor.blackColor, fontSize: 8)),

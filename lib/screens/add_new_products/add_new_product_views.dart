@@ -4,15 +4,11 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/models/product_detail_scanned_model.dart';
-import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
-import 'package:provider/provider.dart';
 
 import '../../styles.dart';
 
-var view = Provider.of<AddNewProductViewModel>(myContext!);
-
-scanProductView() {
+scanProductView(view) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +28,8 @@ scanProductView() {
   );
 }
 
-selectPaymentView() {
+selectPaymentView(view) {
+  view.getPaymentMethods();
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,6 +59,7 @@ selectPaymentView() {
                 for (var element in list) {
                   listOfWidget.add(
                     getPaymentMethodItem(
+                        view: view,
                         enabled: element.active ?? true,
                         title: element.name ?? "-",
                         icon: getIcon(element.id ?? "bt"),
@@ -110,6 +108,7 @@ getIcon(String id) {
 
 getPaymentMethodItem(
     {required String title,
+    required AddNewProductViewModel view,
     required String icon,
     required PaymentMethod paymentMethod,
     required bool enabled}) {
@@ -174,7 +173,7 @@ getPaymentMethodItem(
   );
 }
 
-bankPaymentDetails() {
+bankPaymentDetails(view) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,7 +247,7 @@ bankPaymentDetails() {
   );
 }
 
-productListView() {
+productListView(view) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,7 +263,12 @@ productListView() {
           shrinkWrap: true,
           itemCount: view.listOfScannedProducts.length,
           itemBuilder: (context, index) {
-            return getProductBaseOnType(view.listOfScannedProducts[index]!);
+            if (view.listOfScannedProducts != null) {
+              return getProductBaseOnType(
+                  view.listOfScannedProducts[index]!, view);
+            } else {
+              return Container(color: Colors.red);
+            }
           },
         ),
       ),
@@ -273,7 +277,8 @@ productListView() {
   );
 }
 
-getProductBaseOnType(ProductDetailScannedModel product) {
+getProductBaseOnType(
+    ProductDetailScannedModel product, AddNewProductViewModel view) {
   if (product.productDetail!.haveDiffBarcode!) {
     return Container(
       padding: EdgeInsets.all(20.h),
@@ -313,7 +318,7 @@ getProductBaseOnType(ProductDetailScannedModel product) {
                     ),
                     Flexible(
                       child: Text(
-                        product.productDetail?.salePrice ?? "-",
+                        product.productDetail?.retailPrice ?? "-",
                         style: AppTextStyles.mediumBold
                             .copyWith(color: AppColor.blackColor),
                       ),

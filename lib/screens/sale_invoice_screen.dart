@@ -9,8 +9,6 @@ class SaleInvoiceScreen extends StatefulWidget {
   static const id = "newInvoiceScreen";
   InvoiceSaleModel? invoiceModel;
 
-  SaleInvoiceScreen();
-
   SaleInvoiceScreen.invoice({Key? key, required this.invoiceModel})
       : super(key: key);
 

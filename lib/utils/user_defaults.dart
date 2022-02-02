@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:ims_seller/models/signin_model.dart';
+import 'package:ims_seller/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserDefaults {
@@ -61,6 +63,10 @@ class UserDefaults {
   static void saveUserSession(SignInModel signInModel) async {
     String user = json.encode(signInModel.toJson());
     getPref().then((value) => value..setString('userData', user));
+    if (kDebugMode) {
+      printWrapped("user session saved");
+      printWrapped(user.toString());
+    }
   }
 
   static SignInModel? getUserSession() {
@@ -68,6 +74,7 @@ class UserDefaults {
     if (sharedPreferences!.getString('userData') != null) {
       Map json = jsonDecode(sharedPreferences!.getString('userData')!);
       user = SignInModel.fromJson(json);
+      printWrapped(user.toString());
     }
     return user;
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/ModelSalesTarget.dart';
 import 'package:ims_seller/models/invoice_sale_model.dart';
 import 'package:ims_seller/models/model_invoice_merchat.dart';
 import 'package:ims_seller/routes.dart';
@@ -24,23 +25,30 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
-  Stream<List<ModelInvoiceMerchant>>? streamMerchantInvoices;
+  Stream<List<ModelInvoiceMerchant>>? resentSalesInvoicesStream;
+  Stream<ModelSalesTarget>? invoiceTargetStream;
   var view = Provider.of<DashboardViewModel>(myContext!);
 
   @override
   void initState() {
     super.initState();
-
-    streamMerchantInvoices = view.getMerchantInvoiceList();
+    invoiceTargetStream = view.getInvoiceTargets();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: AppColor.whiteColor,
-          body: Builder(
-              builder: (cntx) => Container(
+        backgroundColor: AppColor.whiteColor,
+        body: Builder(
+          builder: (cntx) => StreamBuilder(
+              stream: invoiceTargetStream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<ModelSalesTarget> snapshot) {
+                resentSalesInvoicesStream = view.getMerchantInvoiceList();
+                if (snapshot.data != null) {
+                  var data = snapshot.data!;
+                  return Container(
                     color: AppColor.blackColor,
                     child: Stack(
                       children: [
@@ -152,7 +160,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 width: 50.w),
                                                             Expanded(
                                                                 child: Text(
-                                                              "2357,00203",
+                                                              data.totalSaleAmount
+                                                                  .toString(),
                                                               maxLines: 1,
                                                               overflow:
                                                                   TextOverflow
@@ -195,7 +204,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          "Total Amount",
+                                                          "Total Quantity",
                                                           style: AppTextStyles
                                                               .smallBold
                                                               .copyWith(
@@ -211,7 +220,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 width: 50.w),
                                                             Expanded(
                                                                 child: Text(
-                                                              "2357,00203",
+                                                              data.totalSaleQty
+                                                                  .toString(),
                                                               maxLines: 1,
                                                               overflow:
                                                                   TextOverflow
@@ -240,8 +250,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           child: CircularPercentIndicator(
                                         radius: 280.r,
                                         lineWidth: 10.0,
-                                        percent: 0.6,
-                                        center: Text("100% \n Percentage",
+                                        percent:
+                                            (data.totalAchivement?.toDouble() ??
+                                                    0.0) /
+                                                100,
+                                        center: Text(
+                                            "${data.totalAchivement.toString()}% \n Target",
                                             textAlign: TextAlign.center,
                                             style: AppTextStyles.smallBold
                                                 .copyWith(
@@ -255,108 +269,149 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               ),
                             ),
                             SizedBox(height: 20.h),
-                            MyTextField(
-                              enable: false,
-                              focusBorderColor: AppColor.greyColor,
-                              hintText: 'Total Sales',
-                              sufixLabel: '14',
-                              prefixIcon: 'assets/icons/icon-invoice.svg',
-                            ),
-                            SizedBox(height: 20.h),
-                            MyTextField(
-                              enable: false,
-                              focusBorderColor: AppColor.greyColor,
-                              hintText: 'Total Discounts',
-                              sufixLabel: '34000',
-                              prefixIcon: 'assets/icons/icon-offer.svg',
-                            ),
-                            SizedBox(height: 20.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Button(
-                                    onTap: () {},
-                                    textColor: AppColor.whiteColor,
-                                    buttonText: 'Stock Checking',
-                                    color: AppColor.blueColor,
-                                    textStyle: AppTextStyles.smallBold
-                                        .copyWith(fontSize: 11),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Button(
-                                    buttonText: 'Search Customer',
-                                    color: AppColor.greenColor,
-                                    textStyle: AppTextStyles.smallBold
-                                        .copyWith(fontSize: 11),
-                                    onTap: () {
-                                      Navigator.of(myContext!)
-                                          .pushNamed(SearchCustomerScreen.id);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 20.h),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 100.w),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Recent Sale Invoices",
-                                    style: AppTextStyles.mediumBold
-                                        .copyWith(color: AppColor.blackColor),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(myContext!)
-                                          .pushNamed(TargetDetailsScreen.id);
-                                    },
-                                    child: Text(
-                                      "View all",
-                                      style: AppTextStyles.mediumBold
-                                          .copyWith(color: AppColor.blueColor),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
                             Expanded(
-                              child: StreamBuilder(
-                                  stream: streamMerchantInvoices,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<List<ModelInvoiceMerchant>>
-                                          snapshot) {
-                                    if (snapshot.data != null) {
-                                      var list = snapshot.data!;
-                                      return ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: list.length,
-                                        itemBuilder: (context, index) =>
-                                            getRowSalesInvoice(
-                                                invoiceMerchant: list[index]),
-                                      );
-                                    } else if (snapshot.error != null) {
-                                      return Center(
-                                          child: Text(
-                                        snapshot.error.toString(),
-                                        style: AppTextStyles.medium.copyWith(
-                                            color: AppColor.blackColor),
-                                      ));
-                                    } else {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                  }),
-                            ),
+                              child: SingleChildScrollView(
+                                physics: BouncingScrollPhysics(),
+                                child: Column(
+                                  children: [
+                                    MyTextField(
+                                      enable: false,
+                                      focusBorderColor: AppColor.greyColor,
+                                      hintText: 'Total Sales',
+                                      sufixLabel:
+                                          '${data.totalSale.toString()}',
+                                      prefixIcon:
+                                          'assets/icons/icon-invoice.svg',
+                                    ),
+                                    SizedBox(height: 20.h),
+                                    MyTextField(
+                                      enable: false,
+                                      focusBorderColor: AppColor.greyColor,
+                                      hintText: 'Total Discounts',
+                                      sufixLabel:
+                                          '${data.totalDiscount.toString()}',
+                                      prefixIcon: 'assets/icons/icon-offer.svg',
+                                    ),
+                                    SizedBox(height: 20.h),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Button(
+                                            onTap: () {},
+                                            textColor: AppColor.whiteColor,
+                                            buttonText: 'Stock Checking',
+                                            color: AppColor.blueColor,
+                                            textStyle: AppTextStyles.smallBold
+                                                .copyWith(fontSize: 11),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Button(
+                                            buttonText: 'Search Customer',
+                                            color: AppColor.greenColor,
+                                            textStyle: AppTextStyles.smallBold
+                                                .copyWith(fontSize: 11),
+                                            onTap: () {
+                                              Navigator.of(myContext!)
+                                                  .pushNamed(
+                                                      SearchCustomerScreen.id);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20.h),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 100.w),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Recent Sale Invoices",
+                                            style: AppTextStyles.mediumBold
+                                                .copyWith(
+                                                    color: AppColor.blackColor),
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      TargetDetailsScreen(data),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              "View all",
+                                              style: AppTextStyles.mediumBold
+                                                  .copyWith(
+                                                      color:
+                                                          AppColor.blueColor),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 20.h),
+                                    StreamBuilder(
+                                        stream: resentSalesInvoicesStream,
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<
+                                                    List<ModelInvoiceMerchant>>
+                                                snapshot) {
+                                          if (snapshot.data != null) {
+                                            var list = snapshot.data!;
+                                            return ListView.builder(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: list.length,
+                                              itemBuilder: (context, index) =>
+                                                  getRowSalesInvoice(
+                                                      invoiceMerchant:
+                                                          list[index]),
+                                            );
+                                          } else if (snapshot.error != null) {
+                                            return Center(
+                                                child: Text(
+                                              snapshot.error.toString(),
+                                              style: AppTextStyles.medium
+                                                  .copyWith(
+                                                      color:
+                                                          AppColor.blackColor),
+                                            ));
+                                          } else {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+                                        }),
+                                  ],
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ],
                     ),
-                  ))),
+                  );
+                } else if (snapshot.error != null) {
+                  return Center(
+                      child: Text(
+                    snapshot.error.toString(),
+                    style: AppTextStyles.medium
+                        .copyWith(color: AppColor.blackColor),
+                  ));
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              }),
+        ),
+      ),
     );
   }
 

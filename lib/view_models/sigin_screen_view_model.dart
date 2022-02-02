@@ -43,6 +43,7 @@ class SignInViewModel extends ChangeNotifier {
           onButtonPressed: () {
             Navigator.of(myContext!).pop();
           });
+      return Future.value(null);
     });
   }
 

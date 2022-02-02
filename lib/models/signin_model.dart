@@ -57,6 +57,11 @@ class SignInModel implements Decodable {
         : null;
     return this;
   }
+
+  @override
+  String toString() {
+    return 'SignInModel{token: $token, userId: $userId, email: $email, username: $username, firstName: $firstName, lastName: $lastName, branchDetail: $branchDetail}';
+  }
 }
 
 class BranchDetail {
@@ -97,5 +102,10 @@ class BranchDetail {
     data['city'] = this.city;
     data['address'] = this.address;
     return data;
+  }
+
+  @override
+  String toString() {
+    return 'BranchDetail{id: $id, name: $name, logo: $logo, phone: $phone, email: $email, city: $city, address: $address}';
   }
 }

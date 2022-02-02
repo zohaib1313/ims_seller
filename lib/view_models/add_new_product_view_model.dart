@@ -10,9 +10,9 @@ import 'package:ims_seller/dio_network/api_client.dart';
 import 'package:ims_seller/dio_network/api_response.dart';
 import 'package:ims_seller/dio_network/api_route.dart';
 import 'package:ims_seller/dio_network/error_mapper.dart';
+import 'package:ims_seller/models/add_new_customer_model.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/models/product_detail_scanned_model.dart';
-import 'package:ims_seller/models/search_result_model.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/utils/utils.dart';
 
@@ -20,15 +20,23 @@ import '../routes.dart';
 
 class AddNewProductViewModel extends ChangeNotifier {
   Views _currentView = Views.scanProduct;
-  SearchResultModel? _modelUser;
+  CustomerModel? _modelUser;
 
-  PaymentMethod selectedPaymentMethod = PaymentMethod.bank;
+  PaymentMethod selectedPaymentMethod = PaymentMethod.cash;
   var selectedNotificationMethods = <NotificationMethods>{
     NotificationMethods.sms
   };
 
   TextEditingController discountedPriceController =
       TextEditingController(text: '0.0');
+  String _nextTitle = "next";
+
+  String get nextTitle => _nextTitle;
+
+  set nextTitle(String value) {
+    _nextTitle = value;
+    notifyListeners();
+  }
 
   void changePaymentMethod(PaymentMethod selectedPaymentMethod) {
     this.selectedPaymentMethod = selectedPaymentMethod;
@@ -56,9 +64,9 @@ class AddNewProductViewModel extends ChangeNotifier {
   }
 
   void goForwards(Views view) {
+    print("going forward to ${view.name}");
     _viewsHistory.add(view);
     currentView = view;
-    notifyListeners();
   }
 
   Future<bool> goBackwards() {
@@ -90,7 +98,7 @@ class AddNewProductViewModel extends ChangeNotifier {
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      barcodeScanRes = '888462108416';
+      // barcodeScanRes = '888462108416';
 
       ///temporary todo
     } on PlatformException {
@@ -147,6 +155,7 @@ class AddNewProductViewModel extends ChangeNotifier {
         .then((response) {
       AppPopUps().dissmissDialog();
       if (response.response!.data != null) {
+        print("data not null");
         listOfScannedProducts.add(response.response!.data);
         calculateTotalAmount();
         completion();
@@ -178,7 +187,8 @@ class AddNewProductViewModel extends ChangeNotifier {
     if (listOfScannedProducts.isNotEmpty) {
       for (var element in listOfScannedProducts) {
         int qty = element?.localQty ?? 0;
-        double price = (double.parse(element?.productDetail?.salePrice ?? "0"));
+        double price =
+            (double.parse(element?.productDetail?.salePrice ?? "0.0"));
         double fullPrice = (price * qty);
         _totalAmount = _totalAmount + fullPrice;
 
@@ -246,11 +256,11 @@ class AddNewProductViewModel extends ChangeNotifier {
     return notificationMethodStream.stream;
   }
 
-  SearchResultModel? get modelUser => _modelUser;
+  CustomerModel? get modelUser => _modelUser;
 
-  set modelUser(SearchResultModel? value) {
+  set modelUser(CustomerModel? value) {
     _modelUser = value;
-    notifyListeners();
+    // notifyListeners();
   }
 
   void refresh() {

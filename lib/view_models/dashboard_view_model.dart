@@ -8,6 +8,7 @@ import 'package:ims_seller/dio_network/api_client.dart';
 import 'package:ims_seller/dio_network/api_response.dart';
 import 'package:ims_seller/dio_network/api_route.dart';
 import 'package:ims_seller/dio_network/error_mapper.dart';
+import 'package:ims_seller/models/ModelSalesTarget.dart';
 import 'package:ims_seller/models/invoice_sale_model.dart';
 import 'package:ims_seller/models/model_invoice_merchat.dart';
 import 'package:ims_seller/utils/utils.dart';
@@ -73,5 +74,32 @@ class DashboardViewModel extends ChangeNotifier {
             AppPopUps().dissmissDialog();
           });
     });
+  }
+
+  StreamController<ModelSalesTarget> salesTargetInvoice =
+      StreamController.broadcast();
+
+  Stream<ModelSalesTarget> getInvoiceTargets() {
+    Map<String, dynamic> body = {};
+    var client = APIClient(isCache: false);
+    client
+        .request(
+            route: APIRoute(
+              APIType.getSalesTarget,
+              body: body,
+            ),
+            create: () =>
+                APIResponse<ModelSalesTarget>(create: () => ModelSalesTarget()),
+            apiFunction: getInvoiceTargets)
+        .then((response) {
+      if (response.response!.data != null) {
+        salesTargetInvoice.sink.add(response.response!.data!);
+      }
+    }).catchError((error) {
+      printWrapped("error= " + error.toString());
+      salesTargetInvoice.addError(
+          error is DioError ? ErrorMapper.dioError(error) : error.toString());
+    });
+    return salesTargetInvoice.stream;
   }
 }

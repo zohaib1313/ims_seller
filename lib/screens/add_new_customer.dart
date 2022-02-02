@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/screens/success_screen.dart';
+import 'package:ims_seller/models/add_new_customer_model.dart';
 import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../routes.dart';
 import '../styles.dart';
+import 'add_new_products/add_new_product_screen.dart';
 
 class AddNewCustomer extends StatelessWidget {
   AddNewCustomer({Key? key}) : super(key: key);
@@ -134,14 +135,13 @@ class AddNewCustomer extends StatelessWidget {
                             onTap: () {
                               if (view.formKey.currentState!.validate()) {
                                 view.addNewUser(
-                                  completion: () {
-                                    Navigator.pushReplacement(
+                                  completion: (CustomerModel user) {
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            SuccessScreen(
-                                                'User added successfully'),
-                                      ),
+                                          builder: (BuildContext context) =>
+                                              AddNewProductScreenNew(
+                                                  customerModel: user)),
                                     );
                                   },
                                 );

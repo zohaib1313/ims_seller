@@ -94,23 +94,22 @@ class APIClient implements BaseAPIClient {
       print("error in response ${error.toString()}");
 
       if ((error as DioError).type == DioErrorType.connectTimeout) {
-        if (kDebugMode) {
-          print('Connection TimeOut ${config.path}');
-        }
+        print('Connection TimeOut ${config.path}');
+        if (kDebugMode) {}
 
         throw error;
       }
     });
 
     final responseData = response.data;
-    if (kDebugMode) {
-      print('\n*****response CODE=*******\n' +
-          response.statusCode.toString() +
-          " \n******************\n");
-      printWrapped('\n************response Data=***********\n' +
-          response.data.toString() +
-          " \n**************\n");
-    }
+
+    print('\n*****response CODE=*******\n' +
+        response.statusCode.toString() +
+        " \n******************\n");
+    printWrapped('\n************response Data=***********\n' +
+        response.data.toString() +
+        " \n**************\n");
+
     int statusCode = response.statusCode!;
 
     switch (statusCode) {

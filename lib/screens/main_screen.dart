@@ -4,7 +4,6 @@ import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
-import 'package:ims_seller/screens/sale_invoice_screen.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/styles.dart';
@@ -83,8 +82,8 @@ class MainScreen extends StatelessWidget {
                               Padding(
                                 padding:
                                     EdgeInsets.only(top: 20.h, bottom: 20.h),
-                                child: const Text(
-                                  'Hi, Hanna Broun',
+                                child: Text(
+                                  "Hi, ${UserDefaults.getUserSession()?.username ?? ""}",
                                   style: AppTextStyles.largeBold,
                                 ),
                               )
@@ -101,7 +100,7 @@ class MainScreen extends StatelessWidget {
                                 Button(
                                   onTap: () {
                                     Navigator.of(myContext!)
-                                        .pushNamed(SaleInvoiceScreen.id);
+                                        .pushNamed(SearchCustomerScreen.id);
                                   },
                                   textColor: AppColor.whiteColor,
                                   buttonText: 'New Invoice',
