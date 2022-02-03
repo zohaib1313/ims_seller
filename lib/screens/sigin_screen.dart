@@ -63,8 +63,15 @@ class SignInScreen extends StatelessWidget {
                       MyTextField(
                         prefixIcon: AppAssets.passwordIc,
                         hintText: 'Password',
+                        suffixIconWidet: GestureDetector(
+                            onTap: () {
+                              view.hidePassword = !view.hidePassword;
+                            },
+                            child: Icon(view.hidePassword
+                                ? Icons.remove_red_eye_rounded
+                                : Icons.visibility_off_outlined)),
                         controller: view.userPasswordController,
-                        obsecureText: true,
+                        obsecureText: view.hidePassword,
                         validator: (string) {
                           if (string == null || string.isEmpty) {
                             return 'Enter Password';

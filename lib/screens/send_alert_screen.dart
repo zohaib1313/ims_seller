@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
+import 'package:ims_seller/screens/success_screen.dart';
 import 'package:ims_seller/styles.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +12,7 @@ import 'package:provider/provider.dart';
 import '../routes.dart';
 
 class SendAlertInvoiceGeneratedScreen extends StatefulWidget {
-  SendAlertInvoiceGeneratedScreen() {}
+  SendAlertInvoiceGeneratedScreen({Key? key});
   static const id = "invoiceGeneratedAlert";
 
   @override
@@ -56,7 +58,7 @@ class _SendAlertInvoiceGeneratedScreenState
                   SizedBox(height: 10.h),
                   SizedBox(height: 10.h),
                   Text(
-                    "Invoice # S-KBA-9982",
+                    "Invoice # ${view.invoiceCreatedModel?.invoiceNumber ?? "--"}",
                     style: AppTextStyles.largeBold
                         .copyWith(color: AppColor.blackColor),
                   ),
@@ -80,8 +82,8 @@ class _SendAlertInvoiceGeneratedScreenState
                                     .copyWith(color: AppColor.whiteColor),
                               ),
                               Text(
-                                "HLA San Ei",
-                                style: AppTextStyles.largeBold
+                                view.modelUser?.name ?? "-",
+                                style: AppTextStyles.small
                                     .copyWith(color: AppColor.whiteColor),
                               ),
                             ],
@@ -98,7 +100,7 @@ class _SendAlertInvoiceGeneratedScreenState
                                   .copyWith(color: AppColor.whiteColor),
                             ),
                             Text(
-                              "+92123456789",
+                              view.modelUser?.phone ?? "-",
                               style: AppTextStyles.smallBold
                                   .copyWith(color: AppColor.whiteColor),
                             ),
@@ -163,7 +165,27 @@ class _SendAlertInvoiceGeneratedScreenState
                   SizedBox(height: 20.h),
                   Button(
                     onTap: () {
-                      Navigator.pop(myContext!);
+                      if (view.selectedNotificationMethods.isEmpty) {
+                        AppPopUps.showAlertDialog(
+                          message: "Select any option first",
+                        );
+                      } else if ((view.selectedNotificationMethods
+                              .contains(NotificationMethods.sms)) ||
+                          (view.selectedNotificationMethods
+                              .contains(NotificationMethods.email))) {
+                        view.sendNotifications(completion: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SuccessScreen(
+                                    title: "Notification sent successfully",
+                                    printt: (view.selectedNotificationMethods
+                                        .contains(NotificationMethods.print)),
+                                  )));
+                          // view.resetState();
+                          // Navigator.pop(myContext!);
+                        });
+                      } else {
+                        view.doPrint();
+                      }
                     },
                     width: 750.w,
                     padding: 10.h,

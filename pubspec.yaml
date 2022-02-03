@@ -45,6 +45,7 @@ dependencies:
   shared_preferences: ^2.0.6
   path_provider:
   flutter_staggered_grid_view:
+  printing: ^5.6.0
   intl: ^0.17.0
   percent_indicator:
 #barcode scanner

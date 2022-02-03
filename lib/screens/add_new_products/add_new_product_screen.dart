@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/add_new_customer_model.dart';
+import 'package:ims_seller/utils/utils.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -53,57 +55,61 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                     child: Column(
                       children: [
                         SizedBox(height: 30.h),
-                        Container(
-                          padding: EdgeInsets.all(20.h),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: AppColor.blueColor),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                flex: 4,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        GestureDetector(
+                          onTap: () {
+                            AppPopUps.showConfirmDialog(
+                                title: "Alert",
+                                message: "Are you sure you want to change user",
+                                onSubmit: () {
+                                  Navigator.of(myContext!).pushReplacementNamed(
+                                      SearchCustomerScreen.id);
+                                });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(20.h),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: AppColor.blueColor),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  flex: 4,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Customer Name:",
+                                        style: AppTextStyles.small.copyWith(
+                                            color: AppColor.whiteColor),
+                                      ),
+                                      Text(
+                                        view.modelUser?.name ?? '',
+                                        style: AppTextStyles.smallBold.copyWith(
+                                            color: AppColor.whiteColor),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Spacer(flex: 2),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    const SvgViewer(
+                                        svgPath: 'assets/icons/edit_icon.svg'),
+                                    const SizedBox(height: 3),
                                     Text(
-                                      "Customer Name:",
-                                      style: AppTextStyles.small
-                                          .copyWith(color: AppColor.whiteColor),
-                                    ),
-                                    Text(
-                                      view.modelUser?.name ?? '',
+                                      view.modelUser?.phone ?? '',
                                       style: AppTextStyles.smallBold
                                           .copyWith(color: AppColor.whiteColor),
                                     ),
                                   ],
                                 ),
-                              ),
-                              const Spacer(flex: 2),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      view.resetState();
-                                      Navigator.of(myContext!)
-                                          .pushReplacementNamed(
-                                              SearchCustomerScreen.id);
-                                    },
-                                    child: const SvgViewer(
-                                        svgPath: 'assets/icons/edit_icon.svg'),
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Text(
-                                    view.modelUser?.phone ?? '',
-                                    style: AppTextStyles.smallBold
-                                        .copyWith(color: AppColor.whiteColor),
-                                  ),
-                                ],
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(height: 30.h),
@@ -130,11 +136,14 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
               Navigator.of(myContext!).pop();
             }
           },
-          child: const SvgViewer(
-            svgPath: 'assets/icons/icon-arrow-back.svg',
-            height: 25,
-            width: 25,
-            color: AppColor.blackColor,
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: SvgViewer(
+              svgPath: 'assets/icons/icon-arrow-back.svg',
+              height: 25,
+              width: 25,
+              color: AppColor.blackColor,
+            ),
           ),
         ),
         SizedBox(width: 100.w),
@@ -252,6 +261,7 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                         Expanded(
                           child: Button(
                             onTap: () {
+                              printWrapped(view.currentView.name);
                               if (view.currentView == Views.scanProduct &&
                                   view.listOfScannedProducts.isNotEmpty) {
                                 view.goForwards(Views.listProducts);
@@ -262,8 +272,15 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                               } else if (view.currentView ==
                                       Views.selectPayment &&
                                   view.selectedPaymentMethod ==
-                                      PaymentMethod.bank) {
+                                      PaymentMethod.bt) {
                                 view.goForwards(Views.bankPaymentDetails);
+                              } else if (view.currentView ==
+                                      Views.bankPaymentDetails &&
+                                  view.selectedBank != null &&
+                                  view.selectedBankTransactionIdController.text
+                                      .isNotEmpty) {
+                                Navigator.of(myContext!)
+                                    .pushNamed(InvoiceSummaryScreen.id);
                               } else if (view.currentView ==
                                   Views.selectPayment) {
                                 Navigator.of(myContext!)

@@ -8,6 +8,9 @@ enum APIType {
   getPaymentMethods,
   getNotificationMethods,
   getSalesTarget,
+  getBankAccountsList,
+  createInvoice,
+  sendNotifications
 }
 
 class ApiConstants {
@@ -23,4 +26,7 @@ class ApiConstants {
   static const getNotificationMethods =
       '/products/notification_method_api_app/';
   static const getSalesTarget = '/sale_target/api/app/get_sale_record/';
+  static const getBankAccountsList = '/products/bank_account_list_api_app/';
+  static const createInvoice = 'products/sale_product_submit_app/';
+  static const sendNotifications = '/products/send_invoice_app/';
 }

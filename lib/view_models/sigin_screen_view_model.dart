@@ -12,6 +12,14 @@ class SignInViewModel extends ChangeNotifier {
   TextEditingController userNameController = TextEditingController();
   TextEditingController userPasswordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  bool _hidePassword = true;
+
+  bool get hidePassword => _hidePassword;
+
+  set hidePassword(bool value) {
+    _hidePassword = value;
+    notifyListeners();
+  }
 
   singInUser({completion}) async {
     AppPopUps().showProgressDialog(context: myContext);

@@ -66,7 +66,6 @@ class APIClient implements BaseAPIClient {
   }
 
   Map<String, dynamic> headers = {
-    'Content-Type': 'application/json',
     'Authorization': 'Token 	614e83765257d5c98edf7bbb72958a4fd13e4519',
     'charset': 'utf-8'
   };

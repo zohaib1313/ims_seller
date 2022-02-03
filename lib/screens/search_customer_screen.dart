@@ -261,7 +261,7 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
   }
 
   getSearchItem(CustomerModel user) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         view.resetState();
         Navigator.push(

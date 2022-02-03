@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/bank_account_model.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/models/product_detail_scanned_model.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
@@ -87,11 +91,11 @@ selectPaymentView(view) {
 getType(String id) {
   switch (id) {
     case 'cs':
-      return PaymentMethod.cash;
+      return PaymentMethod.cs;
     case 'cc':
-      return PaymentMethod.creditCard;
+      return PaymentMethod.cc;
     case 'bt':
-      return PaymentMethod.bank;
+      return PaymentMethod.bt;
   }
 }
 
@@ -173,7 +177,10 @@ getPaymentMethodItem(
   );
 }
 
-bankPaymentDetails(view) {
+bankPaymentDetails(AddNewProductViewModel view) {
+  Stream<List<BankAccountModel>> bankAccountListStream =
+      view.getBankAccountList();
+
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,45 +190,71 @@ bankPaymentDetails(view) {
         style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
       ),
       SizedBox(height: 20.h),
-      Center(
-        child: ListView(
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          children: [
-            Text(
-              'Select Bank *',
-              style:
-                  AppTextStyles.mediumBold.copyWith(color: AppColor.blackColor),
-            ),
-            SizedBox(height: 10.h),
-            MyDropDown(
-                rightPadding: 0,
-                leftPadding: 0,
-                onChange: (value) {},
-                borderColor: AppColor.blackColor,
-                hintColor: AppColor.blackColor,
-                labelColor: AppColor.blackColor,
-                hintText: 'Select Bank',
-                items: ['A', 'B'],
-                validator: (string) {
-                  if (string == null) {
-                    return "select bank";
-                  }
-                }),
-            SizedBox(height: 20.h),
-            Text(
-              'Transaction No. *',
-              style:
-                  AppTextStyles.mediumBold.copyWith(color: AppColor.blackColor),
-            ),
-            SizedBox(height: 10.h),
-            MyTextField(
-              leftPadding: 0,
-              rightPadding: 0,
-              hintText: '123456789',
-            ),
-            SizedBox(height: 20.h),
-            /*   Text(
+      StreamBuilder(
+          stream: bankAccountListStream,
+          builder: (BuildContext context,
+              AsyncSnapshot<List<BankAccountModel>> snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
+            } else if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData && snapshot.data != null) {
+              var list = snapshot.data;
+              return Center(
+                child: ListView(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  children: [
+                    Text(
+                      'Select Bank *',
+                      style: AppTextStyles.mediumBold
+                          .copyWith(color: AppColor.blackColor),
+                    ),
+                    SizedBox(height: 10.h),
+                    MyDropDown(
+                        rightPadding: 0,
+                        leftPadding: 0,
+                        onChange: (value) {
+                          view.selectedBank = value;
+                        },
+                        borderColor: AppColor.blackColor,
+                        hintColor: AppColor.blackColor,
+                        labelColor: AppColor.blackColor,
+                        hintText: 'Select Bank',
+                        items: list
+                            ?.map((e) =>
+                                "${e.accName.toString()} | ${e.iBankShortCode.toString()}")
+                            .toList(),
+                        validator: (string) {
+                          if (string == null) {
+                            return "select bank";
+                          }
+                        }),
+                    SizedBox(height: 20.h),
+                    Text(
+                      'Transaction No. *',
+                      style: AppTextStyles.mediumBold
+                          .copyWith(color: AppColor.blackColor),
+                    ),
+                    SizedBox(height: 10.h),
+                    MyTextField(
+                      leftPadding: 0,
+                      rightPadding: 0,
+                      controller: view.selectedBankTransactionIdController,
+                      hintText: 'xxxxxx',
+                      validator: (string) {
+                        if (string == null || string.isEmpty) {
+                          return 'Enter Transaction no';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20.h),
+                    /*   Text(
                 'Upload Receipt ',
                 style: AppTextStyles.mediumBold
                     .copyWith(color: AppColor.blackColor),
@@ -238,10 +271,16 @@ bankPaymentDetails(view) {
                 textStyle: AppTextStyles.mediumBold
                     .copyWith(color: AppColor.blackColor),
               ),*/
-            SizedBox(height: 200.h),
-          ],
-        ),
-      ),
+                    SizedBox(height: 200.h),
+                  ],
+                ),
+              );
+            } else {
+              return const Center(
+                child: Text("No data found"),
+              );
+            }
+          }),
       SizedBox(height: 20.h),
     ],
   );
@@ -391,8 +430,14 @@ getProductBaseOnType(
               children: [
                 GestureDetector(
                   onTap: () {
-                    product.localQty = product.localQty + 1;
-                    view.calculateTotalAmount();
+                    if (product.localQty <
+                        product
+                            .productDetail!.availableProductQuantityInBranch!) {
+                      product.localQty = product.localQty + 1;
+                      view.calculateTotalAmount();
+                    } else {
+                      AppPopUps.showAlertDialog(message: "Stock Limit reached");
+                    }
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 3),

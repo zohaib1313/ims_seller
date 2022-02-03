@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
@@ -65,15 +64,10 @@ class InvoiceSummaryScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    view.resetState();
-                                    Navigator.of(myContext!)
-                                        .pushReplacementNamed(
-                                            SearchCustomerScreen.id);
-                                  },
-                                  child: const SvgViewer(
-                                      svgPath: 'assets/icons/edit_icon.svg'),
+                                Text(
+                                  '',
+                                  style: AppTextStyles.smallBold
+                                      .copyWith(color: AppColor.whiteColor),
                                 ),
                                 const SizedBox(height: 3),
                                 Text(
@@ -106,11 +100,14 @@ class InvoiceSummaryScreen extends StatelessWidget {
           onTap: () async {
             Navigator.of(myContext!).pop();
           },
-          child: const SvgViewer(
-            svgPath: 'assets/icons/icon-arrow-back.svg',
-            height: 25,
-            width: 25,
-            color: AppColor.blackColor,
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: SvgViewer(
+              svgPath: 'assets/icons/icon-arrow-back.svg',
+              height: 25,
+              width: 25,
+              color: AppColor.blackColor,
+            ),
           ),
         ),
         SizedBox(width: 100.w),
@@ -171,6 +168,46 @@ class InvoiceSummaryScreen extends StatelessWidget {
               ),
               SizedBox(height: 20.h),
               const Divider(color: AppColor.blackColor),
+              Visibility(
+                visible:
+                    view.selectedPaymentMethod.name == PaymentMethod.bt.name,
+                child: Column(
+                  children: [
+                    SizedBox(height: 20.h),
+                    Row(
+                      children: [
+                        Expanded(
+                            flex: 3,
+                            child: Text(
+                              'Transaction id',
+                              style: AppTextStyles.medium
+                                  .copyWith(color: AppColor.blackColor),
+                            )),
+                        Spacer(),
+                        Expanded(
+                            flex: 3,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    view.selectedBankTransactionIdController
+                                        .text
+                                        .toString(),
+                                    style: AppTextStyles.medium
+                                        .copyWith(color: AppColor.blackColor),
+                                  ),
+                                )
+                              ],
+                            )),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    const Divider(color: AppColor.blackColor),
+                    SizedBox(height: 20.h),
+                  ],
+                ),
+              ),
               Text(
                 'Add Discount',
                 style: AppTextStyles.mediumBold
@@ -190,6 +227,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                       onPressed: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         view.calculateTotalAmount();
                       },
                       child: const Text("Add"))
@@ -322,8 +360,10 @@ class InvoiceSummaryScreen extends StatelessWidget {
             Expanded(
               child: Button(
                 onTap: () {
-                  Navigator.of(myContext!)
-                      .pushReplacementNamed(SendAlertInvoiceGeneratedScreen.id);
+                  view.createInvoice(completion: () {
+                    Navigator.of(myContext!).pushReplacementNamed(
+                        SendAlertInvoiceGeneratedScreen.id);
+                  });
                 },
                 leftPadding: 0,
                 rightPading: 0,
@@ -349,24 +389,24 @@ class InvoiceSummaryScreen extends StatelessWidget {
 
   String getPaymentMethodIcon() {
     switch (view.selectedPaymentMethod) {
-      case PaymentMethod.bank:
+      case PaymentMethod.bt:
         return 'assets/icons/icon-bank.svg';
-      case PaymentMethod.cash:
+      case PaymentMethod.cs:
         return 'assets/icons/icon-cash.svg';
 
-      case PaymentMethod.creditCard:
+      case PaymentMethod.cc:
         return 'assets/icons/icon-credit-card.svg';
     }
   }
 
   String getPaymentMethodName() {
     switch (view.selectedPaymentMethod) {
-      case PaymentMethod.bank:
+      case PaymentMethod.bt:
         return 'Bank';
-      case PaymentMethod.cash:
+      case PaymentMethod.cs:
         return 'Cash';
 
-      case PaymentMethod.creditCard:
+      case PaymentMethod.cc:
         return 'Credit Card';
     }
   }

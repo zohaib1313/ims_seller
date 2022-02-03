@@ -260,6 +260,74 @@ class AppPopUps {
     );
   }
 
+  static Future<void> showConfirmDialog({
+    onSubmit,
+    required String title,
+    required String message,
+  }) {
+    return showDialog(
+        context: myContext!,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              title,
+              style:
+                  AppTextStyles.smallBold.copyWith(color: AppColor.blackColor),
+            ),
+            content: Text(
+              message,
+              style:
+                  AppTextStyles.smallBold.copyWith(color: AppColor.blackColor),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: const Text('Confirm'),
+                onPressed: () {
+                  onSubmit();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  static Future<void> showAlertDialog({
+    onSubmit,
+    required String message,
+  }) {
+    return showDialog(
+        context: myContext!,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              message,
+              style:
+                  AppTextStyles.smallBold.copyWith(color: AppColor.blackColor),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: const Text('Ok'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   static Future<void> displayTextInputDialog(
       {onSubmit,
       required String title,

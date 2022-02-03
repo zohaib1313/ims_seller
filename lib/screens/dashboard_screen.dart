@@ -6,8 +6,8 @@ import 'package:ims_seller/models/invoice_sale_model.dart';
 import 'package:ims_seller/models/model_invoice_merchat.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/sale_invoice_screen.dart';
-import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/target_details_screen.dart';
+import 'package:ims_seller/screens/view_all_invoices_screen.dart';
 import 'package:ims_seller/view_models/dashboard_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -70,24 +70,24 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 30.h, left: 100.w, right: 100.w),
-                              child: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(myContext!).pop();
-                                    },
-                                    child: const Icon(
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(myContext!).pop();
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 30.h, left: 100.w, right: 100.w),
+                                child: Row(
+                                  children: const [
+                                    Icon(
                                       Icons.arrow_back_ios,
                                       size: 25,
                                       color: AppColor.whiteColor,
                                     ),
-                                  ),
-                                  const Text("Back",
-                                      style: AppTextStyles.mediumBold)
-                                ],
+                                    Text("Back",
+                                        style: AppTextStyles.mediumBold)
+                                  ],
+                                ),
                               ),
                             ),
                             Center(
@@ -98,172 +98,184 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(50)),
                                 height: 250.h,
-                                child: Card(
-                                  elevation: 20,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(100.w),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  "Top Sales",
-                                                  style: AppTextStyles
-                                                      .mediumBold
-                                                      .copyWith(
-                                                          color: AppColor
-                                                              .blackColor),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            TargetDetailsScreen(data),
+                                      ),
+                                    );
+                                  },
+                                  child: Card(
+                                    elevation: 20,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(100.w),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    "Top Sales",
+                                                    style: AppTextStyles
+                                                        .mediumBold
+                                                        .copyWith(
+                                                            color: AppColor
+                                                                .blackColor),
+                                                  ),
                                                 ),
-                                              ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const SvgViewer(
-                                                        svgPath:
-                                                            'assets/icons/vertical_bar.svg'),
-                                                    SizedBox(width: 50.w),
-                                                    Expanded(
-                                                        child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "Total Amount",
-                                                          style: AppTextStyles
-                                                              .smallBold
-                                                              .copyWith(
-                                                                  color: AppColor
-                                                                      .blackColor),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            const SvgViewer(
-                                                                svgPath:
-                                                                    'assets/icons/icon-money.svg'),
-                                                            SizedBox(
-                                                                width: 50.w),
-                                                            Expanded(
-                                                                child: Text(
-                                                              data.totalSaleAmount
-                                                                  .toString(),
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: AppTextStyles
-                                                                  .smallBold
-                                                                  .copyWith(
-                                                                      color: AppColor
-                                                                          .blackColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                            ))
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ))
-                                                  ],
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const SvgViewer(
+                                                          svgPath:
+                                                              'assets/icons/vertical_bar.svg'),
+                                                      SizedBox(width: 50.w),
+                                                      Expanded(
+                                                          child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            "Total Amount",
+                                                            style: AppTextStyles
+                                                                .smallBold
+                                                                .copyWith(
+                                                                    color: AppColor
+                                                                        .blackColor),
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              const SvgViewer(
+                                                                  svgPath:
+                                                                      'assets/icons/icon-money.svg'),
+                                                              SizedBox(
+                                                                  width: 50.w),
+                                                              Expanded(
+                                                                  child: Text(
+                                                                data.totalSaleAmount
+                                                                    .toString(),
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: AppTextStyles
+                                                                    .smallBold
+                                                                    .copyWith(
+                                                                        color: AppColor
+                                                                            .blackColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                              ))
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ))
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const SvgViewer(
-                                                        svgPath:
-                                                            'assets/icons/vertical_bar.svg'),
-                                                    SizedBox(width: 50.w),
-                                                    Expanded(
-                                                        child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "Total Quantity",
-                                                          style: AppTextStyles
-                                                              .smallBold
-                                                              .copyWith(
-                                                                  color: AppColor
-                                                                      .blackColor),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            const SvgViewer(
-                                                                svgPath:
-                                                                    'assets/icons/icon-money.svg'),
-                                                            SizedBox(
-                                                                width: 50.w),
-                                                            Expanded(
-                                                                child: Text(
-                                                              data.totalSaleQty
-                                                                  .toString(),
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: AppTextStyles
-                                                                  .smallBold
-                                                                  .copyWith(
-                                                                      color: AppColor
-                                                                          .blackColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                            ))
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ))
-                                                  ],
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const SvgViewer(
+                                                          svgPath:
+                                                              'assets/icons/vertical_bar.svg'),
+                                                      SizedBox(width: 50.w),
+                                                      Expanded(
+                                                          child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            "Total Quantity",
+                                                            style: AppTextStyles
+                                                                .smallBold
+                                                                .copyWith(
+                                                                    color: AppColor
+                                                                        .blackColor),
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              const SvgViewer(
+                                                                  svgPath:
+                                                                      'assets/icons/icon-money.svg'),
+                                                              SizedBox(
+                                                                  width: 50.w),
+                                                              Expanded(
+                                                                  child: Text(
+                                                                data.totalSaleQty
+                                                                    .toString(),
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: AppTextStyles
+                                                                    .smallBold
+                                                                    .copyWith(
+                                                                        color: AppColor
+                                                                            .blackColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                              ))
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ))
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Expanded(
-                                          child: CircularPercentIndicator(
-                                        radius: 280.r,
-                                        lineWidth: 10.0,
-                                        percent:
-                                            (data.totalAchivement?.toDouble() ??
-                                                    0.0) /
-                                                100,
-                                        center: Text(
-                                            "${data.totalAchivement.toString()}% \n Target",
-                                            textAlign: TextAlign.center,
-                                            style: AppTextStyles.smallBold
-                                                .copyWith(
-                                                    color:
-                                                        AppColor.blackColor)),
-                                        progressColor: AppColor.blueColor,
-                                      ))
-                                    ],
+                                        Expanded(
+                                            child: CircularPercentIndicator(
+                                          radius: 280.r,
+                                          lineWidth: 10.0,
+                                          percent: (data.totalAchivement
+                                                      ?.toDouble() ??
+                                                  0.0) /
+                                              100,
+                                          center: Text(
+                                              "${data.totalAchivement.toString()}% \n Target",
+                                              textAlign: TextAlign.center,
+                                              style: AppTextStyles.smallBold
+                                                  .copyWith(
+                                                      color:
+                                                          AppColor.blackColor)),
+                                          progressColor: AppColor.blueColor,
+                                        ))
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -293,7 +305,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       prefixIcon: 'assets/icons/icon-offer.svg',
                                     ),
                                     SizedBox(height: 20.h),
-                                    Row(
+                                    /* Row(
                                       children: [
                                         Expanded(
                                           child: Button(
@@ -320,7 +332,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 20.h),
+                                    SizedBox(height: 20.h),*/
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 100.w),
@@ -341,7 +353,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                 MaterialPageRoute(
                                                   builder: (BuildContext
                                                           context) =>
-                                                      TargetDetailsScreen(data),
+                                                      ViewAllInvoiceScreen(),
                                                 ),
                                               );
                                             },

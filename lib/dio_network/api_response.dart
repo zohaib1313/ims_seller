@@ -86,8 +86,7 @@ class ErrorResponse implements Exception {
   ErrorResponse({this.message});
 
   factory ErrorResponse.fromJson(Map<String, dynamic> json) {
-    return ErrorResponse(
-        message: json['non_field_errors'][0] ?? 'Something went wrong');
+    return ErrorResponse(message: json['message'] ?? 'Something went wrong');
   }
 
   @override

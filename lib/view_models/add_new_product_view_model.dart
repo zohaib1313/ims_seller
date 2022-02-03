@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +12,16 @@ import 'package:ims_seller/dio_network/api_response.dart';
 import 'package:ims_seller/dio_network/api_route.dart';
 import 'package:ims_seller/dio_network/error_mapper.dart';
 import 'package:ims_seller/models/add_new_customer_model.dart';
+import 'package:ims_seller/models/bank_account_model.dart';
+import 'package:ims_seller/models/header_invoice_product_model.dart';
+import 'package:ims_seller/models/invoice_created_model.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/models/product_detail_scanned_model.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/utils/utils.dart';
+import 'package:intl/intl.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../routes.dart';
 
@@ -22,16 +29,26 @@ class AddNewProductViewModel extends ChangeNotifier {
   Views _currentView = Views.scanProduct;
   CustomerModel? _modelUser;
 
-  PaymentMethod selectedPaymentMethod = PaymentMethod.cash;
-  var selectedNotificationMethods = <NotificationMethods>{
-    NotificationMethods.sms
-  };
+  PaymentMethod selectedPaymentMethod = PaymentMethod.cs;
+  var selectedNotificationMethods = <NotificationMethods>{};
 
   TextEditingController discountedPriceController =
       TextEditingController(text: '0.0');
   String _nextTitle = "next";
 
   String get nextTitle => _nextTitle;
+
+  String? _selectedBank;
+
+  String? get selectedBank => _selectedBank;
+
+  set selectedBank(String? value) {
+    _selectedBank = value;
+    notifyListeners();
+  }
+
+  TextEditingController selectedBankTransactionIdController =
+      TextEditingController();
 
   set nextTitle(String value) {
     _nextTitle = value;
@@ -98,7 +115,7 @@ class AddNewProductViewModel extends ChangeNotifier {
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      // barcodeScanRes = '888462108416';
+      //barcodeScanRes = '888462108416';
 
       ///temporary todo
     } on PlatformException {
@@ -112,10 +129,11 @@ class AddNewProductViewModel extends ChangeNotifier {
     _viewsHistory = [Views.scanProduct];
     currentView = Views.scanProduct;
     listOfScannedProducts = [];
+    selectedPaymentMethod = PaymentMethod.cs;
     _totalAmount = 0.0;
-    selectedNotificationMethods = <NotificationMethods>{
-      NotificationMethods.sms
-    };
+    selectedBankTransactionIdController.clear();
+    selectedBank = null;
+    selectedNotificationMethods = <NotificationMethods>{};
     discountedPriceController.clear();
     notifyListeners();
   }
@@ -154,9 +172,53 @@ class AddNewProductViewModel extends ChangeNotifier {
             apiFunction: getProductDetails)
         .then((response) {
       AppPopUps().dissmissDialog();
-      if (response.response!.data != null) {
+      if (response.response?.data != null) {
         print("data not null");
-        listOfScannedProducts.add(response.response!.data);
+
+        ProductDetailScannedModel model = response.response!.data!;
+        if (model.productDetail!.haveDiffBarcode!) {
+          bool isAlreadyPresent = false;
+          for (int i = 0; i < listOfScannedProducts.length; i++) {
+            if (listOfScannedProducts[i]!.imeiNumber == model.imeiNumber) {
+              if ((listOfScannedProducts[i]!.localQty <
+                  listOfScannedProducts[i]!
+                      .productDetail!
+                      .availableProductQuantityInBranch!)) {
+                listOfScannedProducts[i]!.localQty =
+                    listOfScannedProducts[i]!.localQty + 1;
+              } else {
+                AppPopUps.showAlertDialog(message: "Out of stock");
+              }
+              isAlreadyPresent = true;
+            }
+          }
+          if (!isAlreadyPresent) {
+            listOfScannedProducts.add(model);
+          } else {
+            AppPopUps.showAlertDialog(message: "Product Already Present");
+          }
+        } else {
+          bool isAlreadyPresent = false;
+
+          for (int i = 0; i < listOfScannedProducts.length; i++) {
+            if (listOfScannedProducts[i]!.imeiNumber == model.imeiNumber) {
+              isAlreadyPresent = true;
+              if ((listOfScannedProducts[i]!.localQty <
+                  listOfScannedProducts[i]!
+                      .productDetail!
+                      .availableProductQuantityInBranch!)) {
+                listOfScannedProducts[i]!.localQty =
+                    listOfScannedProducts[i]!.localQty + 1;
+              } else {
+                AppPopUps.showAlertDialog(message: "Out of stock");
+              }
+            }
+          }
+          if (!isAlreadyPresent) {
+            listOfScannedProducts.add(model);
+          }
+        }
+
         calculateTotalAmount();
         completion();
       }
@@ -207,6 +269,9 @@ class AddNewProductViewModel extends ChangeNotifier {
   StreamController<List<ModelMethods>> notificationMethodStream =
       StreamController.broadcast();
 
+  StreamController<List<BankAccountModel>> bankAccountListStream =
+      StreamController.broadcast();
+
   Stream<List<ModelMethods>> getPaymentMethods() {
     Map<String, dynamic> body = {};
     var client = APIClient(isCache: false);
@@ -231,6 +296,31 @@ class AddNewProductViewModel extends ChangeNotifier {
     return paymentListStream.stream;
   }
 
+  Stream<List<BankAccountModel>> getBankAccountList() {
+    Map<String, dynamic> body = {};
+    var client = APIClient(isCache: false);
+    client
+        .request(
+            route: APIRoute(
+              APIType.getBankAccountsList,
+              body: body,
+            ),
+            create: () => APIResponse<BankAccountModelList>(
+                create: () => BankAccountModelList()),
+            apiFunction: getBankAccountList)
+        .then((response) {
+      if (response.response!.data != null) {
+        bankAccountListStream.sink
+            .add(response.response!.data!.bankAccountModelList);
+      }
+    }).catchError((error) {
+      printWrapped("error= " + error.toString());
+      bankAccountListStream.addError(
+          error is DioError ? ErrorMapper.dioError(error) : error.toString());
+    });
+    return bankAccountListStream.stream;
+  }
+
   Stream<List<ModelMethods>> getNotificationMethods() {
     Map<String, dynamic> body = {};
     var client = APIClient(isCache: false);
@@ -242,7 +332,7 @@ class AddNewProductViewModel extends ChangeNotifier {
             ),
             create: () =>
                 APIResponse<ModelMethodsList>(create: () => ModelMethodsList()),
-            apiFunction: getPaymentMethods)
+            apiFunction: getNotificationMethods)
         .then((response) {
       if (response.response!.data != null) {
         notificationMethodStream.sink
@@ -276,6 +366,217 @@ class AddNewProductViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  InvoiceCreatedModel? _invoiceCreatedModel;
+
+  InvoiceCreatedModel? get invoiceCreatedModel => _invoiceCreatedModel;
+
+  set invoiceCreatedModel(InvoiceCreatedModel? value) {
+    _invoiceCreatedModel = value;
+    notifyListeners();
+  }
+
+  createInvoice({completion}) async {
+    AppPopUps().showProgressDialog(context: myContext);
+    /*AppPopUps().showProgressDialog(context: myContext);
+    Map<String, dynamic> headersMultiPart = {
+      'Authorization': 'Token 614e83765257d5c98edf7bbb72958a4fd13e4519',
+      // "Content-Type":
+      //     "multipart/form-data; boundary=--------------------------189944097829368320179517"
+    };
+    var formData = FormData.fromMap({
+      "data": json.encode({
+        "reference": "",
+        "total_discount": "0",
+        "payment_method": "cs",
+        "invoice_date": "2022-01-10 15:20:46",
+        "to_client": "29026",
+        "sale_desc": "",
+        "internal_desc": "",
+        "amount": "45000",
+        "invoice_amount": "45000",
+        "seller_id": "123",
+        "product_list": [
+          {
+            "imei_number": "888462108416",
+            "product_price": "35000.00",
+            "product_qty": "1"
+          }
+        ]
+      })
+    });
+
+    AppPopUps().showProgressDialog(context: myContext!);
+    RequestOptions requestOptions = RequestOptions(
+        data: formData,
+        baseUrl: "http://207.244.105.191:8866/",
+        path: "products/sale_product_submit_app/",
+        headers: headersMultiPart,
+        responseType: ResponseType.json,
+        validateStatus: (_) => true,
+        method: APIMethod.post);
+
+    var response = await Dio().fetch(requestOptions).catchError(
+      (error) {
+        printWrapped(error.toString());
+        AppPopUps().dissmissDialog();
+      },
+    );
+    Navigator.pop(myContext!);
+    printWrapped(response.statusCode.toString());
+
+    printWrapped("aaaaaaaaaaaaaa");
+    printWrapped(response.data.toString());*/
+
+    Map<String, dynamic> headersMultiPart = {
+      'Authorization': 'Token 614e83765257d5c98edf7bbb72958a4fd13e4519',
+      // "Content-Type":
+      //     "multipart/form-data; boundary=--------------------------189944097829368320179517"
+    };
+    List<HeaderInvoiceModelProduct> listOfProducts = [];
+
+    for (var value in listOfScannedProducts) {
+      listOfProducts.add(HeaderInvoiceModelProduct(
+          imei_number: value?.imeiNumber ?? "",
+          product_price: value?.productDetail?.salePrice ?? "",
+          product_qty: value!.localQty.toString()));
+    }
+    var formData = FormData.fromMap({
+      "data": json.encode({
+        "reference": selectedBankTransactionIdController.text.isEmpty
+            ? ""
+            : selectedBankTransactionIdController.text,
+        "total_discount": double.parse(discountedPriceController.text.isEmpty
+            ? "0.0"
+            : discountedPriceController.text),
+        "payment_method": selectedPaymentMethod.name,
+
+        ///2022-01-10 15:20:46
+        "invoice_date":
+            DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString(),
+        "to_client": modelUser!.id.toString(),
+        "sale_desc": "",
+        "internal_desc": "",
+        "amount": (totalAmount -
+                double.parse((discountedPriceController.text.isEmpty
+                    ? "0.0"
+                    : discountedPriceController.text)))
+            .toString(),
+        "invoice_amount": totalAmount.toString(),
+        "seller_id": UserDefaults.getUserSession()!.userId.toString(),
+        "product_list": [listOfProducts[0].toJson()]
+      })
+    });
+    printWrapped(headersMultiPart.toString());
+    var client = APIClient(
+        isCache: false,
+        baseUrl: ApiConstants.baseUrl,
+        contentType: "multipart/form-data");
+    client
+        .request(
+            route: APIRoute(APIType.createInvoice,
+                body: formData, headers: headersMultiPart),
+            create: () => APIResponse<InvoiceCreatedModel>(
+                create: () => InvoiceCreatedModel()),
+            apiFunction: createInvoice)
+        .then((response) {
+      AppPopUps().dissmissDialog();
+      if (response.response?.data != null) {
+        _invoiceCreatedModel = response.response?.data;
+        completion();
+      }
+    }).catchError((error) {
+      print("error=  ${error.toString()}");
+      AppPopUps().dissmissDialog();
+      AppPopUps().showErrorPopUp(
+          title: 'Error',
+          error: error.toString(),
+          onButtonPressed: () {
+            Navigator.of(myContext!).pop();
+          });
+    });
+  }
+
+  void sendNotifications({completion}) {
+    AppPopUps().showProgressDialog(context: myContext!);
+    String sms = "0";
+    String email = "0";
+    if (selectedNotificationMethods.contains(NotificationMethods.sms)) {
+      sms = "1";
+    }
+    if (selectedNotificationMethods.contains(NotificationMethods.email)) {
+      email = "1";
+    }
+
+    Map<String, dynamic> body = {
+      "invoice_id": invoiceCreatedModel?.invoiceId ?? 0,
+      "email": sms,
+      "sms": email
+    };
+    var client = APIClient(isCache: false);
+    client
+        .request(
+            route: APIRoute(
+              APIType.sendNotifications,
+              body: body,
+            ),
+            create: () => APIResponse(create: () => APIResponse()),
+            apiFunction: sendNotifications)
+        .then((response) {
+      AppPopUps().dissmissDialog();
+      if (response.response?.status != null) {
+        printWrapped("sent ${response.response?.status}");
+        if (response.response?.status == true) {
+          completion();
+        } else {
+          AppPopUps().showErrorPopUp(
+              title: "Error",
+              error: response.response?.responseMessage ?? "--",
+              onButtonPressed: () {
+                AppPopUps().dissmissDialog();
+              });
+        }
+      }
+    }).catchError((error) {
+      printWrapped("error= " + error.toString());
+      AppPopUps().dissmissDialog();
+      AppPopUps().showErrorPopUp(
+          title: "Error",
+          error: error.toString(),
+          onButtonPressed: () {
+            AppPopUps().dissmissDialog();
+          });
+    });
+  }
+
+  doPrint() async {
+    final logo = await flutterImageProvider(
+        const AssetImage('assets/icons/salam_logo.png'));
+    printNow(
+      child: pw.Center(
+        child: pw.Column(
+            mainAxisSize: pw.MainAxisSize.max,
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.SizedBox(
+                height: 10,
+              ),
+              pw.Image(
+                logo,
+                height: 30,
+              ),
+              pw.Text('RECEIPT'),
+              pw.SizedBox(
+                height: 5,
+              ),
+              pw.Text('E-VOUCHER',
+                  style: pw.TextStyle(
+                      fontSize: 5, fontWeight: pw.FontWeight.bold)),
+            ]),
+      ),
+    );
+  }
 }
 
 enum Views {
@@ -285,5 +586,5 @@ enum Views {
   bankPaymentDetails,
 }
 
-enum PaymentMethod { bank, cash, creditCard }
+enum PaymentMethod { bt, cs, cc }
 enum NotificationMethods { sms, email, print }
