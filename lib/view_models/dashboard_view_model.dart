@@ -19,8 +19,12 @@ class DashboardViewModel extends ChangeNotifier {
   StreamController<List<ModelInvoiceMerchant>> streamController =
       StreamController.broadcast();
 
-  Stream<List<ModelInvoiceMerchant>> getMerchantInvoiceList() {
-    Map<String, dynamic> body = {};
+  int startPoint = 0;
+  int endPoint = 10;
+  bool inProgress = false;
+
+  Stream<List<ModelInvoiceMerchant>> getMerchantInvoiceList({end, start}) {
+    Map<String, dynamic> body = {"start": start, "end": end};
     var client = APIClient(isCache: false);
     client
         .request(
@@ -33,9 +37,9 @@ class DashboardViewModel extends ChangeNotifier {
             apiFunction: getMerchantInvoiceList)
         .then((response) {
       if (response.response!.data != null) {
-        // searchListStreamController.sink.add(response.response!.data!);
-        //notifyListener3s();
         streamController.sink.add(response.response!.data!.invoicesList);
+
+        // notifyListeners();
       }
     }).catchError((error) {
       printWrapped("error= " + error.toString());
@@ -101,5 +105,49 @@ class DashboardViewModel extends ChangeNotifier {
           error is DioError ? ErrorMapper.dioError(error) : error.toString());
     });
     return salesTargetInvoice.stream;
+  }
+
+  resetState() {
+    listOfInvoices.clear();
+    startPoint = 0;
+    endPoint = 10;
+    haveMoreItem = true;
+  }
+
+  bool haveMoreItem = true;
+  StreamController<bool> streamController2 = StreamController.broadcast();
+  List<ModelInvoiceMerchant> listOfInvoices = [];
+
+  Stream<bool> getMerchantPaginatedInvoice() {
+    streamController2.sink.add(true);
+    Map<String, dynamic> body = {"start": startPoint, "end": endPoint};
+    var client = APIClient(isCache: false);
+    client
+        .request(
+            route: APIRoute(
+              APIType.searchMerchantInvoices,
+              body: body,
+            ),
+            create: () => APIResponse<InvoicesMerchantModelList>(
+                create: () => InvoicesMerchantModelList()),
+            apiFunction: getMerchantInvoiceList)
+        .then((response) {
+      if (response.response!.data != null) {
+        if (response.response!.data!.invoicesList.isNotEmpty) {
+          listOfInvoices.addAll(response.response!.data!.invoicesList);
+          streamController2.sink.add(false);
+          startPoint = endPoint;
+          endPoint = endPoint + 10;
+          inProgress = false;
+        } else {
+          haveMoreItem = false;
+        }
+      }
+    }).catchError((error) {
+      printWrapped("error= " + error.toString());
+      streamController2.addError(
+          error is DioError ? ErrorMapper.dioError(error) : error.toString());
+    });
+    return streamController2.stream;
   }
 }

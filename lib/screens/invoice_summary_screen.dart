@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
+import 'package:ims_seller/utils/utils.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -129,7 +130,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
             shrinkWrap: true,
             physics: BouncingScrollPhysics(),
             children: [
-              productListView(view),
+              productListView(view, false),
               SizedBox(height: 20.h),
               const Divider(color: AppColor.blackColor),
               Row(
@@ -252,7 +253,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              view.totalAmount.toString(),
+                              formatAmount(view.totalAmount.toString()),
                               style: AppTextStyles.medium
                                   .copyWith(color: AppColor.blackColor),
                             ),
@@ -280,9 +281,10 @@ class InvoiceSummaryScreen extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              view.discountedPriceController.text.isEmpty
-                                  ? '0.0'
-                                  : view.discountedPriceController.text,
+                              formatAmount(
+                                  view.discountedPriceController.text.isEmpty
+                                      ? '0.0'
+                                      : view.discountedPriceController.text),
                               style: AppTextStyles.medium
                                   .copyWith(color: AppColor.blackColor),
                             ),
@@ -310,7 +312,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              (view.totalAmount -
+                              formatAmount((view.totalAmount -
                                       double.parse((view
                                               .discountedPriceController
                                               .text
@@ -318,7 +320,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
                                           ? "0.0"
                                           : view
                                               .discountedPriceController.text)))
-                                  .toString(),
+                                  .toString()),
                               style: AppTextStyles.largeBold
                                   .copyWith(color: AppColor.blackColor),
                             ),
@@ -361,8 +363,15 @@ class InvoiceSummaryScreen extends StatelessWidget {
               child: Button(
                 onTap: () {
                   view.createInvoice(completion: () {
-                    Navigator.of(myContext!).pushReplacementNamed(
-                        SendAlertInvoiceGeneratedScreen.id);
+                    Navigator.of(myContext!).push(
+                      MaterialPageRoute(
+                        builder: (context) => SendAlertInvoiceGeneratedScreen(
+                            key: key,
+                            invoiceId: view.invoiceCreatedModel?.invoiceId ?? 0,
+                            phoneNo: view.modelUser?.phone ?? "-",
+                            userName: view.modelUser?.name ?? "--"),
+                      ),
+                    );
                   });
                 },
                 leftPadding: 0,

@@ -20,8 +20,6 @@ import 'package:ims_seller/models/product_detail_scanned_model.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/utils/utils.dart';
 import 'package:intl/intl.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import '../routes.dart';
 
@@ -30,7 +28,6 @@ class AddNewProductViewModel extends ChangeNotifier {
   CustomerModel? _modelUser;
 
   PaymentMethod selectedPaymentMethod = PaymentMethod.cs;
-  var selectedNotificationMethods = <NotificationMethods>{};
 
   TextEditingController discountedPriceController =
       TextEditingController(text: '0.0');
@@ -38,11 +35,11 @@ class AddNewProductViewModel extends ChangeNotifier {
 
   String get nextTitle => _nextTitle;
 
-  String? _selectedBank;
+  BankAccountModel? _selectedBank;
 
-  String? get selectedBank => _selectedBank;
+  BankAccountModel? get selectedBank => _selectedBank;
 
-  set selectedBank(String? value) {
+  set selectedBank(BankAccountModel? value) {
     _selectedBank = value;
     notifyListeners();
   }
@@ -56,6 +53,10 @@ class AddNewProductViewModel extends ChangeNotifier {
   }
 
   void changePaymentMethod(PaymentMethod selectedPaymentMethod) {
+    if (selectedPaymentMethod == PaymentMethod.cc ||
+        selectedPaymentMethod == PaymentMethod.cs) {
+      selectedBank = null;
+    }
     this.selectedPaymentMethod = selectedPaymentMethod;
     notifyListeners();
   }
@@ -133,7 +134,7 @@ class AddNewProductViewModel extends ChangeNotifier {
     _totalAmount = 0.0;
     selectedBankTransactionIdController.clear();
     selectedBank = null;
-    selectedNotificationMethods = <NotificationMethods>{};
+
     discountedPriceController.clear();
     notifyListeners();
   }
@@ -266,8 +267,6 @@ class AddNewProductViewModel extends ChangeNotifier {
 
   StreamController<List<ModelMethods>> paymentListStream =
       StreamController.broadcast();
-  StreamController<List<ModelMethods>> notificationMethodStream =
-      StreamController.broadcast();
 
   StreamController<List<BankAccountModel>> bankAccountListStream =
       StreamController.broadcast();
@@ -321,31 +320,6 @@ class AddNewProductViewModel extends ChangeNotifier {
     return bankAccountListStream.stream;
   }
 
-  Stream<List<ModelMethods>> getNotificationMethods() {
-    Map<String, dynamic> body = {};
-    var client = APIClient(isCache: false);
-    client
-        .request(
-            route: APIRoute(
-              APIType.getNotificationMethods,
-              body: body,
-            ),
-            create: () =>
-                APIResponse<ModelMethodsList>(create: () => ModelMethodsList()),
-            apiFunction: getNotificationMethods)
-        .then((response) {
-      if (response.response!.data != null) {
-        notificationMethodStream.sink
-            .add(response.response!.data!.modelMethodList);
-      }
-    }).catchError((error) {
-      printWrapped("error= " + error.toString());
-      notificationMethodStream.addError(
-          error is DioError ? ErrorMapper.dioError(error) : error.toString());
-    });
-    return notificationMethodStream.stream;
-  }
-
   CustomerModel? get modelUser => _modelUser;
 
   set modelUser(CustomerModel? value) {
@@ -354,16 +328,6 @@ class AddNewProductViewModel extends ChangeNotifier {
   }
 
   void refresh() {
-    notifyListeners();
-  }
-
-  void updateNotificationMethodTypes(
-      NotificationMethods notificationMethodType) {
-    if (selectedNotificationMethods.contains(notificationMethodType)) {
-      selectedNotificationMethods.remove(notificationMethodType);
-    } else {
-      selectedNotificationMethods.add(notificationMethodType);
-    }
     notifyListeners();
   }
 
@@ -450,6 +414,7 @@ class AddNewProductViewModel extends ChangeNotifier {
             ? "0.0"
             : discountedPriceController.text),
         "payment_method": selectedPaymentMethod.name,
+        "bank_account_id": selectedBank?.id ?? "",
 
         ///2022-01-10 15:20:46
         "invoice_date":
@@ -467,7 +432,6 @@ class AddNewProductViewModel extends ChangeNotifier {
         "product_list": [listOfProducts[0].toJson()]
       })
     });
-    printWrapped(headersMultiPart.toString());
     var client = APIClient(
         isCache: false,
         baseUrl: ApiConstants.baseUrl,
@@ -496,87 +460,6 @@ class AddNewProductViewModel extends ChangeNotifier {
           });
     });
   }
-
-  void sendNotifications({completion}) {
-    AppPopUps().showProgressDialog(context: myContext!);
-    String sms = "0";
-    String email = "0";
-    if (selectedNotificationMethods.contains(NotificationMethods.sms)) {
-      sms = "1";
-    }
-    if (selectedNotificationMethods.contains(NotificationMethods.email)) {
-      email = "1";
-    }
-
-    Map<String, dynamic> body = {
-      "invoice_id": invoiceCreatedModel?.invoiceId ?? 0,
-      "email": sms,
-      "sms": email
-    };
-    var client = APIClient(isCache: false);
-    client
-        .request(
-            route: APIRoute(
-              APIType.sendNotifications,
-              body: body,
-            ),
-            create: () => APIResponse(create: () => APIResponse()),
-            apiFunction: sendNotifications)
-        .then((response) {
-      AppPopUps().dissmissDialog();
-      if (response.response?.status != null) {
-        printWrapped("sent ${response.response?.status}");
-        if (response.response?.status == true) {
-          completion();
-        } else {
-          AppPopUps().showErrorPopUp(
-              title: "Error",
-              error: response.response?.responseMessage ?? "--",
-              onButtonPressed: () {
-                AppPopUps().dissmissDialog();
-              });
-        }
-      }
-    }).catchError((error) {
-      printWrapped("error= " + error.toString());
-      AppPopUps().dissmissDialog();
-      AppPopUps().showErrorPopUp(
-          title: "Error",
-          error: error.toString(),
-          onButtonPressed: () {
-            AppPopUps().dissmissDialog();
-          });
-    });
-  }
-
-  doPrint() async {
-    final logo = await flutterImageProvider(
-        const AssetImage('assets/icons/salam_logo.png'));
-    printNow(
-      child: pw.Center(
-        child: pw.Column(
-            mainAxisSize: pw.MainAxisSize.max,
-            crossAxisAlignment: pw.CrossAxisAlignment.center,
-            mainAxisAlignment: pw.MainAxisAlignment.center,
-            children: [
-              pw.SizedBox(
-                height: 10,
-              ),
-              pw.Image(
-                logo,
-                height: 30,
-              ),
-              pw.Text('RECEIPT'),
-              pw.SizedBox(
-                height: 5,
-              ),
-              pw.Text('E-VOUCHER',
-                  style: pw.TextStyle(
-                      fontSize: 5, fontWeight: pw.FontWeight.bold)),
-            ]),
-      ),
-    );
-  }
 }
 
 enum Views {
@@ -587,4 +470,3 @@ enum Views {
 }
 
 enum PaymentMethod { bt, cs, cc }
-enum NotificationMethods { sms, email, print }

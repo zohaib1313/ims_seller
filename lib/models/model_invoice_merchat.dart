@@ -11,12 +11,14 @@ class ModelInvoiceMerchant {
   String? paymentMethod;
   String? invoiceDiscount;
   String? invoiceTax;
+  String? client_name;
 
   ModelInvoiceMerchant(
       {this.invoiceId,
       this.invoiceNumber,
       this.qty,
       this.price,
+      this.client_name,
       this.invoiceDate,
       this.amount,
       this.invoiceAmount,
@@ -29,6 +31,7 @@ class ModelInvoiceMerchant {
     invoiceNumber = json['invoice_number'];
     qty = json['qty'];
     price = json['price'];
+    client_name = json['client_name'];
     invoiceDate = json['invoice_date'];
     amount = json['amount'];
     invoiceAmount = json['invoice_amount'];
@@ -45,6 +48,7 @@ class ModelInvoiceMerchant {
     data['price'] = this.price;
     data['invoice_date'] = this.invoiceDate;
     data['amount'] = this.amount;
+    data['client_name'] = this.client_name;
     data['invoice_amount'] = this.invoiceAmount;
     data['payment_method'] = this.paymentMethod;
     data['invoice_discount'] = this.invoiceDiscount;

@@ -3,21 +3,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/invoice_sale_model.dart';
 import 'package:ims_seller/routes.dart';
-import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/styles.dart';
 
-class SaleInvoiceScreen extends StatefulWidget {
-  static const id = "newInvoiceScreen";
+class SendAlertInvoiceOldSaleInvoiceScreen extends StatefulWidget {
   InvoiceSaleModel? invoiceModel;
 
-  SaleInvoiceScreen.invoice({Key? key, required this.invoiceModel})
-      : super(key: key);
+  SendAlertInvoiceOldSaleInvoiceScreen(this.invoiceModel);
 
   @override
-  _SaleInvoiceScreenState createState() => _SaleInvoiceScreenState();
+  State<SendAlertInvoiceOldSaleInvoiceScreen> createState() =>
+      _SendAlertInvoiceOldSaleInvoiceScreenState();
 }
 
-class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
+class _SendAlertInvoiceOldSaleInvoiceScreenState
+    extends State<SendAlertInvoiceOldSaleInvoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -88,7 +87,7 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
               ),
               SizedBox(height: 30.h),
               Text(
-                "Product List",
+                "Notification method:",
                 style: AppTextStyles.large.copyWith(color: AppColor.blackColor),
               ),
               SizedBox(height: 20.h),
@@ -96,126 +95,7 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Column(
-                    children: [
-                      SizedBox(height: 30.h),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: widget.invoiceModel!.saleInvoice![0]
-                              .saleInvoice!.length,
-                          itemBuilder: (context, index) {
-                            return getSingleProduct(widget.invoiceModel!
-                                .saleInvoice![0].saleInvoice![index]);
-                          }),
-                      SizedBox(height: 30.h),
-                      const Divider(color: AppColor.blackColor),
-                      Row(
-                        children: [
-                          Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Payment Method:',
-                                style: AppTextStyles.smallBold
-                                    .copyWith(color: AppColor.blackColor),
-                              )),
-                          Spacer(),
-                          Expanded(
-                            flex: 3,
-                            child: getPaymentMethodIcName(widget.invoiceModel),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      const Divider(color: AppColor.blackColor),
-                      Row(
-                        children: [
-                          Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Total Amount',
-                                style: AppTextStyles.medium
-                                    .copyWith(color: AppColor.blackColor),
-                              )),
-                          Spacer(),
-                          Expanded(
-                              flex: 3,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      (double.parse(widget
-                                                  .invoiceModel!.discount!) +
-                                              double.parse(
-                                                  widget.invoiceModel!.amount!))
-                                          .toString(),
-                                      style: AppTextStyles.medium
-                                          .copyWith(color: AppColor.blackColor),
-                                    ),
-                                  )
-                                ],
-                              ))
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      const Divider(color: AppColor.blackColor),
-                      Row(
-                        children: [
-                          Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Discount',
-                                style: AppTextStyles.medium
-                                    .copyWith(color: AppColor.blackColor),
-                              )),
-                          Spacer(),
-                          Expanded(
-                              flex: 3,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      widget.invoiceModel!.discount!.toString(),
-                                      style: AppTextStyles.medium
-                                          .copyWith(color: AppColor.blackColor),
-                                    ),
-                                  )
-                                ],
-                              ))
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      const Divider(color: AppColor.blackColor),
-                      Row(
-                        children: [
-                          Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Grand Total',
-                                style: AppTextStyles.medium
-                                    .copyWith(color: AppColor.blackColor),
-                              )),
-                          Spacer(),
-                          Expanded(
-                              flex: 3,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      widget.invoiceModel!.amount!,
-                                      style: AppTextStyles.largeBold
-                                          .copyWith(color: AppColor.blackColor),
-                                    ),
-                                  )
-                                ],
-                              ))
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      const Divider(color: AppColor.blackColor),
-                      SizedBox(height: 20.h),
-                    ],
+                    children: [],
                   ),
                 ),
               ),
@@ -223,25 +103,12 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: Button(
-                    onTap: () {
-                      Navigator.of(myContext!).push(
-                        MaterialPageRoute(
-                          builder: (context) => SendAlertInvoiceGeneratedScreen(
-                              invoiceId: widget.invoiceModel?.id ?? 0,
-                              phoneNo: widget.invoiceModel?.saleInvoice![0]
-                                      .iClient?.pocPhone ??
-                                  "",
-                              userName: widget.invoiceModel?.saleInvoice![0]
-                                      .iClient?.tradingName ??
-                                  ""),
-                        ),
-                      );
-                    },
+                    onTap: () {},
                     width: 800.w,
-                    color: AppColor.blueColor,
+                    color: AppColor.greenColor,
                     textStyle: AppTextStyles.mediumBold
                         .copyWith(color: AppColor.whiteColor),
-                    buttonText: 'Options',
+                    buttonText: 'Next',
                   ),
                 ),
               )

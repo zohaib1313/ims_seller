@@ -44,12 +44,13 @@ dependencies:
   dio_cache_interceptor_hive_store: ^3.0.1
   shared_preferences: ^2.0.6
   path_provider:
-  flutter_staggered_grid_view:
   printing: ^5.6.0
   intl: ^0.17.0
   percent_indicator:
 #barcode scanner
   flutter_barcode_scanner: ^2.0.0
+  esc_pos_bluetooth:
+    git: https://github.com/andrey-ushakov/esc_pos_bluetooth
 
 
 dev_dependencies:

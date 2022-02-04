@@ -4,15 +4,18 @@ import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
+import 'package:ims_seller/screens/print_tes.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/styles.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
+import 'package:ims_seller/view_models/send_alert_view_model.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatelessWidget {
   static const id = 'Main_Screen';
 
-  const MainScreen({Key? key}) : super(key: key);
+  MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +119,33 @@ class MainScreen extends StatelessWidget {
                                   onTap: () {
                                     Navigator.of(myContext!)
                                         .pushNamed(DashBoardScreen.id);
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 30.h,
+                                ),
+                                Button(
+                                  textColor: AppColor.whiteColor,
+                                  buttonText: 'Print Test',
+                                  color: AppColor.greenColor,
+                                  onTap: () {
+                                    Navigator.of(myContext!).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PrintTest()));
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 30.h,
+                                ),
+                                Button(
+                                  textColor: AppColor.whiteColor,
+                                  buttonText: 'Print Test printing lib',
+                                  color: AppColor.greenColor,
+                                  onTap: () {
+                                    Provider.of<SendAlertViewModel>(myContext!,
+                                            listen: false)
+                                        .doPrint();
                                   },
                                 ),
                               ],

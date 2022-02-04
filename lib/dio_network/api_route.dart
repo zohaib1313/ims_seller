@@ -42,7 +42,7 @@ class APIRoute implements APIRouteConfigurable {
         return RequestOptions(
           path: ApiConstants.searchMerchantInvoices,
           headers: headers,
-          data: body,
+          queryParameters: body,
           method: APIMethod.get,
         );
       case APIType.getInvoiceDetails:

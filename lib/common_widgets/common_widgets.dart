@@ -135,7 +135,7 @@ class MyTextField extends StatelessWidget {
           labelStyle: TextStyle(color: labelColor),
           prefixIcon: (prefixIcon != null)
               ? Padding(
-                  padding: EdgeInsets.all(100.w),
+                  padding: EdgeInsets.all(contentPadding ?? 100.w),
                   child: SvgViewer(svgPath: prefixIcon!),
                 )
               : null,
@@ -144,6 +144,8 @@ class MyTextField extends StatelessWidget {
                   padding: EdgeInsets.all(25.h),
                   child: Text(
                     sufixLabel ?? '',
+                    style: AppTextStyles.smallBold
+                        .copyWith(color: AppColor.blackColor),
                   ),
                 )
               : (suffixIcon != null)

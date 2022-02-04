@@ -43,16 +43,20 @@ class APIResponse<T> extends GenericObject<T>
   String? responseMessage;
   bool? status;
   T? data;
+  bool decoding = true;
 
-  APIResponse({Create<Decodable>? create}) : super(create: create);
+  APIResponse({Create<Decodable>? create, this.decoding = true})
+      : super(create: create);
 
   @override
   APIResponse<T> decode(dynamic json) {
     responseMessage = json['message'] ?? '';
     status = json['status'] ?? false;
-    data = (json as Map<String, dynamic>).containsKey('data')
-        ? genericObject(json['data'])
-        : null;
+    if (decoding) {
+      data = ((json as Map<String, dynamic>).containsKey('data'))
+          ? genericObject(json['data'])
+          : null;
+    }
     return this;
   }
 }

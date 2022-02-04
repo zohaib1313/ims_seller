@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/view_models/add_new_product_view_model.dart';
+import 'package:ims_seller/view_models/send_alert_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../routes.dart';
@@ -43,13 +43,12 @@ class _SuccessScreenState extends State<SuccessScreen> {
           SizedBox(height: 10.h),
           SizedBox(height: 10.h),
           Visibility(
-            visible:
-                Provider.of<AddNewProductViewModel>(myContext!, listen: false)
-                    .selectedNotificationMethods
-                    .contains(NotificationMethods.print),
+            visible: Provider.of<SendAlertViewModel>(myContext!, listen: false)
+                .selectedNotificationMethods
+                .contains(NotificationMethods.print),
             child: InkWell(
               onTap: () {
-                Provider.of<AddNewProductViewModel>(myContext!, listen: false)
+                Provider.of<SendAlertViewModel>(myContext!, listen: false)
                     .doPrint();
               },
               child: Padding(

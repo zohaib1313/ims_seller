@@ -72,7 +72,7 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                                 color: AppColor.blueColor),
                             child: Row(
                               children: [
-                                Flexible(
+                                Expanded(
                                   flex: 4,
                                   child: Column(
                                     mainAxisAlignment:
@@ -222,7 +222,7 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                   Row(
                     children: [
                       Text(
-                        view.totalAmount.toString(),
+                        formatAmount(view.totalAmount.toString()),
                         style: AppTextStyles.largeBold,
                       ),
                     ],
@@ -323,7 +323,7 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
       case Views.scanProduct:
         return scanProductView(view);
       case Views.listProducts:
-        return productListView(view);
+        return productListView(view, true);
       case Views.selectPayment:
         return selectPaymentView(view);
       case Views.bankPaymentDetails:

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -7,17 +8,19 @@ void printWrapped(String text) {
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
 
+String formatAmount(String? amount) {
+  return NumberFormat("#,##0.00", "en_US")
+      .format(double.parse(amount ?? "0.0"));
+}
+
 void printNow({required child}) async {
   final doc = pw.Document();
 
-  doc.addPage(pw.Page(
-      pageFormat: PdfPageFormat.roll57,
-      build: (pw.Context context) {
-        return pw.Center(child: child); // Center
-      })); // Page // Page
+  doc.addPage(pw.Page(build: (pw.Context context) {
+    return pw.Center(child: child); // Center
+  })); // Page // Page
 
   await Printing.layoutPdf(
-    format: PdfPageFormat.roll57,
     onLayout: (PdfPageFormat format) async => doc.save(),
   );
 }

@@ -8,8 +8,9 @@ import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/sale_invoice_screen.dart';
 import 'package:ims_seller/screens/target_details_screen.dart';
 import 'package:ims_seller/screens/view_all_invoices_screen.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
+import 'package:ims_seller/utils/utils.dart';
 import 'package:ims_seller/view_models/dashboard_view_model.dart';
-import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +46,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               stream: invoiceTargetStream,
               builder: (BuildContext context,
                   AsyncSnapshot<ModelSalesTarget> snapshot) {
-                resentSalesInvoicesStream = view.getMerchantInvoiceList();
+                resentSalesInvoicesStream =
+                    view.getMerchantInvoiceList(start: 0, end: 10);
                 if (snapshot.data != null) {
                   var data = snapshot.data!;
                   return Container(
@@ -67,8 +69,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           ],
                         ),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             GestureDetector(
                               onTap: () {
@@ -90,10 +92,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 ),
                               ),
                             ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: 20.h, left: 100.w, right: 100.w),
+                              child: Text(
+                                "Hi, ${UserDefaults.getUserSession()?.username ?? ""}",
+                                style: AppTextStyles.largeBold
+                                    .copyWith(color: AppColor.whiteColor),
+                              ),
+                            ),
                             Center(
                               child: Container(
                                 margin: EdgeInsets.only(
-                                    top: 50.h, left: 100.w, right: 100.w),
+                                    top: 20.h, left: 100.w, right: 100.w),
                                 decoration: BoxDecoration(
                                     color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(50)),
@@ -109,6 +120,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     );
                                   },
                                   child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                          color: Colors.white70, width: 1),
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(50.r),
+                                          topRight: Radius.circular(350.r),
+                                          bottomLeft: Radius.circular(50.r),
+                                          bottomRight: Radius.circular(50.r)),
+                                    ),
                                     elevation: 20,
                                     child: Row(
                                       mainAxisAlignment:
@@ -127,13 +147,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                   child: Text(
                                                     "Top Sales",
                                                     style: AppTextStyles
-                                                        .mediumBold
+                                                        .smallBold
                                                         .copyWith(
                                                             color: AppColor
                                                                 .blackColor),
                                                   ),
                                                 ),
-                                                Expanded(
+                                                Flexible(
                                                   flex: 2,
                                                   child: Row(
                                                     mainAxisAlignment:
@@ -158,7 +178,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                           Text(
                                                             "Total Amount",
                                                             style: AppTextStyles
-                                                                .smallBold
+                                                                .small
                                                                 .copyWith(
                                                                     color: AppColor
                                                                         .blackColor),
@@ -172,19 +192,20 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                   width: 50.w),
                                                               Expanded(
                                                                   child: Text(
-                                                                data.totalSaleAmount
-                                                                    .toString(),
-                                                                maxLines: 1,
+                                                                formatAmount(data
+                                                                    .totalSaleAmount
+                                                                    .toString()),
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
-                                                                style: AppTextStyles
-                                                                    .smallBold
-                                                                    .copyWith(
-                                                                        color: AppColor
-                                                                            .blackColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
+                                                                style: AppTextStyles.smallBold.copyWith(
+                                                                    color: AppColor
+                                                                        .blackColor,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ))
                                                             ],
                                                           )
@@ -218,7 +239,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                           Text(
                                                             "Total Quantity",
                                                             style: AppTextStyles
-                                                                .smallBold
+                                                                .small
                                                                 .copyWith(
                                                                     color: AppColor
                                                                         .blackColor),
@@ -227,7 +248,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             children: [
                                                               const SvgViewer(
                                                                   svgPath:
-                                                                      'assets/icons/icon-money.svg'),
+                                                                      'assets/icons/quantity_ic.svg'),
                                                               SizedBox(
                                                                   width: 50.w),
                                                               Expanded(
@@ -238,13 +259,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
-                                                                style: AppTextStyles
-                                                                    .smallBold
-                                                                    .copyWith(
-                                                                        color: AppColor
-                                                                            .blackColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
+                                                                style: AppTextStyles.smallBold.copyWith(
+                                                                    color: AppColor
+                                                                        .blackColor,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ))
                                                             ],
                                                           )
@@ -257,23 +279,33 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             ),
                                           ),
                                         ),
-                                        Expanded(
-                                            child: CircularPercentIndicator(
-                                          radius: 280.r,
-                                          lineWidth: 10.0,
-                                          percent: (data.totalAchivement
-                                                      ?.toDouble() ??
-                                                  0.0) /
-                                              100,
-                                          center: Text(
-                                              "${data.totalAchivement.toString()}% \n Target",
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.smallBold
-                                                  .copyWith(
-                                                      color:
-                                                          AppColor.blackColor)),
-                                          progressColor: AppColor.blueColor,
-                                        ))
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 80.r,
+                                              right: 80.r,
+                                              bottom: 80.r),
+                                          child: CircularPercentIndicator(
+                                            radius: 300.r,
+                                            lineWidth: 10.0,
+                                            percent: ((data.totalAchivement
+                                                            ?.toDouble() ??
+                                                        0.0) >
+                                                    100.0)
+                                                ? 1.0
+                                                : ((data.totalAchivement
+                                                            ?.toDouble() ??
+                                                        0.0) /
+                                                    100),
+                                            center: Text(
+                                                "${data.totalAchivement.toString()}% \n Target",
+                                                textAlign: TextAlign.center,
+                                                style: AppTextStyles.smallBold
+                                                    .copyWith(
+                                                        color: AppColor
+                                                            .blackColor)),
+                                            progressColor: AppColor.blueColor,
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),
@@ -288,8 +320,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   children: [
                                     MyTextField(
                                       enable: false,
+                                      contentPadding: 10,
                                       focusBorderColor: AppColor.greyColor,
                                       hintText: 'Total Sales',
+                                      hintColor: AppColor.blackColor,
                                       sufixLabel:
                                           '${data.totalSale.toString()}',
                                       prefixIcon:
@@ -298,6 +332,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     SizedBox(height: 20.h),
                                     MyTextField(
                                       enable: false,
+                                      contentPadding: 10,
+                                      hintColor: AppColor.blackColor,
                                       focusBorderColor: AppColor.greyColor,
                                       hintText: 'Total Discounts',
                                       sufixLabel:
@@ -457,28 +493,42 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(invoiceMerchant.invoiceNumber.toString(),
+                        style: AppTextStyles.smallBold.copyWith(
+                            color: AppColor.blackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal)),
                     Text(
-                      DateFormat('dd-MM-yyyy').format(
-                          DateFormat("yyyy-MM-dd'T'HH:mm:sss")
-                              .parse(invoiceMerchant.invoiceDate.toString())),
-                      style: AppTextStyles.smallBold.copyWith(
-                          color: AppColor.blackColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      invoiceMerchant.invoiceId.toString(),
+                      invoiceMerchant.client_name ?? "-",
                       style: AppTextStyles.mediumBold
-                          .copyWith(color: AppColor.blackColor, fontSize: 16),
+                          .copyWith(color: AppColor.blackColor, fontSize: 17),
                     ),
                   ],
                 ),
               ),
-              Text(
-                invoiceMerchant.invoiceAmount.toString(),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(invoiceMerchant.invoiceDate.toString(),
+                        style: AppTextStyles.smallBold.copyWith(
+                            color: AppColor.blackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal)),
+                    Text(
+                      formatAmount(invoiceMerchant.invoiceAmount.toString()),
+                      style: AppTextStyles.mediumBold
+                          .copyWith(color: AppColor.blackColor, fontSize: 17),
+                    ),
+                  ],
+                ),
+              ),
+              /*      Text(
+                oCcy.format(
+                    double.parse(invoiceMerchant.invoiceAmount ?? "0.0")),
                 style: AppTextStyles.mediumBold
                     .copyWith(color: AppColor.blackColor, fontSize: 16),
-              )
+              )*/
             ],
           ),
         ),

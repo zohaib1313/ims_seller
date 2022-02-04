@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/bank_account_model.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/models/product_detail_scanned_model.dart';
+import 'package:ims_seller/utils/utils.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 
 import '../../styles.dart';
@@ -60,22 +60,23 @@ selectPaymentView(view) {
                 var list = snapshot.data!;
                 List<Widget> listOfWidget = [];
 
-                for (var element in list) {
-                  listOfWidget.add(
-                    getPaymentMethodItem(
-                        view: view,
-                        enabled: element.active ?? true,
-                        title: element.name ?? "-",
-                        icon: getIcon(element.id ?? "bt"),
-                        paymentMethod: getType(element.id ?? "bt")),
-                  );
-                }
-                return StaggeredGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 2,
-                  crossAxisSpacing: 2,
-                  children: listOfWidget,
-                );
+                return GridView.builder(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                    itemCount: list.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var element = list[index];
+                      return getPaymentMethodItem(
+                          view: view,
+                          enabled: element.active ?? true,
+                          title: element.name ?? "-",
+                          icon: getIcon(element.id ?? "bt"),
+                          paymentMethod: getType(element.id ?? "bt"));
+                    });
               } else {
                 return const Center(
                   child: Text("No data found"),
@@ -148,10 +149,10 @@ getPaymentMethodItem(
                       : (view.selectedPaymentMethod == paymentMethod
                           ? AppColor.blueColor
                           : AppColor.whiteColor),
-                  child: const Icon(
+                  child: Icon(
                     Icons.check,
                     size: 14,
-                    color: AppColor.whiteColor,
+                    color: enabled ? AppColor.whiteColor : Colors.transparent,
                   ),
                   maxRadius: 10,
                 )
@@ -225,10 +226,21 @@ bankPaymentDetails(AddNewProductViewModel view) {
                         hintColor: AppColor.blackColor,
                         labelColor: AppColor.blackColor,
                         hintText: 'Select Bank',
-                        items: list
+                        /*items: list
                             ?.map((e) =>
                                 "${e.accName.toString()} | ${e.iBankShortCode.toString()}")
-                            .toList(),
+                            .toList(),*/
+                        itemFuntion:
+                            list?.map((BankAccountModel bankAccountModel) {
+                          return DropdownMenuItem<BankAccountModel>(
+                            value: bankAccountModel,
+                            child: Text(
+                              "${bankAccountModel.accName.toString()} | ${bankAccountModel.iBankShortCode.toString()}",
+                              style: AppTextStyles.small
+                                  .copyWith(color: AppColor.blackColor),
+                            ),
+                          );
+                        }).toList(),
                         validator: (string) {
                           if (string == null) {
                             return "select bank";
@@ -286,7 +298,7 @@ bankPaymentDetails(AddNewProductViewModel view) {
   );
 }
 
-productListView(view) {
+productListView(view, bool showAdd) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,7 +316,7 @@ productListView(view) {
           itemBuilder: (context, index) {
             if (view.listOfScannedProducts != null) {
               return getProductBaseOnType(
-                  view.listOfScannedProducts[index]!, view);
+                  view.listOfScannedProducts[index]!, view, showAdd);
             } else {
               return Container(color: Colors.red);
             }
@@ -316,8 +328,8 @@ productListView(view) {
   );
 }
 
-getProductBaseOnType(
-    ProductDetailScannedModel product, AddNewProductViewModel view) {
+getProductBaseOnType(ProductDetailScannedModel product,
+    AddNewProductViewModel view, bool showAdd) {
   if (product.productDetail!.haveDiffBarcode!) {
     return Container(
       padding: EdgeInsets.all(20.h),
@@ -357,9 +369,9 @@ getProductBaseOnType(
                     ),
                     Flexible(
                       child: Text(
-                        product.productDetail?.retailPrice ?? "-",
+                        "MMK: ${formatAmount(product.productDetail?.salePrice)}",
                         style: AppTextStyles.mediumBold
-                            .copyWith(color: AppColor.blackColor),
+                            .copyWith(color: AppColor.blackColor, fontSize: 14),
                       ),
                     ),
                   ],
@@ -402,7 +414,7 @@ getProductBaseOnType(
                   children: [
                     Flexible(
                       child: Text(
-                        "${product.productDetail?.salePrice ?? "-"} x ${product.localQty}",
+                        "${formatAmount(product.productDetail?.salePrice)} x ${product.localQty}",
                         style: AppTextStyles.medium
                             .copyWith(color: AppColor.blackColor),
                       ),
@@ -411,7 +423,7 @@ getProductBaseOnType(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "MMK: ${(double.parse(product.productDetail?.salePrice ?? "0") * product.localQty)}",
+                          "MMK: ${formatAmount((double.parse(product.productDetail?.salePrice ?? "0") * product.localQty).toString())}",
                           style: AppTextStyles.mediumBold.copyWith(
                               color: AppColor.blackColor, fontSize: 14),
                         ),
@@ -422,67 +434,71 @@ getProductBaseOnType(
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    if (product.localQty <
-                        product
-                            .productDetail!.availableProductQuantityInBranch!) {
-                      product.localQty = product.localQty + 1;
-                      view.calculateTotalAmount();
-                    } else {
-                      AppPopUps.showAlertDialog(message: "Stock Limit reached");
-                    }
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 3),
-                    padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(
-                        color: AppColor.blackColor,
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    child: const Icon(
-                      Icons.add,
-                      color: AppColor.whiteColor,
+          Visibility(
+            visible: showAdd,
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (product.localQty <
+                          product.productDetail!
+                              .availableProductQuantityInBranch!) {
+                        product.localQty = product.localQty + 1;
+                        view.calculateTotalAmount();
+                      } else {
+                        AppPopUps.showAlertDialog(
+                            message: "Stock Limit reached");
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 3),
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                          color: AppColor.blackColor,
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                      child: const Icon(
+                        Icons.add,
+                        color: AppColor.whiteColor,
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 3),
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                      color: AppColor.alphaGrey,
-                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                  child: Text(
-                    product.localQty.toString(),
-                    style: AppTextStyles.medium
-                        .copyWith(color: AppColor.blackColor),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (product.localQty > 1) {
-                      product.localQty = product.localQty - 1;
-                      view.calculateTotalAmount();
-                    }
-                  },
-                  child: Container(
+                  Container(
                     margin: const EdgeInsets.symmetric(vertical: 3),
-                    padding: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(8),
                     decoration: const BoxDecoration(
-                        color: AppColor.blackColor,
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    child: const Icon(
-                      Icons.remove,
-                      color: AppColor.whiteColor,
+                        color: AppColor.alphaGrey,
+                        borderRadius: BorderRadius.all(Radius.circular(4))),
+                    child: Text(
+                      product.localQty.toString(),
+                      style: AppTextStyles.medium
+                          .copyWith(color: AppColor.blackColor),
                     ),
                   ),
-                ),
-              ],
+                  GestureDetector(
+                    onTap: () {
+                      if (product.localQty > 1) {
+                        product.localQty = product.localQty - 1;
+                        view.calculateTotalAmount();
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 3),
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                          color: AppColor.blackColor,
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                      child: const Icon(
+                        Icons.remove,
+                        color: AppColor.whiteColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],

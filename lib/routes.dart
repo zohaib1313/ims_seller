@@ -8,13 +8,13 @@ import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/screens/splash_screen.dart';
-import 'package:ims_seller/view_models/TesTViewModel.dart';
 import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:ims_seller/view_models/dashboard_view_model.dart';
 import 'package:ims_seller/view_models/main_screen_view_model.dart';
 import 'package:ims_seller/view_models/sales_invoice_view_model.dart';
 import 'package:ims_seller/view_models/search_customer_view_model.dart';
+import 'package:ims_seller/view_models/send_alert_view_model.dart';
 import 'package:ims_seller/view_models/sigin_screen_view_model.dart';
 import 'package:ims_seller/view_models/splash_screen_view_model.dart';
 import 'package:ims_seller/view_models/target_details_view_model.dart';
@@ -27,7 +27,7 @@ final Map<String, Widget Function(BuildContext)> routes = {
   SplashScreen.id: (context) => const SplashScreen(),
   SignInScreen.id: (context) => SignInScreen(),
   DashBoardScreen.id: (context) => DashBoardScreen(),
-  MainScreen.id: (context) => const MainScreen(),
+  MainScreen.id: (context) => MainScreen(),
   SearchCustomerScreen.id: (context) => SearchCustomerScreen(),
   AddNewCustomer.id: (context) => AddNewCustomer(),
   InvoiceSummaryScreen.id: (context) => InvoiceSummaryScreen(),
@@ -54,5 +54,6 @@ final List<ChangeNotifierProvider<dynamic>> multiProviders = [
       create: (_) => SearchCustomerViewModel()),
   ChangeNotifierProvider<AddNewCustomerViewModel>(
       create: (_) => AddNewCustomerViewModel()),
-  ChangeNotifierProvider<TestViewModel>(create: (_) => TestViewModel()),
+  ChangeNotifierProvider<SendAlertViewModel>(
+      create: (_) => SendAlertViewModel()),
 ];

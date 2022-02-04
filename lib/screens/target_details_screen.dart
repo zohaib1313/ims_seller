@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/ModelSalesTarget.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
+import 'package:ims_seller/utils/utils.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../routes.dart';
@@ -44,27 +46,36 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                           ],
                         ),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 30.h, left: 100.w, right: 100.w),
-                              child: Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(myContext!).pop();
-                                    },
-                                    child: const Icon(
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(myContext!).pop();
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 30.h, left: 100.w, right: 100.w),
+                                child: Row(
+                                  children: const [
+                                    Icon(
                                       Icons.arrow_back_ios,
                                       size: 25,
                                       color: AppColor.whiteColor,
                                     ),
-                                  ),
-                                  const Text("Back",
-                                      style: AppTextStyles.mediumBold)
-                                ],
+                                    Text("Back",
+                                        style: AppTextStyles.mediumBold),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: 20.h, left: 100.w, right: 100.w),
+                              child: Text(
+                                "Hi, ${UserDefaults.getUserSession()?.username ?? ""}",
+                                style: AppTextStyles.largeBold
+                                    .copyWith(color: AppColor.whiteColor),
                               ),
                             ),
                             Center(
@@ -72,12 +83,21 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                 physics: BouncingScrollPhysics(),
                                 child: Container(
                                   margin: EdgeInsets.only(
-                                      top: 50.h, left: 100.w, right: 100.w),
+                                      top: 20.h, left: 100.w, right: 100.w),
                                   decoration: BoxDecoration(
                                       color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(50)),
                                   height: 250.h,
                                   child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                          color: Colors.white70, width: 1),
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(50.r),
+                                          topRight: Radius.circular(350.r),
+                                          bottomLeft: Radius.circular(50.r),
+                                          bottomRight: Radius.circular(50.r)),
+                                    ),
                                     elevation: 20,
                                     child: Row(
                                       mainAxisAlignment:
@@ -96,13 +116,13 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                   child: Text(
                                                     "Top Sales",
                                                     style: AppTextStyles
-                                                        .mediumBold
+                                                        .smallBold
                                                         .copyWith(
                                                             color: AppColor
                                                                 .blackColor),
                                                   ),
                                                 ),
-                                                Expanded(
+                                                Flexible(
                                                   flex: 2,
                                                   child: Row(
                                                     mainAxisAlignment:
@@ -127,7 +147,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                           Text(
                                                             "Total Amount",
                                                             style: AppTextStyles
-                                                                .smallBold
+                                                                .small
                                                                 .copyWith(
                                                                     color: AppColor
                                                                         .blackColor),
@@ -139,23 +159,23 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                                       'assets/icons/icon-money.svg'),
                                                               SizedBox(
                                                                   width: 50.w),
-                                                              Expanded(
+                                                              Flexible(
                                                                   child: Text(
-                                                                widget
+                                                                formatAmount(widget
                                                                     ._modelSalesTarget
                                                                     .totalSaleAmount
-                                                                    .toString(),
-                                                                maxLines: 1,
+                                                                    .toString()),
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
-                                                                style: AppTextStyles
-                                                                    .smallBold
-                                                                    .copyWith(
-                                                                        color: AppColor
-                                                                            .blackColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
+                                                                style: AppTextStyles.smallBold.copyWith(
+                                                                    color: AppColor
+                                                                        .blackColor,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ))
                                                             ],
                                                           )
@@ -189,7 +209,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                           Text(
                                                             "Total Quantity",
                                                             style: AppTextStyles
-                                                                .smallBold
+                                                                .small
                                                                 .copyWith(
                                                                     color: AppColor
                                                                         .blackColor),
@@ -198,7 +218,7 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                             children: [
                                                               const SvgViewer(
                                                                   svgPath:
-                                                                      'assets/icons/icon-money.svg'),
+                                                                      'assets/icons/quantity_ic.svg'),
                                                               SizedBox(
                                                                   width: 50.w),
                                                               Expanded(
@@ -211,13 +231,14 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
-                                                                style: AppTextStyles
-                                                                    .smallBold
-                                                                    .copyWith(
-                                                                        color: AppColor
-                                                                            .blackColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
+                                                                style: AppTextStyles.smallBold.copyWith(
+                                                                    color: AppColor
+                                                                        .blackColor,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ))
                                                             ],
                                                           )
@@ -230,24 +251,35 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                                             ),
                                           ),
                                         ),
-                                        Expanded(
-                                            child: CircularPercentIndicator(
-                                          radius: 280.r,
-                                          lineWidth: 10.0,
-                                          percent: (widget._modelSalesTarget
-                                                      .totalAchivement
-                                                      ?.toDouble() ??
-                                                  0.0) /
-                                              100,
-                                          center: Text(
-                                              "${widget._modelSalesTarget.totalAchivement.toString()}% \n Target",
-                                              textAlign: TextAlign.center,
-                                              style: AppTextStyles.smallBold
-                                                  .copyWith(
-                                                      color:
-                                                          AppColor.blackColor)),
-                                          progressColor: AppColor.blueColor,
-                                        ))
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 80.r,
+                                              right: 80.r,
+                                              bottom: 80.r),
+                                          child: CircularPercentIndicator(
+                                            radius: 300.r,
+                                            lineWidth: 10.0,
+                                            percent: ((widget._modelSalesTarget
+                                                            .totalAchivement
+                                                            ?.toDouble() ??
+                                                        0.0) >
+                                                    100.0)
+                                                ? 1.0
+                                                : ((widget._modelSalesTarget
+                                                            .totalAchivement
+                                                            ?.toDouble() ??
+                                                        0.0) /
+                                                    100),
+                                            center: Text(
+                                                "${widget._modelSalesTarget.totalAchivement.toString()}% \n Target",
+                                                textAlign: TextAlign.center,
+                                                style: AppTextStyles.smallBold
+                                                    .copyWith(
+                                                        color: AppColor
+                                                            .blackColor)),
+                                            progressColor: AppColor.blueColor,
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),
@@ -287,25 +319,28 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
       margin: EdgeInsets.symmetric(horizontal: 100.w, vertical: 10.h),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColor.greyColor)),
+          border: Border.all(width: 0.5, color: AppColor.greyColor)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              target.name.toString(),
-              style: AppTextStyles.mediumBold.copyWith(
-                  color: AppColor.blackColor, fontWeight: FontWeight.bold),
-            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        target.name.toString(),
+                        style: AppTextStyles.mediumBold.copyWith(
+                            color: AppColor.blackColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15.h),
                       Text(
                         "Target",
                         style: AppTextStyles.smallBold.copyWith(
@@ -315,10 +350,8 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                       ),
                       Text(
                         target.targetAmount.toString(),
-                        style: AppTextStyles.smallBold.copyWith(
-                            color: AppColor.blackColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal),
+                        style: AppTextStyles.mediumBold
+                            .copyWith(color: AppColor.blackColor, fontSize: 18),
                       ),
                     ],
                   ),
@@ -327,6 +360,13 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        '',
+                        style: AppTextStyles.mediumBold.copyWith(
+                            color: AppColor.blackColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15.h),
                       Text(
                         "Achieved",
                         style: AppTextStyles.smallBold.copyWith(
@@ -337,20 +377,22 @@ class _TargetDetailsScreenState extends State<TargetDetailsScreen> {
                       Text(
                         target.achivedAmount.toString(),
                         style: AppTextStyles.mediumBold
-                            .copyWith(color: AppColor.blackColor, fontSize: 16),
+                            .copyWith(color: AppColor.blackColor, fontSize: 18),
                       ),
                     ],
                   ),
                 ),
                 Expanded(
                   child: CircularPercentIndicator(
-                    radius: 150.r,
-                    lineWidth: 5.0,
-                    percent: (target.percentage?.toDouble() ?? 0.0) / 100,
-                    center: Text("${target.percentage}% \n Percentage",
+                    radius: 200.r,
+                    lineWidth: 6.0,
+                    percent: ((target.percentage?.toDouble() ?? 0.0) > 100.0)
+                        ? 1.0
+                        : ((target.percentage?.toDouble() ?? 0.0) / 100),
+                    center: Text("${target.percentage}%",
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.smallBold
-                            .copyWith(color: AppColor.blackColor, fontSize: 8)),
+                        style: AppTextStyles.mediumBold.copyWith(
+                            color: AppColor.blackColor, fontSize: 10)),
                     progressColor: AppColor.blueColor,
                   ),
                 ),
