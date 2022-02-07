@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/invoice_sale_model.dart';
+import 'package:ims_seller/models/mode_printer_product.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/styles.dart';
+import 'package:ims_seller/utils/utils.dart';
 
 class SaleInvoiceScreen extends StatefulWidget {
   static const id = "newInvoiceScreen";
@@ -18,6 +21,8 @@ class SaleInvoiceScreen extends StatefulWidget {
 }
 
 class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
+  String paymentMethodName = '';
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -99,6 +104,7 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                     children: [
                       SizedBox(height: 30.h),
                       ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: widget.invoiceModel!.saleInvoice![0]
                               .saleInvoice!.length,
@@ -143,11 +149,11 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      (double.parse(widget
+                                      formatAmount((double.parse(widget
                                                   .invoiceModel!.discount!) +
                                               double.parse(
                                                   widget.invoiceModel!.amount!))
-                                          .toString(),
+                                          .toString()),
                                       style: AppTextStyles.medium
                                           .copyWith(color: AppColor.blackColor),
                                     ),
@@ -175,7 +181,9 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      widget.invoiceModel!.discount!.toString(),
+                                      formatAmount(widget.invoiceModel?.discount
+                                              ?.toString() ??
+                                          "0"),
                                       style: AppTextStyles.medium
                                           .copyWith(color: AppColor.blackColor),
                                     ),
@@ -203,7 +211,8 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      widget.invoiceModel!.amount!,
+                                      formatAmount(
+                                          widget.invoiceModel?.amount ?? "0"),
                                       style: AppTextStyles.largeBold
                                           .copyWith(color: AppColor.blackColor),
                                     ),
@@ -224,18 +233,59 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                 child: Center(
                   child: Button(
                     onTap: () {
-                      Navigator.of(myContext!).push(
-                        MaterialPageRoute(
-                          builder: (context) => SendAlertInvoiceGeneratedScreen(
+                      List<ModelPrinterProduct> listOfProducts = [];
+                      if (widget.invoiceModel?.saleInvoice?[0].saleInvoice !=
+                          null) {
+                        for (var value in widget
+                            .invoiceModel!.saleInvoice![0].saleInvoice!) {
+                          listOfProducts.add(
+                            ModelPrinterProduct(
+                              itemQty: value.qty?.toString() ?? "1",
+                              itemRate: formatAmount(
+                                  (value.price?.toString() ?? "0")),
+                              itemAmount: formatAmount((double.parse(
+                                          value.price?.toString() ?? "0") *
+                                      (value.qty ?? 0))
+                                  .toString()),
+                              itemDescription:
+                                  value.iProductItem?.iProduct?.name ?? "--",
+                            ),
+                          );
+                        }
+
+                        Navigator.of(myContext!).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SendAlertInvoiceGeneratedScreen(
                               invoiceId: widget.invoiceModel?.id ?? 0,
+                              address:
+                                  widget.invoiceModel?.iBranch?.address ?? "-",
+                              invoiceNumber: widget.invoiceModel
+                                      ?.saleInvoice![0].invoiceNumber ??
+                                  "",
+                              haveMail: (widget.invoiceModel?.saleInvoice![0]
+                                              .iClient?.pocEmail ??
+                                          "")
+                                      .isNotEmpty
+                                  ? true
+                                  : false,
                               phoneNo: widget.invoiceModel?.saleInvoice![0]
                                       .iClient?.pocPhone ??
                                   "",
                               userName: widget.invoiceModel?.saleInvoice![0]
                                       .iClient?.tradingName ??
-                                  ""),
-                        ),
-                      );
+                                  "",
+                              listOfProducts: listOfProducts,
+                              discount: formatAmount((double.parse(
+                                      widget.invoiceModel?.discount ?? "0.0")
+                                  .toString())),
+                              paymentMethod: paymentMethodName,
+                              totalAmount: formatAmount(
+                                  widget.invoiceModel?.amount ?? "0"),
+                            ),
+                          ),
+                        );
+                      }
                     },
                     width: 800.w,
                     color: AppColor.blueColor,
@@ -278,6 +328,7 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
   getPaymentMethodIcName(InvoiceSaleModel? invoiceModel) {
     switch (invoiceModel!.paymentMethod!) {
       case 'cs':
+        paymentMethodName = "Cash";
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -299,6 +350,8 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
           ],
         );
       case 'cc':
+        paymentMethodName = "Credit Card";
+
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -320,6 +373,8 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
           ],
         );
       case 'bt':
+        paymentMethodName = "Bank Transfer";
+
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -346,6 +401,7 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
   getSingleProduct(SubSaleInvoice saleInvoice) {
     return Container(
       padding: EdgeInsets.all(20.h),
+      margin: EdgeInsets.only(bottom: 20.h),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColor.greyColor),
@@ -374,13 +430,14 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
             children: [
               Text(
                 saleInvoice.qty! > 1
-                    ? '${saleInvoice.price!} x ${saleInvoice.qty!}'
-                    : "${saleInvoice.price!}",
+                    ? '${formatAmount(saleInvoice.price)} x ${saleInvoice.qty!}'
+                    : formatAmount(saleInvoice.price),
                 style: AppTextStyles.smallBold
                     .copyWith(color: AppColor.blackColor),
               ),
               Text(
-                'MMK: ${saleInvoice.price!}',
+                'MMK: ${formatAmount((double.parse(saleInvoice.price ?? "0") * (saleInvoice.qty?.toDouble() ?? 1.0)).toString())}',
+                //  "",
                 style: AppTextStyles.smallBold
                     .copyWith(color: AppColor.blackColor),
               )

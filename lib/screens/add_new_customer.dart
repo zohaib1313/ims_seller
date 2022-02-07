@@ -82,6 +82,7 @@ class AddNewCustomer extends StatelessWidget {
                                         controller:
                                             view.mobileNumberEditingController,
                                         leftPadding: 0,
+                                        keyboardType: TextInputType.phone,
                                         hintText: 'Enter Mobile Number',
                                         // validator: (string) {
                                         //   if (string == null ||
@@ -109,17 +110,17 @@ class AddNewCustomer extends StatelessWidget {
                             ),
                             SizedBox(height: 20.h),
                             getRow('Full Name*',
-                                view.fullNameEditingTextController),
+                                view.fullNameEditingTextController, true),
                             SizedBox(height: 20.h),
-                            getRow(
-                                'Email Address', view.emailAddressController),
+                            getRow('Email Address', view.emailAddressController,
+                                false),
                             SizedBox(height: 20.h),
-                            getRow('City', view.cityController),
+                            getRow('City', view.cityController, false),
                             SizedBox(height: 20.h),
-                            getRow('Address', view.addressController),
+                            getRow('Address', view.addressController, false),
                             SizedBox(height: 20.h),
                             getRow('Membership No*',
-                                view.memberShipNumberEditingController),
+                                view.memberShipNumberEditingController, true),
                           ],
                         ),
                       ),
@@ -184,7 +185,8 @@ class AddNewCustomer extends StatelessWidget {
     );
   }
 
-  getRow(String title, TextEditingController controller) {
+  getRow(
+      String title, TextEditingController controller, bool enableValidation) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,12 +207,14 @@ class AddNewCustomer extends StatelessWidget {
                 leftPadding: 0,
                 hintText: '',
                 onChanged: (String text) {},
-                validator: (string) {
-                  if (string == null || string.isEmpty) {
-                    return 'Enter $title';
-                  }
-                  return null;
-                },
+                validator: enableValidation
+                    ? ((string) {
+                        if (string == null || string.isEmpty) {
+                          return 'Enter $title';
+                        }
+                        return null;
+                      })
+                    : null,
               ),
             ),
           ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/mode_printer_product.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/utils/utils.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:provider/provider.dart';
@@ -128,7 +130,7 @@ class InvoiceSummaryScreen extends StatelessWidget {
         Center(
           child: ListView(
             shrinkWrap: true,
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             children: [
               productListView(view, false),
               SizedBox(height: 20.h),
@@ -209,33 +211,9 @@ class InvoiceSummaryScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
-                'Add Discount',
-                style: AppTextStyles.mediumBold
-                    .copyWith(color: AppColor.blackColor),
-              ),
-              SizedBox(height: 20.h),
-              MyTextField(
-                leftPadding: 0,
-                controller: view.discountedPriceController,
-                rightPadding: 0,
-                keyboardType: TextInputType.number,
-                hintText: 'Enter amount',
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                      onPressed: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        view.calculateTotalAmount();
-                      },
-                      child: const Text("Add"))
-                ],
-              ),
-              SizedBox(height: 20.h),
-              const Divider(color: AppColor.blackColor),
+              (UserDefaults.getUserSession()?.discountPermission ?? false)
+                  ? showDiscount()
+                  : const IgnorePointer(),
               Row(
                 children: [
                   Expanded(
@@ -362,17 +340,58 @@ class InvoiceSummaryScreen extends StatelessWidget {
             Expanded(
               child: Button(
                 onTap: () {
-                  view.createInvoice(completion: () {
-                    Navigator.of(myContext!).push(
-                      MaterialPageRoute(
-                        builder: (context) => SendAlertInvoiceGeneratedScreen(
+                  view.createInvoice(
+                    completion: () {
+                      List<ModelPrinterProduct> listOfProducts = [];
+                      for (var value in view.listOfScannedProducts) {
+                        listOfProducts.add(
+                          ModelPrinterProduct(
+                            itemQty: value?.localQty.toString() ?? "1",
+                            itemRate: formatAmount(
+                                (value?.productDetail?.salePrice?.toString() ??
+                                    "0.0")),
+                            itemAmount: formatAmount(((double.parse((value
+                                            ?.productDetail?.salePrice
+                                            ?.toString() ??
+                                        "0.0"))) *
+                                    ((double.parse(
+                                        value?.localQty.toString() ?? "0.0"))))
+                                .toString()),
+                            itemDescription: value?.productDetail?.name ?? "-",
+                          ),
+                        );
+                      }
+
+                      Navigator.of(myContext!).push(
+                        MaterialPageRoute(
+                          builder: (context) => SendAlertInvoiceGeneratedScreen(
                             key: key,
+                            haveMail: (view.modelUser?.email ?? "").isNotEmpty
+                                ? true
+                                : false,
                             invoiceId: view.invoiceCreatedModel?.invoiceId ?? 0,
+                            invoiceNumber:
+                                view.invoiceCreatedModel?.invoiceNumber ?? "",
                             phoneNo: view.modelUser?.phone ?? "-",
-                            userName: view.modelUser?.name ?? "--"),
-                      ),
-                    );
-                  });
+                            userName: view.modelUser?.name ?? "-",
+                            address: view.modelUser?.address ?? "-",
+                            totalAmount: formatAmount((view.totalAmount -
+                                    double.parse((view.discountedPriceController
+                                            .text.isEmpty
+                                        ? "0.0"
+                                        : view.discountedPriceController.text)))
+                                .toString()),
+                            paymentMethod: "",
+                            discount:
+                                (view.discountedPriceController.text.isEmpty
+                                    ? '0.0'
+                                    : view.discountedPriceController.text),
+                            listOfProducts: listOfProducts,
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
                 leftPadding: 0,
                 rightPading: 0,
@@ -396,14 +415,18 @@ class InvoiceSummaryScreen extends StatelessWidget {
     );
   }
 
+  String paymentMethodName = '';
+
   String getPaymentMethodIcon() {
     switch (view.selectedPaymentMethod) {
       case PaymentMethod.bt:
+        paymentMethodName = "Bank Transfer";
         return 'assets/icons/icon-bank.svg';
       case PaymentMethod.cs:
+        paymentMethodName = "Cash";
         return 'assets/icons/icon-cash.svg';
-
       case PaymentMethod.cc:
+        paymentMethodName = "Credit Card";
         return 'assets/icons/icon-credit-card.svg';
     }
   }
@@ -418,6 +441,40 @@ class InvoiceSummaryScreen extends StatelessWidget {
       case PaymentMethod.cc:
         return 'Credit Card';
     }
+  }
+
+  showDiscount() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Add Discount',
+          style: AppTextStyles.mediumBold.copyWith(color: AppColor.blackColor),
+        ),
+        SizedBox(height: 20.h),
+        MyTextField(
+          leftPadding: 0,
+          controller: view.discountedPriceController,
+          rightPadding: 0,
+          keyboardType: TextInputType.number,
+          hintText: 'Enter amount',
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  view.calculateTotalAmount();
+                },
+                child: const Text("Add"))
+          ],
+        ),
+        SizedBox(height: 20.h),
+        const Divider(color: AppColor.blackColor),
+      ],
+    );
   }
 }
 

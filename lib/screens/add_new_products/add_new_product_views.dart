@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/app_popups.dart';
@@ -58,7 +59,6 @@ selectPaymentView(view) {
                 );
               } else if (snapshot.hasData && snapshot.data != null) {
                 var list = snapshot.data!;
-                List<Widget> listOfWidget = [];
 
                 return GridView.builder(
                     physics: ScrollPhysics(),
@@ -298,7 +298,7 @@ bankPaymentDetails(AddNewProductViewModel view) {
   );
 }
 
-productListView(view, bool showAdd) {
+productListView(AddNewProductViewModel view, bool showAdd) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,10 +315,76 @@ productListView(view, bool showAdd) {
           itemCount: view.listOfScannedProducts.length,
           itemBuilder: (context, index) {
             if (view.listOfScannedProducts != null) {
-              return getProductBaseOnType(
-                  view.listOfScannedProducts[index]!, view, showAdd);
+              return showAdd
+                  ? Dismissible(
+                      key: UniqueKey(),
+                      onDismissed: (direction) {
+                        view.removeProductListItemAt(index);
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Theme.of(context).accentColor,
+                            content: const Text(
+                              'Deleted',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      confirmDismiss: (direction) {
+                        return showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: const Text('Alert'),
+                              content: const Text(
+                                  'Are you sure you want to remove this item'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    // Navigator.pop(context, false);
+                                    Navigator.of(
+                                      context,
+                                      // rootNavigator: true,
+                                    ).pop(false);
+                                  },
+                                  child: const Text('No'),
+                                ),
+                                FlatButton(
+                                  onPressed: () {
+                                    // Navigator.pop(context, true);
+                                    Navigator.of(
+                                      context,
+                                      // rootNavigator: true,
+                                    ).pop(true);
+                                  },
+                                  child: const Text('Yes'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      background: Container(
+                        padding: const EdgeInsets.only(right: 20.0),
+                        // alignment: AlignmentDirectional.centerEnd,
+                        alignment: Alignment.centerRight,
+                        color: AppColor.whiteColor,
+                        child: const Icon(
+                          Icons.delete,
+                          size: 32.0,
+                          color: AppColor.redColor,
+                        ),
+                      ),
+                      child: getProductBaseOnType(
+                          view.listOfScannedProducts[index]!, view, showAdd))
+                  : getProductBaseOnType(
+                      view.listOfScannedProducts[index]!, view, showAdd);
             } else {
-              return Container(color: Colors.red);
+              return const IgnorePointer();
             }
           },
         ),
@@ -371,7 +437,7 @@ getProductBaseOnType(ProductDetailScannedModel product,
                       child: Text(
                         "MMK: ${formatAmount(product.productDetail?.salePrice)}",
                         style: AppTextStyles.mediumBold
-                            .copyWith(color: AppColor.blackColor, fontSize: 14),
+                            .copyWith(color: AppColor.blackColor, fontSize: 12),
                       ),
                     ),
                   ],
@@ -416,7 +482,7 @@ getProductBaseOnType(ProductDetailScannedModel product,
                       child: Text(
                         "${formatAmount(product.productDetail?.salePrice)} x ${product.localQty}",
                         style: AppTextStyles.medium
-                            .copyWith(color: AppColor.blackColor),
+                            .copyWith(color: AppColor.blackColor, fontSize: 12),
                       ),
                     ),
                     Flexible(
@@ -425,7 +491,7 @@ getProductBaseOnType(ProductDetailScannedModel product,
                         child: Text(
                           "MMK: ${formatAmount((double.parse(product.productDetail?.salePrice ?? "0") * product.localQty).toString())}",
                           style: AppTextStyles.mediumBold.copyWith(
-                              color: AppColor.blackColor, fontSize: 14),
+                              color: AppColor.blackColor, fontSize: 12),
                         ),
                       ),
                     ),

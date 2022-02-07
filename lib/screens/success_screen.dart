@@ -48,8 +48,8 @@ class _SuccessScreenState extends State<SuccessScreen> {
                 .contains(NotificationMethods.print),
             child: InkWell(
               onTap: () {
-                Provider.of<SendAlertViewModel>(myContext!, listen: false)
-                    .doPrint();
+                // Provider.of<SendAlertViewModel>(myContext!, listen: false)
+                //     .doPrint();
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

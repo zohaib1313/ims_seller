@@ -10,15 +10,14 @@ import 'package:ims_seller/dio_network/api_route.dart';
 import 'package:ims_seller/dio_network/error_mapper.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/utils/utils.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import '../routes.dart';
 
 class SendAlertViewModel extends ChangeNotifier {
   StreamController<List<ModelMethods>> notificationMethodStream =
       StreamController.broadcast();
-  Stream<List<ModelMethods>> getNotificationMethods() {
+
+  Stream<List<ModelMethods>> getNotificationMethods({required bool haveMail}) {
     Map<String, dynamic> body = {};
     var client = APIClient(isCache: false);
     client
@@ -32,8 +31,18 @@ class SendAlertViewModel extends ChangeNotifier {
             apiFunction: getNotificationMethods)
         .then((response) {
       if (response.response!.data != null) {
-        notificationMethodStream.sink
-            .add(response.response!.data!.modelMethodList);
+        List<ModelMethods> list = response.response!.data!.modelMethodList;
+        List<ModelMethods> finalList = [];
+        for (var element in list) {
+          if (element.id == 'email') {
+            if (haveMail) {
+              finalList.add(element);
+            }
+          } else {
+            finalList.add(element);
+          }
+        }
+        notificationMethodStream.sink.add(finalList);
       }
     }).catchError((error) {
       printWrapped("error= " + error.toString());
@@ -44,6 +53,7 @@ class SendAlertViewModel extends ChangeNotifier {
   }
 
   var selectedNotificationMethods = <NotificationMethods>{};
+
   void updateNotificationMethodTypes(
       NotificationMethods notificationMethodType) {
     if (selectedNotificationMethods.contains(notificationMethodType)) {
@@ -52,35 +62,6 @@ class SendAlertViewModel extends ChangeNotifier {
       selectedNotificationMethods.add(notificationMethodType);
     }
     notifyListeners();
-  }
-
-  doPrint() async {
-    final logo = await flutterImageProvider(
-        const AssetImage('assets/icons/salam_logo.png'));
-    printNow(
-      child: pw.Center(
-        child: pw.Column(
-            mainAxisSize: pw.MainAxisSize.max,
-            crossAxisAlignment: pw.CrossAxisAlignment.center,
-            mainAxisAlignment: pw.MainAxisAlignment.center,
-            children: [
-              pw.SizedBox(
-                height: 10,
-              ),
-              pw.Image(
-                logo,
-                height: 200,
-              ),
-              pw.Text('RECEIPT', style: pw.TextStyle(fontSize: 100)),
-              pw.SizedBox(
-                height: 5,
-              ),
-              pw.Text('E-VOUCHER',
-                  style: pw.TextStyle(
-                      fontSize: 50, fontWeight: pw.FontWeight.bold)),
-            ]),
-      ),
-    );
   }
 
   void sendNotifications({completion, required int invoiceId}) {

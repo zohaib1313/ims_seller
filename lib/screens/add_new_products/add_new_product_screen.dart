@@ -57,13 +57,17 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                         SizedBox(height: 30.h),
                         GestureDetector(
                           onTap: () {
-                            AppPopUps.showConfirmDialog(
-                                title: "Alert",
-                                message: "Are you sure you want to change user",
-                                onSubmit: () {
-                                  Navigator.of(myContext!).pushReplacementNamed(
-                                      SearchCustomerScreen.id);
-                                });
+                            if (view.currentView == Views.scanProduct) {
+                              AppPopUps.showConfirmDialog(
+                                  title: "Alert",
+                                  message:
+                                      "Are you sure you want to change user",
+                                  onSubmit: () {
+                                    Navigator.of(myContext!)
+                                        .pushReplacementNamed(
+                                            SearchCustomerScreen.id);
+                                  });
+                            }
                           },
                           child: Container(
                             padding: EdgeInsets.all(20.h),
@@ -98,8 +102,11 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    const SvgViewer(
-                                        svgPath: 'assets/icons/edit_icon.svg'),
+                                    view.currentView == Views.scanProduct
+                                        ? const SvgViewer(
+                                            svgPath:
+                                                'assets/icons/edit_icon.svg')
+                                        : const IgnorePointer(),
                                     const SizedBox(height: 3),
                                     Text(
                                       view.modelUser?.phone ?? '',

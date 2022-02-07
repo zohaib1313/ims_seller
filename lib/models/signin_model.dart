@@ -7,12 +7,14 @@ class SignInModel implements Decodable {
   String? username;
   String? firstName;
   String? lastName;
+  bool? discountPermission;
   BranchDetail? branchDetail;
 
   SignInModel(
       {this.token,
       this.userId,
       this.email,
+      this.discountPermission,
       this.username,
       this.firstName,
       this.lastName,
@@ -21,6 +23,8 @@ class SignInModel implements Decodable {
   SignInModel.fromJson(Map<dynamic, dynamic> json) {
     token = json['token'];
     userId = json['user_id'];
+    discountPermission = json['discount_permission'] ?? null;
+
     email = json['email'];
     username = json['username'];
     firstName = json['first_name'];
@@ -37,6 +41,7 @@ class SignInModel implements Decodable {
     data['email'] = this.email;
     data['username'] = this.username;
     data['first_name'] = this.firstName;
+    data['discount_permission'] = this.discountPermission;
     data['last_name'] = this.lastName;
     if (this.branchDetail != null) {
       data['branch_detail'] = this.branchDetail!.toJson();
@@ -49,6 +54,7 @@ class SignInModel implements Decodable {
     token = json['token'];
     userId = json['user_id'];
     email = json['email'];
+    discountPermission = json['discount_permission'] ?? null;
     username = json['username'];
     firstName = json['first_name'];
     lastName = json['last_name'];

@@ -63,6 +63,13 @@ class AddNewProductViewModel extends ChangeNotifier {
 
   List<ProductDetailScannedModel?> listOfScannedProducts = [];
 
+  removeProductListItemAt(int index) {
+    if (listOfScannedProducts.isNotEmpty) {
+      listOfScannedProducts.removeAt(index);
+      calculateTotalAmount();
+    }
+  }
+
   Views get currentView => _currentView;
   List<Views> _viewsHistory = [Views.scanProduct];
 
@@ -342,68 +349,18 @@ class AddNewProductViewModel extends ChangeNotifier {
 
   createInvoice({completion}) async {
     AppPopUps().showProgressDialog(context: myContext);
-    /*AppPopUps().showProgressDialog(context: myContext);
-    Map<String, dynamic> headersMultiPart = {
-      'Authorization': 'Token 614e83765257d5c98edf7bbb72958a4fd13e4519',
-      // "Content-Type":
-      //     "multipart/form-data; boundary=--------------------------189944097829368320179517"
-    };
-    var formData = FormData.fromMap({
-      "data": json.encode({
-        "reference": "",
-        "total_discount": "0",
-        "payment_method": "cs",
-        "invoice_date": "2022-01-10 15:20:46",
-        "to_client": "29026",
-        "sale_desc": "",
-        "internal_desc": "",
-        "amount": "45000",
-        "invoice_amount": "45000",
-        "seller_id": "123",
-        "product_list": [
-          {
-            "imei_number": "888462108416",
-            "product_price": "35000.00",
-            "product_qty": "1"
-          }
-        ]
-      })
-    });
-
-    AppPopUps().showProgressDialog(context: myContext!);
-    RequestOptions requestOptions = RequestOptions(
-        data: formData,
-        baseUrl: "http://207.244.105.191:8866/",
-        path: "products/sale_product_submit_app/",
-        headers: headersMultiPart,
-        responseType: ResponseType.json,
-        validateStatus: (_) => true,
-        method: APIMethod.post);
-
-    var response = await Dio().fetch(requestOptions).catchError(
-      (error) {
-        printWrapped(error.toString());
-        AppPopUps().dissmissDialog();
-      },
-    );
-    Navigator.pop(myContext!);
-    printWrapped(response.statusCode.toString());
-
-    printWrapped("aaaaaaaaaaaaaa");
-    printWrapped(response.data.toString());*/
 
     Map<String, dynamic> headersMultiPart = {
       'Authorization': 'Token 614e83765257d5c98edf7bbb72958a4fd13e4519',
-      // "Content-Type":
-      //     "multipart/form-data; boundary=--------------------------189944097829368320179517"
     };
-    List<HeaderInvoiceModelProduct> listOfProducts = [];
-
+    List<Map<String, String>> listOfProducts = [];
+    printWrapped("sizeee===" + listOfScannedProducts.length.toString());
     for (var value in listOfScannedProducts) {
       listOfProducts.add(HeaderInvoiceModelProduct(
-          imei_number: value?.imeiNumber ?? "",
-          product_price: value?.productDetail?.salePrice ?? "",
-          product_qty: value!.localQty.toString()));
+              imei_number: value?.imeiNumber ?? "",
+              product_price: value?.productDetail?.salePrice ?? "",
+              product_qty: value!.localQty.toString())
+          .toJson());
     }
     var formData = FormData.fromMap({
       "data": json.encode({
@@ -429,9 +386,10 @@ class AddNewProductViewModel extends ChangeNotifier {
             .toString(),
         "invoice_amount": totalAmount.toString(),
         "seller_id": UserDefaults.getUserSession()!.userId.toString(),
-        "product_list": [listOfProducts[0].toJson()]
+        "product_list": listOfProducts
       })
     });
+    printWrapped("form data");
     var client = APIClient(
         isCache: false,
         baseUrl: ApiConstants.baseUrl,

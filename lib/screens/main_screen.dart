@@ -4,13 +4,10 @@ import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
-import 'package:ims_seller/screens/print_tes.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/styles.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
-import 'package:ims_seller/view_models/send_alert_view_model.dart';
-import 'package:provider/provider.dart';
 
 class MainScreen extends StatelessWidget {
   static const id = 'Main_Screen';
@@ -55,7 +52,8 @@ class MainScreen extends StatelessWidget {
                   onTap: () {
                     UserDefaults().clearAll();
                     Navigator.of(myContext!).pop();
-                    Navigator.of(myContext!).pushNamed(SignInScreen.id);
+                    Navigator.of(myContext!)
+                        .pushReplacementNamed(SignInScreen.id);
                   },
                 ),
               ],
@@ -124,30 +122,74 @@ class MainScreen extends StatelessWidget {
                                 SizedBox(
                                   height: 30.h,
                                 ),
-                                Button(
-                                  textColor: AppColor.whiteColor,
-                                  buttonText: 'Print Test',
-                                  color: AppColor.greenColor,
-                                  onTap: () {
-                                    Navigator.of(myContext!).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const PrintTest()));
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 30.h,
-                                ),
-                                Button(
+                                /* Button(
                                   textColor: AppColor.whiteColor,
                                   buttonText: 'Print Test printing lib',
                                   color: AppColor.greenColor,
                                   onTap: () {
-                                    Provider.of<SendAlertViewModel>(myContext!,
-                                            listen: false)
-                                        .doPrint();
+                                    List<ModelPrinterProduct> list = [];
+                                    list.add(ModelPrinterProduct(
+                                        itemDescription:
+                                            "iPhone 13 128GB Pink (12456789)",
+                                        itemQty: "1",
+                                        itemRate: "12345",
+                                        itemAmount: "12345"));
+
+                                    list.add(ModelPrinterProduct(
+                                        itemDescription:
+                                            "iPhone 13 128GB Pink (12456789)",
+                                        itemQty: "1",
+                                        itemRate: "12345",
+                                        itemAmount: "12345"));
+                                    list.add(ModelPrinterProduct(
+                                        itemDescription:
+                                            "iPhone 13 128GB Pink (12456789)",
+                                        itemQty: "1",
+                                        itemRate: "12345",
+                                        itemAmount: "12345"));
+                                    list.add(ModelPrinterProduct(
+                                        itemDescription:
+                                            "iPhone 13 128GB Pink (12456789)",
+                                        itemQty: "1",
+                                        itemRate: "12345",
+                                        itemAmount: "12345"));
+                                    list.add(ModelPrinterProduct(
+                                        itemDescription:
+                                            "iPhone 13 128GB Pink (12456789)",
+                                        itemQty: "1",
+                                        itemRate: "12345",
+                                        itemAmount: "12345"));
+                                    list.add(ModelPrinterProduct(
+                                        itemDescription:
+                                            "iPhone 13 128GB Pink (12456789)",
+                                        itemQty: "1",
+                                        itemRate: "12345",
+                                        itemAmount: "12345"));
+                                    list.add(ModelPrinterProduct(
+                                        itemDescription:
+                                            "iPhone 13 128GB Pink (12456789)",
+                                        itemQty: "1",
+                                        itemRate: "12345",
+                                        itemAmount: "12345"));
+
+                                    //CustomPrinter().print(list);
+                                    MyPrinting().doPrint(
+                                        title: "mDrive(Kabar Aye)",
+                                        address:
+                                            "no.81, Kabar Aye Pagoda Road, Bahan Township",
+                                        stringPhoneNo: "+09000000",
+                                        invoiceNumber: "Invoice# S-KBA-19906",
+                                        dateTime:
+                                            "Wednesday,February 2nd 2022, 2:02:54 pm",
+                                        salePersonName: "Shwe",
+                                        customer: "12312-Thent Htar Zaw",
+                                        paymentMethod: "Cash",
+                                        totalAmount: formatAmount("1927500.0"),
+                                        discount: formatAmount("929492.0"),
+                                        numberOfItems: "4",
+                                        listOfProducts: list);
                                   },
-                                ),
+                                ),*/
                               ],
                             ),
                           ),

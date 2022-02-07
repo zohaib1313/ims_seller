@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
+import 'package:ims_seller/models/mode_printer_product.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
 import 'package:ims_seller/screens/success_screen.dart';
 import 'package:ims_seller/styles.dart';
+import 'package:ims_seller/utils/printing.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/view_models/send_alert_view_model.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../routes.dart';
@@ -14,11 +18,28 @@ import '../routes.dart';
 class SendAlertInvoiceGeneratedScreen extends StatefulWidget {
   static const id = "invoiceGeneratedAlert";
   int? invoiceId;
+  String? invoiceNumber;
   String? userName;
+  String? address;
   String? phoneNo;
+  String? paymentMethod;
+  bool? haveMail;
+  String? totalAmount;
+  String? discount;
+  List<ModelPrinterProduct> listOfProducts;
 
   SendAlertInvoiceGeneratedScreen(
-      {Key? key, this.invoiceId, this.userName, this.phoneNo})
+      {Key? key,
+      this.invoiceId,
+      this.invoiceNumber,
+      this.userName,
+      this.address,
+      this.phoneNo,
+      this.paymentMethod,
+      this.haveMail,
+      this.totalAmount,
+      this.discount,
+      required this.listOfProducts})
       : super(key: key);
 
   @override
@@ -33,7 +54,7 @@ class _SendAlertInvoiceGeneratedScreenState
   @override
   void initState() {
     super.initState();
-    view.getNotificationMethods();
+    view.getNotificationMethods(haveMail: widget.haveMail ?? false);
   }
 
   @override
@@ -64,7 +85,7 @@ class _SendAlertInvoiceGeneratedScreenState
                   SizedBox(height: 10.h),
                   SizedBox(height: 10.h),
                   Text(
-                    "Invoice # ${widget.invoiceId ?? "--"}",
+                    "Invoice # ${widget.invoiceNumber ?? "--"}",
                     style: AppTextStyles.largeBold
                         .copyWith(color: AppColor.blackColor),
                   ),
@@ -152,6 +173,7 @@ class _SendAlertInvoiceGeneratedScreenState
                                 itemCount: list.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   var element = list[index];
+
                                   return getNotificationMethod(
                                       enabled: element.active ?? true,
                                       title: element.name ?? "-",
@@ -192,7 +214,23 @@ class _SendAlertInvoiceGeneratedScreenState
                             },
                             invoiceId: widget.invoiceId ?? 0);
                       } else {
-                        view.doPrint();
+                        MyPrinting().doPrint(
+                            title: "  mDrive(Kabar Aye) ",
+                            address: widget.address ?? "",
+                            stringPhoneNo: widget.phoneNo ?? "",
+                            invoiceNumber: widget.invoiceNumber ?? "",
+                            dateTime: (DateFormat("yyyy-MM-dd hh:ss a")
+                                    .format(DateTime.now()))
+                                .toString(),
+                            salePersonName: widget.userName ?? "-",
+                            customer:
+                                UserDefaults.getUserSession()?.username ?? "",
+                            paymentMethod: widget.paymentMethod ?? "",
+                            totalAmount: widget.totalAmount ?? "0.0",
+                            discount: widget.discount ?? "0.0",
+                            listOfProducts: widget.listOfProducts,
+                            numberOfItems:
+                                widget.listOfProducts.length.toString());
                       }
                     },
                     width: 750.w,
@@ -383,11 +421,13 @@ getNotificationMethod(
                               .contains(notificationMethodType)
                           ? AppColor.blueColor
                           : AppColor.whiteColor),
-                  child: const Icon(
-                    Icons.check,
-                    size: 14,
-                    color: AppColor.whiteColor,
-                  ),
+                  child: enabled
+                      ? const Icon(
+                          Icons.check,
+                          size: 14,
+                          color: AppColor.whiteColor,
+                        )
+                      : const IgnorePointer(),
                   maxRadius: 10,
                 )
               ],

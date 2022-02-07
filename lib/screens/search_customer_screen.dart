@@ -6,6 +6,7 @@ import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/add_new_customer_model.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/add_new_products/add_new_product_screen.dart';
+import 'package:ims_seller/utils/utils.dart';
 import 'package:ims_seller/view_models/search_customer_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -263,6 +264,7 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
   getSearchItem(CustomerModel user) {
     return InkWell(
       onTap: () {
+        printWrapped(user.toString());
         view.resetState();
         Navigator.push(
           myContext!,

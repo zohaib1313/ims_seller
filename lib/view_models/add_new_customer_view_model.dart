@@ -31,12 +31,18 @@ class AddNewCustomerViewModel extends ChangeNotifier {
   void addNewUser({completion}) {
     AppPopUps().showProgressDialog(context: myContext);
     Map<String, dynamic> body = {
-      "name": fullNameEditingTextController.text,
+      "name": fullNameEditingTextController.text.isEmpty
+          ? ""
+          : fullNameEditingTextController.text,
       "phone": "+959${mobileNumberEditingController.text}",
-      "email": emailAddressController.text,
-      "city": cityController.text,
-      "address": addressController.text,
-      "member_ship": memberShipNumberEditingController.text
+      "email": emailAddressController.text.isEmpty
+          ? ""
+          : emailAddressController.text,
+      "city": cityController.text.isEmpty ? "" : cityController.text,
+      "address": addressController.text.isEmpty ? "" : addressController.text,
+      "member_ship": memberShipNumberEditingController.text.isEmpty
+          ? ""
+          : memberShipNumberEditingController.text
     };
     var client = APIClient(isCache: false, baseUrl: ApiConstants.baseUrl);
     client

@@ -49,8 +49,7 @@ dependencies:
   percent_indicator:
 #barcode scanner
   flutter_barcode_scanner: ^2.0.0
-  esc_pos_bluetooth:
-    git: https://github.com/andrey-ushakov/esc_pos_bluetooth
+
 
 
 dev_dependencies:

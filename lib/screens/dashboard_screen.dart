@@ -494,12 +494,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(invoiceMerchant.invoiceNumber.toString(),
+                        overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.smallBold.copyWith(
                             color: AppColor.blackColor,
                             fontSize: 16,
                             fontWeight: FontWeight.normal)),
                     Text(
                       invoiceMerchant.client_name ?? "-",
+                      overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.mediumBold
                           .copyWith(color: AppColor.blackColor, fontSize: 17),
                     ),
@@ -511,12 +513,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(invoiceMerchant.invoiceDate.toString(),
+                        overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.smallBold.copyWith(
                             color: AppColor.blackColor,
                             fontSize: 16,
                             fontWeight: FontWeight.normal)),
                     Text(
                       formatAmount(invoiceMerchant.invoiceAmount.toString()),
+                      overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.mediumBold
                           .copyWith(color: AppColor.blackColor, fontSize: 17),
                     ),

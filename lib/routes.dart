@@ -5,7 +5,6 @@ import 'package:ims_seller/screens/dashboard_screen.dart';
 import 'package:ims_seller/screens/invoice_summary_screen.dart';
 import 'package:ims_seller/screens/main_screen.dart';
 import 'package:ims_seller/screens/search_customer_screen.dart';
-import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/screens/splash_screen.dart';
 import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
@@ -31,8 +30,6 @@ final Map<String, Widget Function(BuildContext)> routes = {
   SearchCustomerScreen.id: (context) => SearchCustomerScreen(),
   AddNewCustomer.id: (context) => AddNewCustomer(),
   InvoiceSummaryScreen.id: (context) => InvoiceSummaryScreen(),
-  SendAlertInvoiceGeneratedScreen.id: (context) =>
-      SendAlertInvoiceGeneratedScreen(),
   TestScreen.id: (context) => TestScreen(),
 };
 

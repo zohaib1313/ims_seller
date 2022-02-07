@@ -52,7 +52,8 @@ class APIResponse<T> extends GenericObject<T>
   APIResponse<T> decode(dynamic json) {
     responseMessage = json['message'] ?? '';
     status = json['status'] ?? false;
-    if (decoding) {
+
+    if (decoding && (status == true)) {
       data = ((json as Map<String, dynamic>).containsKey('data'))
           ? genericObject(json['data'])
           : null;

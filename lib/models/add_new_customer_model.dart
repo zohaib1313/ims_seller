@@ -51,4 +51,9 @@ class CustomerModel implements Decodable {
     address = json['address'];
     return this;
   }
+
+  @override
+  String toString() {
+    return 'CustomerModel{id: $id, name: $name, phone: $phone, email: $email, memberShip: $memberShip, city: $city, address: $address}';
+  }
 }
