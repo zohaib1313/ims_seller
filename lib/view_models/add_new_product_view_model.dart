@@ -38,7 +38,7 @@ class AddNewProductViewModel extends ChangeNotifier {
   BankAccountModel? _selectedBank;
 
   BankAccountModel? get selectedBank => _selectedBank;
-
+  String? _dateTimeOfInvoice;
   set selectedBank(BankAccountModel? value) {
     _selectedBank = value;
     notifyListeners();
@@ -46,6 +46,12 @@ class AddNewProductViewModel extends ChangeNotifier {
 
   TextEditingController selectedBankTransactionIdController =
       TextEditingController();
+
+  String? get dateTimeOfInvoice => _dateTimeOfInvoice;
+
+  set dateTimeOfInvoice(String? value) {
+    _dateTimeOfInvoice = value;
+  }
 
   set nextTitle(String value) {
     _nextTitle = value;
@@ -104,6 +110,10 @@ class AddNewProductViewModel extends ChangeNotifier {
       if (_currentView == Views.listProducts) {
         listOfScannedProducts.clear();
         calculateTotalAmount();
+      }
+
+      if (_currentView == Views.bankPaymentDetails) {
+        selectedBank = null;
       }
       _viewsHistory.removeLast();
       _currentView = _viewsHistory.last;
@@ -348,6 +358,8 @@ class AddNewProductViewModel extends ChangeNotifier {
   }
 
   createInvoice({completion}) async {
+    dateTimeOfInvoice =
+        DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString();
     AppPopUps().showProgressDialog(context: myContext);
 
     Map<String, dynamic> headersMultiPart = {
@@ -374,8 +386,7 @@ class AddNewProductViewModel extends ChangeNotifier {
         "bank_account_id": selectedBank?.id ?? "",
 
         ///2022-01-10 15:20:46
-        "invoice_date":
-            DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString(),
+        "invoice_date": dateTimeOfInvoice ?? "-",
         "to_client": modelUser!.id.toString(),
         "sale_desc": "",
         "internal_desc": "",

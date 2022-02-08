@@ -13,25 +13,33 @@ class MyPrinting {
 
   _divider() => pw.Divider();
 
-  doPrint(
+  Future<bool> doPrint(
       {required String title,
       required String address,
       required stringPhoneNo,
       required String invoiceNumber,
       required String dateTime,
       required String salePersonName,
-      required String customer,
+      required String customerName,
       required String paymentMethod,
       required String totalAmount,
       required String discount,
       required List<ModelPrinterProduct> listOfProducts,
-      required String numberOfItems}) async {
-    final logo = await flutterImageProvider(
-        const AssetImage('assets/icons/printing_logo.png'));
+      required String numberOfItems,
+      required String logoNetwork}) async {
+    /* final logo = await flutterImageProvider(
+        const AssetImage('assets/icons/printing_logo.png'))*/
+    pw.ImageProvider? logo;
+    printWrapped(logoNetwork);
+
+    if (logoNetwork != "") {
+      logo = await flutterImageProvider(NetworkImage(logoNetwork));
+    } else {
+      logo = null;
+    }
     final doc = pw.Document(verbose: true);
     PrintingInfo res = await Printing.info();
-    printWrapped(res.directPrint.toString());
-    await Printing.layoutPdf(
+    return Printing.layoutPdf(
       //format: PdfPageFormat.roll57,
       onLayout: (PdfPageFormat format) async {
         printWrapped(format.toString());
@@ -51,11 +59,11 @@ class MyPrinting {
         doc.addPage(pw.MultiPage(
             pageFormat: format.copyWith(marginBottom: 0, marginTop: 0),
             margin: const pw.EdgeInsets.only(
-                left: 15, right: 15, bottom: 0.0, top: 0.0),
+                left: 5, right: 5, bottom: 0.0, top: 0.0),
             build: (context) {
               return [
                 _getHeader(logo, title, stringPhoneNo, address, invoiceNumber,
-                    dateTime, salePersonName, customer, paymentMethod),
+                    dateTime, salePersonName, customerName, paymentMethod),
                 pw.Column(
                   children: getAllProductsRow(listOfProducts),
                 ),
@@ -153,7 +161,7 @@ class MyPrinting {
   }
 
   _getHeader(
-      pw.ImageProvider logo,
+      pw.ImageProvider? logo,
       String name,
       String stringPhoneNo,
       String address,
@@ -178,10 +186,13 @@ class MyPrinting {
               _vSpaceSmall(),
               _vSpaceSmall(),
               _vSpaceSmall(),
-              pw.Image(
-                logo,
-                height: 180,
-              ),
+              logo != null
+                  ? pw.Image(
+                      logo,
+                      height: 160,
+                    )
+                  : pw.Container(),
+              _vSpaceSmall(),
               _vSpaceSmall(),
               _vSpaceSmall(),
               pw.Text(name,
@@ -206,19 +217,19 @@ class MyPrinting {
                   textAlign: pw.TextAlign.center),
               _vSpaceSmall(),
               pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
                   mainAxisAlignment: pw.MainAxisAlignment.center,
                   children: [
-                    pw.Text("Sale Person:",
+                    pw.Text("Sale Person: ",
                         style: AppTextStyles.mediumBoldPrint,
                         textAlign: pw.TextAlign.center),
                     pw.Text(salePersonName,
-                        style: AppTextStyles.mediumNormalPrint,
+                        style: AppTextStyles.smallBoldPrint,
                         textAlign: pw.TextAlign.center),
                   ]),
               _vSpaceSmall(),
               pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
                   mainAxisAlignment: pw.MainAxisAlignment.center,
                   children: [
                     pw.Flexible(
@@ -227,7 +238,7 @@ class MyPrinting {
                             textAlign: pw.TextAlign.center)),
                     pw.Flexible(
                         child: pw.Text(customer,
-                            style: AppTextStyles.mediumNormalPrint,
+                            style: AppTextStyles.smallNormalPrint,
                             textAlign: pw.TextAlign.center)),
                   ]),
               _vSpaceSmall(),
@@ -236,7 +247,7 @@ class MyPrinting {
                   textAlign: pw.TextAlign.center),
               _vSpaceSmall(),
               pw.Text(paymentMethod,
-                  style: AppTextStyles.mediumNormalPrint,
+                  style: AppTextStyles.smallNormalPrint,
                   textAlign: pw.TextAlign.center),
               _vSpaceSmall(),
               _vSpaceSmall(),
@@ -267,7 +278,7 @@ class MyPrinting {
                     pw.Expanded(
                       child: pw.Text(numberOfItems,
                           textAlign: pw.TextAlign.right,
-                          style: AppTextStyles.smallBoldPrint),
+                          style: AppTextStyles.smallNormalPrint),
                     ),
                     _hSpaceSmall(),
                     _hSpaceSmall()
@@ -286,7 +297,7 @@ class MyPrinting {
                     pw.Expanded(
                       child: pw.Text(totalAmount,
                           textAlign: pw.TextAlign.right,
-                          style: AppTextStyles.smallBoldPrint),
+                          style: AppTextStyles.smallNormalPrint),
                     ),
                     _hSpaceSmall(),
                     _hSpaceSmall()
@@ -305,7 +316,7 @@ class MyPrinting {
                     pw.Expanded(
                       child: pw.Text(discount,
                           textAlign: pw.TextAlign.right,
-                          style: AppTextStyles.smallBoldPrint),
+                          style: AppTextStyles.smallNormalPrint),
                     ),
                     _hSpaceSmall(),
                     _hSpaceSmall()
@@ -315,12 +326,12 @@ class MyPrinting {
               _hSpaceSmall(),
               pw.Text("Total Amount",
                   textAlign: pw.TextAlign.right,
-                  style: AppTextStyles.smallBoldPrint),
+                  style: AppTextStyles.smallNormalPrint),
               _hSpaceSmall(),
               _hSpaceSmall(),
               pw.Text(totalAmount,
                   textAlign: pw.TextAlign.right,
-                  style: AppTextStyles.smallBoldPrint),
+                  style: AppTextStyles.mediumBoldPrint),
               _hSpaceSmall(),
               _hSpaceSmall(),
               _divider(),

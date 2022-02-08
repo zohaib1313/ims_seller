@@ -8,6 +8,10 @@ import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/styles.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
+import 'package:ims_seller/view_models/add_new_product_view_model.dart';
+import 'package:ims_seller/view_models/dashboard_view_model.dart';
+import 'package:ims_seller/view_models/search_customer_view_model.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatelessWidget {
   static const id = 'Main_Screen';
@@ -100,6 +104,14 @@ class MainScreen extends StatelessWidget {
                               children: [
                                 Button(
                                   onTap: () {
+                                    Provider.of<AddNewProductViewModel>(
+                                            myContext!,
+                                            listen: false)
+                                        .resetState();
+                                    Provider.of<SearchCustomerViewModel>(
+                                            myContext!,
+                                            listen: false)
+                                        .resetState();
                                     Navigator.of(myContext!)
                                         .pushNamed(SearchCustomerScreen.id);
                                   },
@@ -115,6 +127,9 @@ class MainScreen extends StatelessWidget {
                                   buttonText: 'Dashboard',
                                   color: AppColor.greenColor,
                                   onTap: () {
+                                    Provider.of<DashboardViewModel>(myContext!,
+                                            listen: false)
+                                        .resetState();
                                     Navigator.of(myContext!)
                                         .pushNamed(DashBoardScreen.id);
                                   },

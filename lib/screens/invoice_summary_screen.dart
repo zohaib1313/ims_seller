@@ -366,27 +366,39 @@ class InvoiceSummaryScreen extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => SendAlertInvoiceGeneratedScreen(
                             key: key,
+                            logo:
+                                "http://207.244.105.191:8866${UserDefaults.getUserSession()?.branchDetail?.logo ?? ""}",
+                            branchPhoneNo: UserDefaults.getUserSession()
+                                    ?.branchDetail
+                                    ?.phone ??
+                                "-",
+                            address: UserDefaults.getUserSession()
+                                    ?.branchDetail
+                                    ?.address ??
+                                "",
+                            salePersonName:
+                                UserDefaults.getUserSession()?.firstName ?? "",
+                            dateTime: view.dateTimeOfInvoice ?? "-",
+                            customerName: view.modelUser?.name ?? "",
                             haveMail: (view.modelUser?.email ?? "").isNotEmpty
                                 ? true
                                 : false,
                             invoiceId: view.invoiceCreatedModel?.invoiceId ?? 0,
                             invoiceNumber:
                                 view.invoiceCreatedModel?.invoiceNumber ?? "",
-                            phoneNo: view.modelUser?.phone ?? "-",
-                            userName: view.modelUser?.name ?? "-",
-                            address: view.modelUser?.address ?? "-",
                             totalAmount: formatAmount((view.totalAmount -
                                     double.parse((view.discountedPriceController
                                             .text.isEmpty
-                                        ? "0.0"
+                                        ? "0"
                                         : view.discountedPriceController.text)))
                                 .toString()),
-                            paymentMethod: "",
+                            paymentMethod: paymentMethodName,
                             discount:
                                 (view.discountedPriceController.text.isEmpty
-                                    ? '0.0'
+                                    ? '0'
                                     : view.discountedPriceController.text),
                             listOfProducts: listOfProducts,
+                            customerPhone: view.modelUser?.phone ?? '',
                           ),
                         ),
                       );

@@ -7,6 +7,7 @@ import 'package:ims_seller/models/mode_printer_product.dart';
 import 'package:ims_seller/routes.dart';
 import 'package:ims_seller/screens/send_alert_screen.dart';
 import 'package:ims_seller/styles.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/utils/utils.dart';
 
 class SaleInvoiceScreen extends StatefulWidget {
@@ -241,12 +242,11 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                           listOfProducts.add(
                             ModelPrinterProduct(
                               itemQty: value.qty?.toString() ?? "1",
-                              itemRate: formatAmount(
-                                  (value.price?.toString() ?? "0")),
-                              itemAmount: formatAmount((double.parse(
+                              itemRate: (value.price?.toString() ?? "0"),
+                              itemAmount: (double.parse(
                                           value.price?.toString() ?? "0") *
                                       (value.qty ?? 0))
-                                  .toString()),
+                                  .toString(),
                               itemDescription:
                                   value.iProductItem?.iProduct?.name ?? "--",
                             ),
@@ -258,28 +258,38 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
                             builder: (context) =>
                                 SendAlertInvoiceGeneratedScreen(
                               invoiceId: widget.invoiceModel?.id ?? 0,
+                              logo: widget.invoiceModel?.iBranch?.logo ?? "",
+                              title: widget.invoiceModel?.iBranch?.name ?? "",
                               address:
                                   widget.invoiceModel?.iBranch?.address ?? "-",
+                              branchPhoneNo:
+                                  widget.invoiceModel?.iBranch?.phone ?? "",
                               invoiceNumber: widget.invoiceModel
                                       ?.saleInvoice![0].invoiceNumber ??
                                   "",
+                              dateTime: widget.invoiceModel?.invoiceDate
+                                      ?.toString() ??
+                                  "-",
+                              salePersonName:
+                                  UserDefaults.getUserSession()?.firstName ??
+                                      "",
+                              customerName: (widget.invoiceModel
+                                      ?.saleInvoice![0].iClient?.tradingName ??
+                                  ""),
                               haveMail: (widget.invoiceModel?.saleInvoice![0]
                                               .iClient?.pocEmail ??
                                           "")
                                       .isNotEmpty
                                   ? true
                                   : false,
-                              phoneNo: widget.invoiceModel?.saleInvoice![0]
-                                      .iClient?.pocPhone ??
-                                  "",
-                              userName: widget.invoiceModel?.saleInvoice![0]
-                                      .iClient?.tradingName ??
-                                  "",
                               listOfProducts: listOfProducts,
                               discount: formatAmount((double.parse(
-                                      widget.invoiceModel?.discount ?? "0.0")
+                                      widget.invoiceModel?.discount ?? "0")
                                   .toString())),
                               paymentMethod: paymentMethodName,
+                              customerPhone: widget.invoiceModel
+                                      ?.saleInvoice![0].iClient?.pocPhone ??
+                                  "",
                               totalAmount: formatAmount(
                                   widget.invoiceModel?.amount ?? "0"),
                             ),
@@ -410,17 +420,23 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
         children: [
           Row(
             children: [
-              Text(
-                saleInvoice.iProductItem!.iProduct!.shortCode.toString(),
-                style: AppTextStyles.small.copyWith(color: AppColor.blackColor),
+              Flexible(
+                child: Text(
+                  saleInvoice.iProductItem!.iProduct!.shortCode.toString(),
+                  style:
+                      AppTextStyles.small.copyWith(color: AppColor.blackColor),
+                ),
               )
             ],
           ),
           Row(
             children: [
-              Text(
-                saleInvoice.iProductItem!.iProduct!.name.toString(),
-                style: AppTextStyles.small.copyWith(color: AppColor.blackColor),
+              Flexible(
+                child: Text(
+                  saleInvoice.iProductItem!.iProduct!.name.toString(),
+                  style:
+                      AppTextStyles.small.copyWith(color: AppColor.blackColor),
+                ),
               )
             ],
           ),
@@ -428,18 +444,22 @@ class _SaleInvoiceScreenState extends State<SaleInvoiceScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                saleInvoice.qty! > 1
-                    ? '${formatAmount(saleInvoice.price)} x ${saleInvoice.qty!}'
-                    : formatAmount(saleInvoice.price),
-                style: AppTextStyles.smallBold
-                    .copyWith(color: AppColor.blackColor),
+              Flexible(
+                child: Text(
+                  saleInvoice.qty! > 1
+                      ? '${formatAmount(saleInvoice.price)} x ${saleInvoice.qty!}'
+                      : formatAmount(saleInvoice.price),
+                  style: AppTextStyles.smallBold
+                      .copyWith(color: AppColor.blackColor),
+                ),
               ),
-              Text(
-                'MMK: ${formatAmount((double.parse(saleInvoice.price ?? "0") * (saleInvoice.qty?.toDouble() ?? 1.0)).toString())}',
-                //  "",
-                style: AppTextStyles.smallBold
-                    .copyWith(color: AppColor.blackColor),
+              Flexible(
+                child: Text(
+                  'MMK: ${formatAmount((double.parse(saleInvoice.price ?? "0") * (saleInvoice.qty?.toDouble() ?? 1.0)).toString())}',
+                  //  "",
+                  style: AppTextStyles.smallBold
+                      .copyWith(color: AppColor.blackColor),
+                ),
               )
             ],
           ),

@@ -5,12 +5,11 @@ import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/mode_printer_product.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
+import 'package:ims_seller/screens/main_screen.dart';
 import 'package:ims_seller/screens/success_screen.dart';
 import 'package:ims_seller/styles.dart';
 import 'package:ims_seller/utils/printing.dart';
-import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/view_models/send_alert_view_model.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../routes.dart';
@@ -19,22 +18,32 @@ class SendAlertInvoiceGeneratedScreen extends StatefulWidget {
   static const id = "invoiceGeneratedAlert";
   int? invoiceId;
   String? invoiceNumber;
-  String? userName;
+  String? salePersonName;
+  String? customerName;
+  String customerPhone;
   String? address;
-  String? phoneNo;
+  String? title;
+  String? branchPhoneNo;
   String? paymentMethod;
   bool? haveMail;
+  String? logo;
   String? totalAmount;
   String? discount;
+  String dateTime;
   List<ModelPrinterProduct> listOfProducts;
 
   SendAlertInvoiceGeneratedScreen(
       {Key? key,
       this.invoiceId,
+      required this.customerPhone,
+      this.logo,
+      required this.customerName,
+      required this.dateTime,
       this.invoiceNumber,
-      this.userName,
+      this.salePersonName,
       this.address,
-      this.phoneNo,
+      this.title,
+      this.branchPhoneNo,
       this.paymentMethod,
       this.haveMail,
       this.totalAmount,
@@ -109,7 +118,7 @@ class _SendAlertInvoiceGeneratedScreenState
                                     .copyWith(color: AppColor.whiteColor),
                               ),
                               Text(
-                                widget.userName ?? "-",
+                                widget.customerName ?? "-",
                                 style: AppTextStyles.small
                                     .copyWith(color: AppColor.whiteColor),
                               ),
@@ -127,7 +136,7 @@ class _SendAlertInvoiceGeneratedScreenState
                                   .copyWith(color: AppColor.whiteColor),
                             ),
                             Text(
-                              widget.phoneNo ?? "-",
+                              widget.customerPhone,
                               style: AppTextStyles.smallBold
                                   .copyWith(color: AppColor.whiteColor),
                             ),
@@ -190,7 +199,7 @@ class _SendAlertInvoiceGeneratedScreenState
                   ),
                   SizedBox(height: 20.h),
                   Button(
-                    onTap: () {
+                    onTap: () async {
                       if (view.selectedNotificationMethods.isEmpty) {
                         AppPopUps.showAlertDialog(
                           message: "Select any option first",
@@ -201,6 +210,9 @@ class _SendAlertInvoiceGeneratedScreenState
                               .contains(NotificationMethods.email))) {
                         view.sendNotifications(
                             completion: () {
+                              view.resetState();
+                              Navigator.of(context)
+                                  .popUntil(ModalRoute.withName(MainScreen.id));
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => SuccessScreen(
                                         title: "Notification sent successfully",
@@ -209,28 +221,32 @@ class _SendAlertInvoiceGeneratedScreenState
                                             .contains(
                                                 NotificationMethods.print)),
                                       )));
-                              // view.resetState();
-                              // Navigator.pop(myContext!);
                             },
                             invoiceId: widget.invoiceId ?? 0);
                       } else {
-                        MyPrinting().doPrint(
-                            title: "  mDrive(Kabar Aye) ",
+                        int count = 0;
+                        for (var item in widget.listOfProducts) {
+                          count = count + (int.parse(item.itemQty ?? "1"));
+                        }
+                        bool result = await MyPrinting().doPrint(
+                            title: widget.title ?? "",
+                            logoNetwork: widget.logo ?? "",
                             address: widget.address ?? "",
-                            stringPhoneNo: widget.phoneNo ?? "",
+                            stringPhoneNo: widget.branchPhoneNo ?? "",
                             invoiceNumber: widget.invoiceNumber ?? "",
-                            dateTime: (DateFormat("yyyy-MM-dd hh:ss a")
-                                    .format(DateTime.now()))
-                                .toString(),
-                            salePersonName: widget.userName ?? "-",
-                            customer:
-                                UserDefaults.getUserSession()?.username ?? "",
+                            dateTime: widget.dateTime.toString(),
+                            salePersonName: widget.salePersonName ?? "-",
+                            customerName: widget.customerName ?? "",
                             paymentMethod: widget.paymentMethod ?? "",
                             totalAmount: widget.totalAmount ?? "0.0",
                             discount: widget.discount ?? "0.0",
                             listOfProducts: widget.listOfProducts,
-                            numberOfItems:
-                                widget.listOfProducts.length.toString());
+                            numberOfItems: count.toString());
+                        if (result) {
+                          view.resetState();
+                          Navigator.of(context)
+                              .popUntil(ModalRoute.withName(MainScreen.id));
+                        }
                       }
                     },
                     width: 750.w,
@@ -325,7 +341,7 @@ selectPaymentView(view) {
                 );
               } else if (snapshot.hasData && snapshot.data != null) {
                 var list = snapshot.data!;
-                List<Widget> listOfWidget = [];
+
                 return GridView.builder(
                     physics: ScrollPhysics(),
                     shrinkWrap: true,

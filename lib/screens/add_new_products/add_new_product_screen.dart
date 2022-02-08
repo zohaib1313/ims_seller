@@ -57,7 +57,8 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                         SizedBox(height: 30.h),
                         GestureDetector(
                           onTap: () {
-                            if (view.currentView == Views.scanProduct) {
+                            if (view.currentView == Views.scanProduct ||
+                                view.currentView == Views.listProducts) {
                               AppPopUps.showConfirmDialog(
                                   title: "Alert",
                                   message:
@@ -102,7 +103,9 @@ class _AddNewProductScreenNewState extends State<AddNewProductScreenNew> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    view.currentView == Views.scanProduct
+                                    (view.currentView == Views.scanProduct ||
+                                            view.currentView ==
+                                                Views.listProducts)
                                         ? const SvgViewer(
                                             svgPath:
                                                 'assets/icons/edit_icon.svg')

@@ -108,6 +108,8 @@ class DashboardViewModel extends ChangeNotifier {
   }
 
   resetState() {
+    streamController.sink.add([]);
+    streamController2.sink.add(false);
     listOfInvoices.clear();
     startPoint = 0;
     endPoint = 10;

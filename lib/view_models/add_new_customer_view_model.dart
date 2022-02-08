@@ -20,12 +20,13 @@ class AddNewCustomerViewModel extends ChangeNotifier {
   TextEditingController memberShipNumberEditingController =
       TextEditingController();
 
-  void resetState() {
+  Future<bool> resetState() {
     mobileNumberEditingController.clear();
     fullNameEditingTextController.clear();
     memberShipNumberEditingController.clear();
     addressController.clear();
     cityController.clear();
+    return Future.value(true);
   }
 
   void addNewUser({completion}) {

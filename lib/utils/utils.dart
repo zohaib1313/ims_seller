@@ -6,6 +6,5 @@ void printWrapped(String text) {
 }
 
 String formatAmount(String? amount) {
-  return NumberFormat("#,##0.00", "en_US")
-      .format(double.parse(amount ?? "0.0"));
+  return NumberFormat("#,##0.0", "en_US").format(double.parse(amount ?? "0.0"));
 }

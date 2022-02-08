@@ -33,9 +33,9 @@ class AppTextStyles {
       color: AppColor.whiteColor, fontWeight: FontWeight.normal, fontSize: 20);
 
   static double largep = 60;
-  static double mediump = 40;
-  static double smallp = 30;
-  static double xSmallp = 20;
+  static double mediump = 35;
+  static double smallp = 25;
+  static double xSmallp = 18;
 /*  static double largep = 30;
   static double mediump = 20;
   static double smallp = 10;
