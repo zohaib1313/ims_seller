@@ -21,7 +21,7 @@ packages:
       name: barcode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.1.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -311,12 +311,12 @@ packages:
     source: hosted
     version: "2.0.5"
   pdf:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: pdf
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.7.1"
+    version: "3.6.4"
   percent_indicator:
     dependency: "direct main"
     description:
@@ -351,7 +351,7 @@ packages:
       name: printing
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.7.2"
+    version: "5.6.5"
   process:
     dependency: transitive
     description:
@@ -372,7 +372,7 @@ packages:
       name: qr
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "2.1.0"
   shared_preferences:
     dependency: "direct main"
     description:

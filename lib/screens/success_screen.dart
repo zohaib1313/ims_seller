@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
-import 'package:ims_seller/view_models/send_alert_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:ims_seller/models/model_printin.dart';
+import 'package:ims_seller/utils/printing.dart';
 
-import '../routes.dart';
 import '../styles.dart';
+import 'main_screen.dart';
 
 class SuccessScreen extends StatefulWidget {
   static const id = 'SuccessScreen';
   String title;
   bool printt;
+  ModelPrintingFull? modelPrintingFull;
 
-  SuccessScreen({required this.title, required this.printt});
+  SuccessScreen(
+      {Key? key,
+      required this.title,
+      required this.printt,
+      required this.modelPrintingFull})
+      : super(key: key);
 
   @override
   State<SuccessScreen> createState() => _SuccessScreenState();
@@ -43,13 +49,40 @@ class _SuccessScreenState extends State<SuccessScreen> {
           SizedBox(height: 10.h),
           SizedBox(height: 10.h),
           Visibility(
-            visible: Provider.of<SendAlertViewModel>(myContext!, listen: false)
-                .selectedNotificationMethods
-                .contains(NotificationMethods.print),
+            visible: widget.printt,
             child: InkWell(
-              onTap: () {
-                // Provider.of<SendAlertViewModel>(myContext!, listen: false)
-                //     .doPrint();
+              onTap: () async {
+                if (widget.modelPrintingFull != null) {
+                  int count = 0;
+                  for (var item in widget.modelPrintingFull!.listOfProducts) {
+                    count = count + (int.parse(item.itemQty ?? "1"));
+                  }
+                  bool result = await MyPrinting().doPrint(
+                      title: widget.modelPrintingFull?.title ?? "",
+                      logoNetwork: widget.modelPrintingFull?.logo ?? "",
+                      address: widget.modelPrintingFull?.address ?? "",
+                      stringPhoneNo:
+                          widget.modelPrintingFull?.branchPhoneNo ?? "",
+                      invoiceNumber:
+                          widget.modelPrintingFull?.invoiceNumber ?? "",
+                      dateTime:
+                          widget.modelPrintingFull?.dateTime.toString() ?? "",
+                      salePersonName:
+                          widget.modelPrintingFull?.salePersonName ?? "-",
+                      customerName:
+                          widget.modelPrintingFull?.customerName ?? "",
+                      paymentMethod:
+                          widget.modelPrintingFull?.paymentMethod ?? "",
+                      totalAmount:
+                          widget.modelPrintingFull?.totalAmount ?? "0.0",
+                      discount: widget.modelPrintingFull?.discount ?? "0.0",
+                      listOfProducts: widget.modelPrintingFull!.listOfProducts,
+                      numberOfItems: count.toString());
+                  if (result) {
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName(MainScreen.id));
+                  }
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

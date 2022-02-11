@@ -137,6 +137,20 @@ class MainScreen extends StatelessWidget {
                                 SizedBox(
                                   height: 30.h,
                                 ),
+                                // Button(
+                                //   textColor: AppColor.whiteColor,
+                                //   buttonText: 'Add Printing Device',
+                                //   color: AppColor.greenColor,
+                                //   onTap: () {
+                                //     Navigator.of(myContext!).push(
+                                //         MaterialPageRoute(
+                                //             builder: (context) =>
+                                //                 AddPrintingDevice()));
+                                //   },
+                                // ),
+                                // SizedBox(
+                                //   height: 30.h,
+                                // ),
                                 /* Button(
                                   textColor: AppColor.whiteColor,
                                   buttonText: 'Print Test printing lib',

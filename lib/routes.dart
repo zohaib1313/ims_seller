@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:ims_seller/screens/TestProviderScren.dart';
 import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
 import 'package:ims_seller/screens/invoice_summary_screen.dart';
@@ -8,6 +7,7 @@ import 'package:ims_seller/screens/search_customer_screen.dart';
 import 'package:ims_seller/screens/sigin_screen.dart';
 import 'package:ims_seller/screens/splash_screen.dart';
 import 'package:ims_seller/view_models/add_new_customer_view_model.dart';
+import 'package:ims_seller/view_models/add_new_printer_view_model.dart';
 import 'package:ims_seller/view_models/add_new_product_view_model.dart';
 import 'package:ims_seller/view_models/dashboard_view_model.dart';
 import 'package:ims_seller/view_models/main_screen_view_model.dart';
@@ -30,7 +30,6 @@ final Map<String, Widget Function(BuildContext)> routes = {
   SearchCustomerScreen.id: (context) => SearchCustomerScreen(),
   AddNewCustomer.id: (context) => AddNewCustomer(),
   InvoiceSummaryScreen.id: (context) => InvoiceSummaryScreen(),
-  TestScreen.id: (context) => TestScreen(),
 };
 
 final List<ChangeNotifierProvider<dynamic>> multiProviders = [
@@ -53,4 +52,6 @@ final List<ChangeNotifierProvider<dynamic>> multiProviders = [
       create: (_) => AddNewCustomerViewModel()),
   ChangeNotifierProvider<SendAlertViewModel>(
       create: (_) => SendAlertViewModel()),
+  ChangeNotifierProvider<AddNewPrinterViewModel>(
+      create: (_) => AddNewPrinterViewModel()),
 ];

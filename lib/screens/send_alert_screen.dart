@@ -5,6 +5,7 @@ import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/common_widgets/common_widgets.dart';
 import 'package:ims_seller/models/mode_printer_product.dart';
 import 'package:ims_seller/models/model_payment_methods.dart';
+import 'package:ims_seller/models/model_printin.dart';
 import 'package:ims_seller/screens/main_screen.dart';
 import 'package:ims_seller/screens/success_screen.dart';
 import 'package:ims_seller/styles.dart';
@@ -209,18 +210,45 @@ class _SendAlertInvoiceGeneratedScreenState
                           (view.selectedNotificationMethods
                               .contains(NotificationMethods.email))) {
                         view.sendNotifications(
-                            completion: () {
-                              view.resetState();
+                            completion: () async {
                               Navigator.of(context)
                                   .popUntil(ModalRoute.withName(MainScreen.id));
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SuccessScreen(
-                                        title: "Notification sent successfully",
-                                        printt: (view
-                                            .selectedNotificationMethods
-                                            .contains(
-                                                NotificationMethods.print)),
-                                      )));
+                              await Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) => SuccessScreen(
+                                            title:
+                                                "Notification sent successfully",
+                                            modelPrintingFull:
+                                                ModelPrintingFull(
+                                                    listOfProducts:
+                                                        widget.listOfProducts,
+                                                    customerPhone:
+                                                        widget.customerPhone,
+                                                    dateTime: widget.dateTime,
+                                                    address: widget.address,
+                                                    title: widget.title,
+                                                    branchPhoneNo:
+                                                        widget.branchPhoneNo,
+                                                    customerName:
+                                                        widget.customerName,
+                                                    discount: widget.discount,
+                                                    haveMail: widget.haveMail,
+                                                    invoiceId: widget.invoiceId,
+                                                    invoiceNumber:
+                                                        widget.invoiceNumber,
+                                                    logo: widget.logo,
+                                                    paymentMethod:
+                                                        widget.paymentMethod,
+                                                    salePersonName:
+                                                        widget.salePersonName,
+                                                    totalAmount:
+                                                        widget.totalAmount),
+                                            printt: view
+                                                .selectedNotificationMethods
+                                                .contains(
+                                                    NotificationMethods.print),
+                                          )));
+                              view.resetState();
                             },
                             invoiceId: widget.invoiceId ?? 0);
                       } else {
@@ -376,7 +404,6 @@ getType(String id) {
       return NotificationMethods.sms;
     case 'email':
       return NotificationMethods.email;
-
     case 'print':
       return NotificationMethods.print;
   }

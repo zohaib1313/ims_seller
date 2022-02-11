@@ -77,8 +77,8 @@ class SendAlertViewModel extends ChangeNotifier {
 
     Map<String, dynamic> body = {
       "invoice_id": invoiceId,
-      "email": sms,
-      "sms": email
+      "email": email,
+      "sms": sms
     };
     var client = APIClient(isCache: false);
     client

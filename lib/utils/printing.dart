@@ -37,8 +37,8 @@ class MyPrinting {
     } else {
       logo = null;
     }
-    final doc = pw.Document(verbose: true);
-    PrintingInfo res = await Printing.info();
+    final doc = pw.Document();
+
     return Printing.layoutPdf(
       //format: PdfPageFormat.roll57,
       onLayout: (PdfPageFormat format) async {
