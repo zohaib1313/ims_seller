@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:ims_seller/screens/add_new_customer.dart';
 import 'package:ims_seller/screens/dashboard_screen.dart';
 import 'package:ims_seller/screens/invoice_summary_screen.dart';
 import 'package:ims_seller/screens/main_screen.dart';
@@ -28,7 +27,6 @@ final Map<String, Widget Function(BuildContext)> routes = {
   DashBoardScreen.id: (context) => DashBoardScreen(),
   MainScreen.id: (context) => MainScreen(),
   SearchCustomerScreen.id: (context) => SearchCustomerScreen(),
-  AddNewCustomer.id: (context) => AddNewCustomer(),
   InvoiceSummaryScreen.id: (context) => InvoiceSummaryScreen(),
 };
 

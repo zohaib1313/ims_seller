@@ -39,7 +39,11 @@ class MainScreen extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward),
                   onTap: () {
                     Navigator.of(myContext!).pop();
-                    Navigator.of(myContext!).pushNamed(AddNewCustomer.id);
+
+                    Navigator.of(myContext!).push(MaterialPageRoute(
+                        builder: (context) => AddNewCustomer(
+                              phoneNumber: "",
+                            )));
                   },
                 ),
                 // ListTile(

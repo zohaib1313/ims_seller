@@ -185,8 +185,18 @@ class _SearchCustomerScreenState extends State<SearchCustomerScreen> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Navigator.of(myContext!)
-                                                .pushNamed(AddNewCustomer.id);
+                                            /*  Navigator.of(myContext!)
+                                                .pushNamed(AddNewCustomer.id);*/
+
+                                            Navigator.of(myContext!).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddNewCustomer(
+                                                          phoneNumber: view
+                                                              .searchTextEditingController
+                                                              .text
+                                                              .toString(),
+                                                        )));
                                           },
                                           child: Text(
                                             'Add New Customer?',

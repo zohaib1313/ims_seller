@@ -10,11 +10,24 @@ import '../routes.dart';
 import '../styles.dart';
 import 'add_new_products/add_new_product_screen.dart';
 
-class AddNewCustomer extends StatelessWidget {
-  AddNewCustomer({Key? key}) : super(key: key);
+class AddNewCustomer extends StatefulWidget {
   static const id = "AddNewCustomer";
+  String? phoneNumber;
 
+  AddNewCustomer({this.phoneNumber});
+
+  @override
+  State<AddNewCustomer> createState() => _AddNewCustomerState();
+}
+
+class _AddNewCustomerState extends State<AddNewCustomer> {
   var view = Provider.of<AddNewCustomerViewModel>(myContext!);
+
+  @override
+  void initState() {
+    super.initState();
+    view.mobileNumberEditingController.text = widget.phoneNumber ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,17 +109,7 @@ class AddNewCustomer extends StatelessWidget {
                                           //   }
                                           //   return null;
                                           // },
-                                          onChanged: (String text) {
-                                            /*   if (text.isNotEmpty) {
-                                        setState(() {
-                                          isSearching = true;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          isSearching = false;
-                                        });
-                                      }*/
-                                          },
+                                          onChanged: (String text) {},
                                         ),
                                       ),
                                     ],
@@ -123,9 +126,9 @@ class AddNewCustomer extends StatelessWidget {
                               getRow('City', view.cityController, false),
                               SizedBox(height: 20.h),
                               getRow('Address', view.addressController, false),
-                              SizedBox(height: 20.h),
+                              /*    SizedBox(height: 20.h),
                               getRow('Membership No*',
-                                  view.memberShipNumberEditingController, true),
+                                  view.memberShipNumberEditingController, true),*/
                             ],
                           ),
                         ),

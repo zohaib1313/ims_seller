@@ -17,13 +17,10 @@ class AddNewCustomerViewModel extends ChangeNotifier {
   TextEditingController addressController = TextEditingController();
   TextEditingController cityController = TextEditingController();
 
-  TextEditingController memberShipNumberEditingController =
-      TextEditingController();
-
   Future<bool> resetState() {
     mobileNumberEditingController.clear();
     fullNameEditingTextController.clear();
-    memberShipNumberEditingController.clear();
+    emailAddressController.clear();
     addressController.clear();
     cityController.clear();
     return Future.value(true);
@@ -41,9 +38,9 @@ class AddNewCustomerViewModel extends ChangeNotifier {
           : emailAddressController.text,
       "city": cityController.text.isEmpty ? "" : cityController.text,
       "address": addressController.text.isEmpty ? "" : addressController.text,
-      "member_ship": memberShipNumberEditingController.text.isEmpty
+      /*  "member_ship": memberShipNumberEditingController.text.isEmpty
           ? ""
-          : memberShipNumberEditingController.text
+          : memberShipNumberEditingController.text*/
     };
     var client = APIClient(isCache: false, baseUrl: ApiConstants.baseUrl);
     client
