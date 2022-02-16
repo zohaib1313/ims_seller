@@ -64,12 +64,13 @@ class SignInScreen extends StatelessWidget {
                         prefixIcon: AppAssets.passwordIc,
                         hintText: 'Password',
                         suffixIconWidet: GestureDetector(
-                            onTap: () {
-                              view.hidePassword = !view.hidePassword;
-                            },
-                            child: Icon(view.hidePassword
-                                ? Icons.remove_red_eye_rounded
-                                : Icons.visibility_off_outlined)),
+                          onTap: () {
+                            view.hidePassword = !view.hidePassword;
+                          },
+                          child: Icon(view.hidePassword
+                              ? Icons.remove_red_eye_rounded
+                              : Icons.visibility_off_outlined),
+                        ),
                         controller: view.userPasswordController,
                         obsecureText: view.hidePassword,
                         validator: (string) {

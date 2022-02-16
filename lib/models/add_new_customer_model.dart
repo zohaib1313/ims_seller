@@ -5,25 +5,19 @@ class CustomerModel implements Decodable {
   String? name;
   String? phone;
   String? email;
-  String? memberShip;
+
   String? city;
   String? address;
 
   CustomerModel(
-      {this.id,
-      this.name,
-      this.phone,
-      this.email,
-      this.memberShip,
-      this.city,
-      this.address});
+      {this.id, this.name, this.phone, this.email, this.city, this.address});
 
   CustomerModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     phone = json['phone'];
     email = json['email'];
-    memberShip = json['member_ship'];
+
     city = json['city'];
     address = json['address'];
   }
@@ -34,7 +28,7 @@ class CustomerModel implements Decodable {
     data['name'] = this.name;
     data['phone'] = this.phone;
     data['email'] = this.email;
-    data['member_ship'] = this.memberShip;
+
     data['city'] = this.city;
     data['address'] = this.address;
     return data;
@@ -46,7 +40,6 @@ class CustomerModel implements Decodable {
     name = json['name'];
     phone = json['phone'];
     email = json['email'];
-    memberShip = json['member_ship'];
     city = json['city'];
     address = json['address'];
     return this;
@@ -54,6 +47,6 @@ class CustomerModel implements Decodable {
 
   @override
   String toString() {
-    return 'CustomerModel{id: $id, name: $name, phone: $phone, email: $email, memberShip: $memberShip, city: $city, address: $address}';
+    return 'CustomerModel{id: $id, name: $name, phone: $phone, email: $email, city: $city, address: $address}';
   }
 }
