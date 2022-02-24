@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io' show Platform, exit;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/utils/utils.dart';
 
 import 'APis.dart';
@@ -89,14 +92,19 @@ class APIClient implements BaseAPIClient {
     };
 
     final response = await instance!.fetch(config).catchError((error) {
-      // AppPopUps().dissmissDialog();
       print("error in response ${error.toString()}");
-
-      if ((error as DioError).type == DioErrorType.connectTimeout) {
-        print('Connection TimeOut ${config.path}');
-        if (kDebugMode) {}
-
-        throw error;
+      if ((error as DioError).type == DioErrorType.connectTimeout ||
+          (error).type == DioErrorType.other) {
+        AppPopUps.showAlertDialog(
+            message: "Network is unreachable",
+            onSubmit: () {
+              if (Platform.isAndroid) {
+                SystemNavigator.pop();
+              } else if (Platform.isIOS) {
+                exit(0);
+              }
+            });
+        throw Future.value(error);
       }
     });
 
@@ -117,9 +125,6 @@ class APIClient implements BaseAPIClient {
         var finalResponse =
             ResponseWrapper.init(create: create, json: responseData);
         if (finalResponse.error != null) {
-          if (kDebugMode) {
-            print('Response Error');
-          }
           final errorResponse = finalResponse.error!;
           throw errorResponse;
         } else {
