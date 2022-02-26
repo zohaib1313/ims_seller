@@ -94,7 +94,7 @@ class APIClient implements BaseAPIClient {
     final response = await instance!.fetch(config).catchError((error) {
       print("error in response ${error.toString()}");
       if ((error as DioError).type == DioErrorType.connectTimeout ||
-          (error).type == DioErrorType.other) {
+          (error as DioError).type == DioErrorType.other) {
         AppPopUps.showAlertDialog(
             message: "Network is unreachable",
             onSubmit: () {
@@ -104,7 +104,7 @@ class APIClient implements BaseAPIClient {
                 exit(0);
               }
             });
-        throw Future.value(error);
+        throw "Network is unreachable";
       }
     });
 

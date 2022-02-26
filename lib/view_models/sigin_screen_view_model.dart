@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ims_seller/common_widgets/app_popups.dart';
 import 'package:ims_seller/dio_network/APis.dart';
 import 'package:ims_seller/dio_network/api_client.dart';
+import 'package:ims_seller/dio_network/api_response.dart';
 import 'package:ims_seller/dio_network/api_route.dart';
 import 'package:ims_seller/models/signin_model.dart';
 import 'package:ims_seller/utils/user_defaults.dart';
@@ -34,12 +35,11 @@ class SignInViewModel extends ChangeNotifier {
               APIType.login,
               body: body,
             ),
-            create: () => SignInModel(),
+            create: () => APIResponse<SignInModel>(create: () => SignInModel()),
             apiFunction: singInUser)
         .then((response) {
       AppPopUps().dissmissDialog();
-
-      UserDefaults.saveUserSession(response.response!);
+      UserDefaults.saveUserSession(response.response!.data!);
       resetState();
       completion();
     }).catchError((error) {
