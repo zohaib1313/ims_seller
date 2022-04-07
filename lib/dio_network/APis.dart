@@ -14,7 +14,9 @@ enum APIType {
 }
 
 class ApiConstants {
-  static const baseUrl = "http://207.244.105.191:8866/";
+  //static const baseUrl = "http://207.244.105.191:8866/";
+  static const baseUrl = " http://103.121.224.130:8899/";
+
   static const loginUser = 'api/app/login/authentication/';
   static const searchCustomer = 'products/search_merchant_customer/';
   static const addCustomer = 'products/add_merchant_customer/';
