@@ -192,9 +192,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                   width: 50.w),
                                                               Expanded(
                                                                   child: Text(
-                                                                formatAmount(data
-                                                                    .totalSaleAmount
-                                                                    .toString()),
+                                                                formatAmount(
+                                                                    (data.totalSaleAmount ??
+                                                                            0.0)
+                                                                        .toString()),
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,

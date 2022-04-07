@@ -89,10 +89,16 @@ class _ViewAllInvoiceScreenState extends State<ViewAllInvoiceScreen> {
                       stream: isLoadingStream,
                       builder:
                           (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        /* if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }*/
+
                         if (snapshot.data != null) {
                           return ListView.builder(
                             controller: controller,
-                            physics: BouncingScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: view.listOfInvoices.length,
                             itemBuilder: (context, index) => getRowSalesInvoice(
@@ -107,8 +113,7 @@ class _ViewAllInvoiceScreenState extends State<ViewAllInvoiceScreen> {
                             ),
                           );
                         } else {
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return const IgnorePointer();
                         }
                       }),
                 ),
