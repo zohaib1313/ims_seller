@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ims_seller/common_widgets/app_popups.dart';
+import 'package:ims_seller/utils/user_defaults.dart';
 import 'package:ims_seller/utils/utils.dart';
 
 import 'APis.dart';
@@ -69,7 +70,7 @@ class APIClient implements BaseAPIClient {
   }
 
   Map<String, dynamic> headers = {
-    'Authorization': 'Token 	614e83765257d5c98edf7bbb72958a4fd13e4519',
+    /*  'Authorization': 'Token 614e83765257d5c98edf7bbb72958a4fd13e4519',*/
     'charset': 'utf-8',
     "X-SellerApp": true
   };
@@ -81,6 +82,11 @@ class APIClient implements BaseAPIClient {
     Function? apiFunction,
   }) async {
     print(headers);
+
+    if (UserDefaults.getUserSession()?.token != null) {
+      headers['Authorization'] =
+          'Token  ${UserDefaults.getUserSession()?.token ?? ''}';
+    }
 
     final config = route!.getConfig();
     config.baseUrl = baseUrl;
